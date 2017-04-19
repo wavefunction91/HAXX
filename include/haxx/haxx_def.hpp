@@ -1,3 +1,6 @@
+#ifndef __INCLUDED_HAXX_DEF_HPP
+#define __INCLUDED_HAXX_DEF_HPP
+
 
 #include <complex> // Support for complex numbers
 
@@ -132,3 +135,6 @@ struct quaternion {
 
 
 }; // HAXX namespace
+
+
+#endif

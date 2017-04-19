@@ -1,3 +1,7 @@
+#ifndef __INCLUDED_HAXX_QUATERNION_REDUCTION_HPP
+#define __INCLUDED_HAXX_QUATERNION_REDUCTION_HPP
+
+#include "haxx/haxx_def.hpp"
 
 namespace HAXX {
 
@@ -28,3 +32,5 @@ inline quaternion<_F> inv(const quaternion<_F>& __q) {
 };
 
 };
+
+#endif

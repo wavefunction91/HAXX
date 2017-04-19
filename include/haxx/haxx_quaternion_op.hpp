@@ -1,3 +1,7 @@
+#ifndef __INCLUDED_HAXX_QUATERNION_OP_HPP
+#define __INCLUDED_HAXX_QUATERNION_OP_HPP
+
+#include "haxx/haxx_def.hpp"
 
 namespace HAXX {
 
@@ -99,3 +103,5 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
 
 
 }; // HAXX namespace
+
+#endif

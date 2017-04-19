@@ -1,3 +1,7 @@
+#ifndef __INCLUDED_HAXX_COMPLEX_OP_HPP
+#define __INCLUDED_HAXX_COMPLEX_OP_HPP
+
+#include "haxx/haxx_def.hpp"
 
 namespace HAXX {
 
@@ -111,3 +115,5 @@ inline quaternion<_F> operator*(const std::complex<_F>& __x,
 
 
 }; // HAXX namespace
+
+#endif

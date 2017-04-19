@@ -1,3 +1,7 @@
+#ifndef __INCLUDED_HAXX_SCALAR_OP_HPP
+#define __INCLUDED_HAXX_SCALAR_OP_HPP
+
+#include "haxx/haxx_def.hpp"
 
 namespace HAXX {
 
@@ -132,3 +136,5 @@ inline quaternion<_F> operator/(const _F& __x, const quaternion<_F>& __y){
 };
 
 }; // HAXX namespace
+
+#endif
