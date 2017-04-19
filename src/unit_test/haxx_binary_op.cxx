@@ -1,6 +1,11 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE HAXX_BINARY_OP
-#include <boost/test/included/unit_test.hpp>
+
+#ifndef _HAXX_UT_BUTF_NINCLUDED
+  #include <boost/test/included/unit_test.hpp>
+#else
+  #include <boost/test/unit_test.hpp>
+#endif
 
 #include "haxx.hpp"
 

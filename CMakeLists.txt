@@ -8,5 +8,10 @@ set(HAXX_VERSION_PATCH 0)
 include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_BINARY_DIR}/include")
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  message(STATUS "${CMAKE_CXX_COMPILER_ID} Recognized as CLANG: Adding -D_HAXX_UT_BUTF_NINCLUDED")
+  add_definitions("-D_HAXX_UT_BUTF_NINCLUDED")
+endif()
+
 enable_testing()
 add_subdirectory(src)
