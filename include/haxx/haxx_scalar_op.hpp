@@ -1,3 +1,6 @@
+
+namespace HAXX {
+
 template <typename _F>
 quaternion<_F>& quaternion<_F>::operator=(const _F& __t) {
 
@@ -127,3 +130,5 @@ inline quaternion<_F> operator/(const _F& __x, const quaternion<_F>& __y){
   return __r;
 
 };
+
+}; // HAXX namespace

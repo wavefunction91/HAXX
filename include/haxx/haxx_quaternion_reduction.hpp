@@ -1,3 +1,6 @@
+
+namespace HAXX {
+
 template <typename _F>
 inline _F norm(const quaternion<_F>& __q) {
   _F nmsq = __q.real() * __q.real();
@@ -21,5 +24,7 @@ inline quaternion<_F> inv(const quaternion<_F>& __q) {
 
   _F nrm = norm(__q);
   return conj(__q) / nrm / nrm;
+
+};
 
 };
