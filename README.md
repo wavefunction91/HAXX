@@ -14,5 +14,5 @@ Design Goals
 
 Developers
 ==========
-David Williams-Young (Li Research Group / University of Washington)
+David Williams-Young (Li Research Group / University of Washington) <br />
 E-Mail: dbwy at uw dot edu
