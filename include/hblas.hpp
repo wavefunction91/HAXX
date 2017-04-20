@@ -9,4 +9,10 @@
 // Level 1 HBLAS
 #include "hblas/hblas1.hpp"
 
+// Level 2 HBLAS
+#include "hblas/hblas2.hpp"
+
+// Level 3 HBLAS
+#include "hblas/hblas3.hpp"
+
 #endif

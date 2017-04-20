@@ -118,6 +118,15 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
   return __r;
 };
 
+/**
+ *  Returns true iff all of the elements of quaternion \f$q\f$ are the
+ *  same as quaternoin \f$p\f$.
+ */
+template <typename _F>
+inline bool operator==(const quaternion<_F>& p, const quaternion<_F>& q) {
+  return p.real() == q.real() and p.imag_i() == q.imag_i() 
+    and p.imag_j() == q.imag_j() and q.imag_k() == q.imag_k();
+}
 
 }; // HAXX namespace
 

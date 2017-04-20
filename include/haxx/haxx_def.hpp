@@ -145,6 +145,7 @@ struct quaternion {
 
   // Quaternion operators
 
+
   /// Assign a quaternion number (same type) to this quaternion number
   quaternion& operator=(const quaternion&) = default;
 
@@ -176,6 +177,20 @@ struct quaternion {
 
 }; // struct quaternion
 
+///  Insertion operator for quaternion values.
+template<typename _F, typename _CharT, class _Traits>
+  std::basic_ostream<_CharT, _Traits>&
+  operator<<(std::basic_ostream<_CharT, _Traits>& __os, const quaternion<_F>& __x)
+  {
+    std::basic_ostringstream<_CharT, _Traits> __s;
+    __s.flags(__os.flags());
+    __s.imbue(__os.getloc());
+    __s.precision(__os.precision());
+    __s << '(' << __x.real() << ',' << __x.imag_i() 
+        << ',' << __x.imag_j() << ',' << __x.imag_k() << ')';
+    return __os << __s.str();
+  }
+
 /**
  *  @defgroup QQOp Quaternion - Quaternion Binary Operations
  *  Binary arithmetic operations between quaternion numbers
@@ -197,6 +212,10 @@ inline quaternion<_F> operator-(const quaternion<_F>&, const quaternion<_F>&);
 /// Negate a quaternion number
 template <typename _F>
 inline quaternion<_F> operator-(const quaternion<_F>& __x);
+
+/// Check the equality of two quaternions
+template <typename _F>
+inline bool operator==(const quaternion<_F>&, const quaternion<_F>&);
 
 /* @} */ // QQOp
 
