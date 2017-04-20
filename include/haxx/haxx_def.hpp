@@ -7,29 +7,42 @@
 // HAXX Namespace
 namespace HAXX {
 
-// Primary template class quaternion
+/**
+ *  @defgroup quaternion The Quaternion Struct
+ *  The templated quaternion struct definition and associated
+ *  arithmetic functions for the quaternion algebra.
+ */
+
+/**
+ * \ingroup quaternion
+ * Primary template class quaternion
+ *
+ */
 template <typename _F>
 struct quaternion {
 
   /// Value typedef
   typedef _F value_type;
+
+  /// Complex value typedef
   typedef std::complex<_F> _CF;
 
-  /// Default Constructor.
+  /// \brief Default Constructor.
   /// Constructs a quaternion from real quadruple
-  ///   q = __r + __i * i + __j * j + __k * k
-  constexpr quaternion(const _F& __r = _F(), const _F& __i = _F(), 
-    const _F& __j = _F(), const _F& __k = _F()) :
-    _M_real(__r), _M_imag_i(__i), _M_imag_j(__j), _M_imag_k(__k){ } 
+  ///
+  ///   \f$q = a + bi + cj + dk = (a,b,c,d) \qquad a,b,c,d\in\mathbb{R}\f$
+  constexpr quaternion(const _F& a = _F(), const _F& b = _F(), 
+    const _F& c = _F(), const _F& d = _F()) :
+    _M_real(a), _M_imag_i(b), _M_imag_j(c), _M_imag_k(d){ } 
 
-  /// Complex Constructor.
+  /// \brief Complex Constructor.
   /// Constructs a quaternion using Cayley-Dickson construction of
   ///   the complex numbers
   ///
-  ///   q = __a + __b * j
-  constexpr quaternion(const _CF& __a, const _CF& __b = _CF()) :
-    _M_real(__a.real()), _M_imag_i(__a.imag()),
-    _M_imag_j(__b.real()), _M_imag_k(__b.imag()){ }
+  ///   \f$ q = a + bj = a^R + a^Ii + b^Rj + b^Ik \qquad a,b \in \mathbb{C}\f$
+  constexpr quaternion(const _CF& a, const _CF& b = _CF()) :
+    _M_real(a.real()), _M_imag_i(a.imag()),
+    _M_imag_j(b.real()), _M_imag_k(b.imag()){ }
 
   /// Copy Constructor.
   constexpr quaternion(const quaternion&) = default;
@@ -47,16 +60,26 @@ struct quaternion {
 
 
   // Getters for components of the quaternion
+ 
+  /// Returns the real (scalar) part of the quaternion
   constexpr _F real()   const { return _M_real;   }
+  /// Returns the imaginary (i) part of the quaternion
   constexpr _F imag_i() const { return _M_imag_i; }
+  /// Returns the imaginary (j) part of the quaternion
   constexpr _F imag_j() const { return _M_imag_j; }
+  /// Returns the imaginary (k) part of the quaternion
   constexpr _F imag_k() const { return _M_imag_k; }
 
 
   // Setters for components of the quaternion
+
+  /// Sets the real (scalar) part of the quaternion
   void real(_F __x)   { _M_real   = __x; }
+  /// Sets the imaginary (i) part of the quaternion
   void imag_i(_F __x) { _M_imag_i = __x; }
+  /// Sets the imaginary (j) part of the quaternion
   void imag_j(_F __x) { _M_imag_j = __x; }
+  /// Sets the imaginary (k) part of the quaternion
   void imag_k(_F __x) { _M_imag_k = __x; }
 
   // Real / Complex Assignment Operators
@@ -105,7 +128,7 @@ struct quaternion {
   /// Assign a quaternion number (same type) to this quaternion number
   quaternion& operator=(const quaternion&) = default;
 
-  /// Assign a quaternion number (different type) to this quaternion number
+  /// Quaternion conversion assignment
   template <typename _G> quaternion<_F>& operator=(const quaternion<_G>&);
 
   /// Add a quaternion number to this quaternion number
