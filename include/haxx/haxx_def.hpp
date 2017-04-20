@@ -44,6 +44,17 @@ struct quaternion {
     _M_real(a.real()), _M_imag_i(a.imag()),
     _M_imag_j(b.real()), _M_imag_k(b.imag()){ }
 
+
+  /// \brief Real Array Constructor
+  /// Constructs a quaternion from a std::array<_F,4>
+  constexpr quaternion(const std::array<_F,4>& q) :
+    quaternion(q[0],q[1],q[2],q[3]){ };
+
+  /// \brief Complex Array Constructor
+  /// Constructs a quaternion from a std::array<_CF,4>
+  constexpr quaternion(const std::array<_CF,2>& q) :
+    quaternion(q[0],q[1]){ };
+
   /// Copy Constructor.
   constexpr quaternion(const quaternion&) = default;
 
@@ -69,6 +80,8 @@ struct quaternion {
   constexpr _F imag_j() const { return _M_imag_j; }
   /// Returns the imaginary (k) part of the quaternion
   constexpr _F imag_k() const { return _M_imag_k; }
+  /// Returns the imaginary vector {i,j,k} of the quaternion
+  constexpr std::array<_F,3> imag() const { return { _M_imag_i,_M_imag_j,_M_imag_k }; }
 
 
   // Setters for components of the quaternion
@@ -81,6 +94,12 @@ struct quaternion {
   void imag_j(_F __x) { _M_imag_j = __x; }
   /// Sets the imaginary (k) part of the quaternion
   void imag_k(_F __x) { _M_imag_k = __x; }
+  /// Sets the imaginary {i,j,k} part of the quaternion
+  void imag(const std::array<_F,3>& __x) {
+    _M_imag_i = __x[0];
+    _M_imag_j = __x[1];
+    _M_imag_k = __x[2];
+  }
 
   // Real / Complex Assignment Operators
 
