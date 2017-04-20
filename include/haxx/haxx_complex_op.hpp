@@ -66,10 +66,6 @@ quaternion<_F>& quaternion<_F>::operator-=(const _CF& __t) {
 
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Add a complex number to a quaternion number
- *
  *  Adds a complex number and a quaternion number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra.
@@ -90,10 +86,6 @@ inline quaternion<_F> operator+(const quaternion<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Add a complex number to a quaternion number
- *
  *  Adds a complex number and a quaternion number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra.
@@ -114,10 +106,6 @@ inline quaternion<_F> operator+(const std::complex<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Subtract a complex number from a quaternion number
- *
  *  Subtracts a complex number from a quaternion number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra.
@@ -138,10 +126,6 @@ inline quaternion<_F> operator-(const quaternion<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Subtract a quaternion number from a complex number
- *
  *  Subtracts a quaternion number from a complex number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra.
@@ -164,10 +148,6 @@ inline quaternion<_F> operator-(const std::complex<_F>& __x,
 
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Right multiply a quaternion number by a complex number
- *
  *  Right multiplies a quaternion number by a complex number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra. 
@@ -193,10 +173,6 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Left multiply a quaternion number by a complex number
- *
  *  Left multiplies a quaternion number by a complex number to return a 
  *  quaternion number through the natural embedding of the complex
  *  numbers in the quaternion algebra. 

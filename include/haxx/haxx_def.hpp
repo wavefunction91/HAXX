@@ -11,10 +11,11 @@ namespace HAXX {
  *  @defgroup quaternion The Quaternion Struct
  *  The templated quaternion struct definition and associated
  *  arithmetic functions for the quaternion algebra.
+ *
+ *  @{
  */
 
 /**
- * \ingroup quaternion
  * Primary template class quaternion
  *
  */
@@ -175,6 +176,121 @@ struct quaternion {
 
 }; // struct quaternion
 
+/**
+ *  @defgroup QQOp Quaternion - Quaternion Binary Operations
+ *  Binary arithmetic operations between quaternion numbers
+ *  @{
+ */
+
+/// Add two quaternion numbers
+template <typename _F>
+inline quaternion<_F> operator+(const quaternion<_F>&, const quaternion<_F>&);
+
+/// Subtract two quaternion numbers
+template <typename _F>
+inline quaternion<_F> operator-(const quaternion<_F>&, const quaternion<_F>&);
+
+/// Multiply two quaternion numbers
+template <typename _F>
+inline quaternion<_F> operator-(const quaternion<_F>&, const quaternion<_F>&);
+
+/// Negate a quaternion number
+template <typename _F>
+inline quaternion<_F> operator-(const quaternion<_F>& __x);
+
+/* @} */ // QQOp
+
+
+/**
+ *  @defgroup QROp Quaternion - Real Binary Operations
+ *  Binary arithmetic operations between quaternion and real numbers
+ *  @{
+ */
+
+/// Add a real number to a quaternion number
+template <typename _F>
+inline quaternion<_F> operator+(const quaternion<_F>&, const _F&);
+
+/// Add a real number to a quaternion number
+template <typename _F>
+inline quaternion<_F> operator+(const _F&, const quaternion<_F>&);
+
+/// Subtract a real number from a quaternion number
+template <typename _F>
+inline quaternion<_F> operator-(const quaternion<_F>&, const _F&);
+
+/// Subtract a quaternion number from a real number
+template <typename _F>
+inline quaternion<_F> operator-(const _F&, const quaternion<_F>&);
+
+/// Right multiply a quaternion number by a real number
+template <typename _F>
+inline quaternion<_F> operator*(const quaternion<_F>&, const _F&);
+
+/// Left multiply a quaternion number by a real number
+template <typename _F>
+inline quaternion<_F> operator*(const _F&, const quaternion<_F>&);
+
+/// Divide a quaternion number by a real number
+template <typename _F>
+inline quaternion<_F> operator/(const quaternion<_F>&, const _F&);
+
+/// Divide a real number by a quaternion number
+template <typename _F>
+inline quaternion<_F> operator*(const _F&, const quaternion<_F>&);
+
+/* @} */ // QROp
+
+/**
+ *  @defgroup QCOp Quaternion - Complex Binary Operations
+ *  Binary arithmetic operations between quaternion and complex numbers
+ *  @{
+ */
+
+/// Add a complex number to a quaternion number
+template <typename _F>
+inline quaternion<_F> operator+(const quaternion<_F>&, const std::complex<_F>&);
+
+/// Add a complex number to a quaternion number
+template <typename _F>
+inline quaternion<_F> operator+(const std::complex<_F>&, const quaternion<_F>&);
+
+/// Subtract a complex number from a quaternion number
+template <typename _F>
+inline quaternion<_F> operator-(const quaternion<_F>&, const std::complex<_F>&);
+
+/// Subtract a quaternion number from a complex number
+template <typename _F>
+inline quaternion<_F> operator-(const std::complex<_F>&, const quaternion<_F>&);
+
+/// Right multiply a quaternion number by a complex number
+template <typename _F>
+inline quaternion<_F> operator*(const quaternion<_F>&, const std::complex<_F>&);
+
+/// Left multiply a quaternion number by a complex number
+template <typename _F>
+inline quaternion<_F> operator*(const std::complex<_F>&, const quaternion<_F>&);
+
+/* @} */ // QCOp
+
+/**
+ *  @defgroup QAlg Quaternion Algebraic Operations
+ *  Defines the algebraic operations for the quaternion numbers
+ *  @{
+ */
+
+/// Returns the norm of a quaternion number
+template <typename _F> inline _F norm(const quaternion<_F>&);
+
+/// Returns the conjugate of a quaternion number
+template <typename _F> inline quaternion<_F> conj(const quaternion<_F>&);
+
+/// Returns the inverse of a quaternion number
+template <typename _F> inline quaternion<_F>  inv(const quaternion<_F>&);
+
+/* @} */ // QAlg
+
+/* @} */ // quaternion
 
 }; // HAXX namespace
 

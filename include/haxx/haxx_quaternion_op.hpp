@@ -57,10 +57,6 @@ quaternion<_F>& quaternion<_F>::operator-=(const quaternion<_G> &__q) {
 
 
 /**
- * \ingroup quaternion
- *
- * \brief Negates a quaternion
- *
  * \f$ r = -q = (-q^R, -q^I, -q^J, -q^K) \f$
  */
 template <typename _F>
@@ -72,12 +68,7 @@ inline quaternion<_F> operator-(const quaternion<_F>& __x) {
 
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Adds two quaternion numbers
- *
  *  \f$r = p + q \qquad r,p,q\in\mathbb{H} \f$
- *
  */
 template <typename _F>
 inline quaternion<_F> operator+(const quaternion<_F>& __x, 
@@ -90,12 +81,7 @@ inline quaternion<_F> operator+(const quaternion<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Subtracts two quaternion numbers
- *
  *  \f$r = p - q \qquad r,p,q\in\mathbb{H} \f$
- *
  */
 template <typename _F>
 inline quaternion<_F> operator-(const quaternion<_F>& __x, 
@@ -108,12 +94,7 @@ inline quaternion<_F> operator-(const quaternion<_F>& __x,
 };
 
 /**
- *  \ingroup quaternion
- *
- *  \brief Multiplies two quaternion numbers
- *
  *  \f$r = pq \qquad r,p,q\in\mathbb{H} \f$
- *
  */
 template <typename _F>
 inline quaternion<_F> operator*(const quaternion<_F>& __x,
