@@ -48,7 +48,7 @@ void SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y,
 
     // Use unrolled loops for both unit increments
 
-    // FIXME: For some reason Z/CSWAP does not do this. 
+    // XXX: For some reason Z/CSWAP does not do this. 
     //   Cache utilization?
     if( m != 0 ) {
       for( i = 0; i < m; ++i ) {
@@ -119,9 +119,6 @@ void SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
   bool isL = not isR;
 
   if( INCX == 1 ) {
-    // FIXME: This seems strange to hard code this
-    //   I would assuming that this is arch dependent for 
-    //   best performace
     HAXX_INT m = N % HAXX_SCAL_UNROLL;
   
     if( m != 0 ) {
@@ -247,7 +244,7 @@ void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
       if( isL ) for( i = 0; i < m; ++i ) Y[i] += ALPHA * X[i];
       else      for( i = 0; i < m; ++i ) Y[i] += X[i] * ALPHA;
 
-      // FIXME: DAXPY has this outside of the if-check? Unline COPY and SCAL
+      // XXX: DAXPY has this outside of the if-check? Unline COPY and SCAL
       if( N < HAXX_AXPY_UNROLL ) return;
     }
 

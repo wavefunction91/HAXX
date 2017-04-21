@@ -73,3 +73,5 @@ BOOST_AUTO_TEST_CASE(norm)
   BOOST_CHECK_EQUAL(q.imag_k(),4.);
 
 };
+
+

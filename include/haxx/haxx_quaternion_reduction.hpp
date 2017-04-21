@@ -51,6 +51,16 @@ inline quaternion<_F> inv(const quaternion<_F>& __q) {
 
 };
 
+/**
+ *  \f$ [p,q] = pq - qp \f$
+ */
+template <typename _F>
+inline quaternion<_F> comm(const quaternion<_F>& p, const quaternion<_F>& q){
+
+  return p * q - q * p;
+
+};
+
 };
 
 #endif

@@ -328,6 +328,10 @@ template <typename _F> inline quaternion<_F> conj(const quaternion<_F>&);
 /// Returns the inverse of a quaternion number
 template <typename _F> inline quaternion<_F>  inv(const quaternion<_F>&);
 
+/// Returns the commutator of two quaternion numbers
+template <typename _F> 
+  inline quaternion<_F> comm(const quaternion<_F>&, const quaternion<_F>&);
+
 /* @} */ // QAlg
 
 /* @} */ // quaternion
