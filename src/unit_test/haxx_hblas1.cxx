@@ -228,6 +228,7 @@ BOOST_AUTO_TEST_CASE(hblas1_copy)
 
 
   std::vector<size_t> strides = {1,2,3,5,9};
+
   // Check swap when both strides are equal
   for(int stride : strides) { 
 
@@ -281,6 +282,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
   std::vector<size_t> strides = {1,2,3,5,9};
   //std::vector<size_t> strides = {1};
   
+  // Both strides equal
   for(auto stride : strides) {
     auto len = HBLAS1_VECLEN/stride; 
 
@@ -380,3 +382,38 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
   // FIXME: Need a test for when strides are not equal
 
 };
+
+BOOST_AUTO_TEST_CASE(hblas1_dot)
+{
+  // Random Quaternion vectors
+  std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  // Index list
+  std::vector<int> indx(HBLAS1_VECLEN); 
+  std::iota(indx.begin(),indx.end(),0);
+
+  std::vector<size_t> strides = {1,2,3,5,9};
+  //std::vector<size_t> strides = {1};
+
+  // Both strides equal
+  for(int stride : strides) {
+    auto len = HBLAS1_VECLEN/stride; 
+    HAXX::quaternion<double> dotu = DOTU(len,&X[0],stride,&Y[0],stride);
+    HAXX::quaternion<double> dotc = DOTC(len,&X[0],stride,&Y[0],stride);
+
+    HAXX::quaternion<double> dotus(0.,0.,0.,0.), dotcs(0.,0.,0.,0.);
+    for(auto j = 0; j < len*stride; j+= stride) {
+      dotus = dotus + X[j] * Y[j];
+      dotcs = dotcs + HAXX::conj(X[j]) * Y[j];
+    }
+
+    BOOST_CHECK_EQUAL(dotu,dotus);
+    BOOST_CHECK_EQUAL(dotc,dotcs);
+  }
+
+  // FIXME: Need a test for when strides are not equal
+}
