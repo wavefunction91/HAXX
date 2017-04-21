@@ -31,77 +31,25 @@ namespace HAXX {
    *  @{
    */
 
-  /// Multiply a quaternion vector by a quaternion matrix
-  template <typename _F, typename _AlphaF, typename _BetaF>
+  /// Multiply a general vector by a quaternion matrix
+  template <typename _F,typename _MatF, typename _VecF, typename _AlphaF, 
+    typename _BetaF>
   void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-    quaternion<_F> *A, HAXX_INT LDA, quaternion<_F> *X, 
-    HAXX_INT INCX, _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY);
-
-  /// Multiply a complex vector by a quaternion matrix
-  template <typename _F, typename _AlphaF, typename _BetaF>
-  void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-    quaternion<_F> *A, HAXX_INT LDA, std::complex<_F> *X, 
-    HAXX_INT INCX, _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY);
-
-  /// Multiply a real vector by a quaternion matrix
-  template <typename _F, typename _AlphaF, typename _BetaF>
-  void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-    quaternion<_F> *A, HAXX_INT LDA, _F *X, HAXX_INT INCX,
+    _MatF *A, HAXX_INT LDA, _VecF *X, HAXX_INT INCX, 
     _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY);
 
-
-
-  /// Perform the rank 1 operation with quaternion vectors
-  template <typename _F, typename _AlphaF>
-  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+  /// Perform the quaternion rank 1 operation with two general vectors
+  template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+    HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
     HAXX_INT LDA);
 
-  /// Perform the rank 1 operation with one quaternion and one complex vector
-  template <typename _F, typename _AlphaF>
-  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, std::complex<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
-  /// Perform the rank 1 operation with one quaternion and one complex vector
-  template <typename _F, typename _AlphaF>
-  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, std::complex<_F> *X, 
-    HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+  /// Perform the quaternion rank 1 operation with two general vectors
+  template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+    HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
     HAXX_INT LDA);
 
-  /// Perform the rank 1 operation with one quaternion and one real vector
-  template <typename _F, typename _AlphaF>
-  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, _F *Y, HAXX_INT INCY, quaternion<_F> *A, HAXX_INT LDA);
-  /// Perform the rank 1 operation with one quaternion and one real vector
-  template <typename _F, typename _AlphaF>
-  void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _F *X, HAXX_INT INCX, 
-    quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, HAXX_INT LDA);
-
-  /// Perform the rank 1 operation with quaternion vectors
-  template <typename _F, typename _AlphaF>
-  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
-
-  /// Perform the rank 1 operation with one quaternion and one complex vector
-  template <typename _F, typename _AlphaF>
-  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, std::complex<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
-  /// Perform the rank 1 operation with one quaternion and one complex vector
-  template <typename _F, typename _AlphaF>
-  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, std::complex<_F> *X, 
-    HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
-
-  /// Perform the rank 1 operation with one quaternion and one real vector
-  template <typename _F, typename _AlphaF>
-  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-    HAXX_INT INCX, _F *Y, HAXX_INT INCY, quaternion<_F> *A, HAXX_INT LDA);
-  /// Perform the rank 1 operation with one quaternion and one real vector
-  template <typename _F, typename _AlphaF>
-  void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _F *X, HAXX_INT INCX, 
-    quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, HAXX_INT LDA);
 
   /* @} */ // HBLAS2
 

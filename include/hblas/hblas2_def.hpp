@@ -25,6 +25,8 @@ namespace HAXX {
  *
  *  Performs one of the matrix - vector operations
  *
+ *  \f$ y \in \mathbb{H} \qquad x,\alpha,A \in \mathbb{R},\mathbb{C},\mathbb{H}\f$
+ *
  *  TRANS = 'N'
  *
  *  \f$ y_i = \alpha A_{ij} x_j + \beta y_i\f$
@@ -40,10 +42,11 @@ namespace HAXX {
 // FIXME: In this implementaion, it has been implied that scalars
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in both ALPHA and BETA
-template <typename _F, typename _AlphaF, typename _BetaF>
+template <typename _F,typename _MatF, typename _VecF, typename _AlphaF, 
+  typename _BetaF>
 void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-  quaternion<_F> *A, HAXX_INT LDA, quaternion<_F> *X, 
-  HAXX_INT INCX, _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY) {
+  _MatF *A, HAXX_INT LDA, _VecF *X, HAXX_INT INCX, _BetaF BETA, 
+  quaternion<_F> *Y, HAXX_INT INCY) {
 
   // FIXME: Should write functions to check quaternion equality
   //   to real / complex
@@ -212,13 +215,15 @@ void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
  *  Performs the rank 1 operation
  *
  *  \f$ A_{ij} = A_{ij} + \alpha x_i y_j \f$ 
+ *
+ *  \f$ A \in \mathbb{H} \qquad x,y,\alpha \in \mathbb{R},\mathbb{C},\mathbb{H}\f$
  */
 // FIXME: In this implementaion, it has been implied that scalars
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in ALPHA 
-template <typename _F, typename _AlphaF>
-void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-  HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+  HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
   HAXX_INT LDA){
 
   if( M == 0 or N == 0 or ALPHA == _AlphaF(0.)) return;
@@ -240,7 +245,7 @@ void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
   if( INCX == 1 ) {
 
     for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != quaternion<_F>(0.) ) {
+      if( Y[JY] != _RightVecF(0.) ) {
 //      htemp1 = ALPHA * Y[JY];
         for( i = 0; i < M; ++i ) {
           A[RANK2_INDX(i,j,LDA)] += ALPHA * X[i] * Y[JY];
@@ -254,7 +259,7 @@ void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
     HAXX_INT KX = 0;
 
     for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != quaternion<_F>(0.) ) {
+      if( Y[JY] != _RightVecF(0.) ) {
 //      htemp1 = ALPHA * Y[JY];
         for( i = 0, ix = KX; i < M; ++i, ix += INCX ) {
           A[RANK2_INDX(i,j,LDA)] += ALPHA * X[ix] * Y[JY];
@@ -274,13 +279,15 @@ void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
  *  Performs the rank 1 operation
  *
  *  \f$ A_{ij} = A_{ij} + \alpha x_i y^*_j \f$ 
+ *
+ *  \f$ A \in \mathbb{H} \qquad x,y,\alpha \in \mathbb{R},\mathbb{C},\mathbb{H}\f$
  */
 // FIXME: In this implementaion, it has been implied that scalars
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in ALPHA 
-template <typename _F, typename _AlphaF>
-void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
-  HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+  HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
   HAXX_INT LDA){
 
   if( M == 0 or N == 0 or ALPHA == _AlphaF(0.)) return;
@@ -302,7 +309,7 @@ void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
   if( INCX == 1 ) {
 
     for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != quaternion<_F>(0.) ) {
+      if( Y[JY] != _RightVecF(0.) ) {
 //      htemp1 = ALPHA * Y[JY];
         for( i = 0; i < M; ++i ) {
           A[RANK2_INDX(i,j,LDA)] += ALPHA * X[i] * conj(Y[JY]);
@@ -316,7 +323,7 @@ void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
     HAXX_INT KX = 0;
 
     for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != quaternion<_F>(0.) ) {
+      if( Y[JY] != _RightVecF(0.) ) {
 //      htemp1 = ALPHA * Y[JY];
         for( i = 0, ix = KX; i < M; ++i, ix += INCX ) {
           A[RANK2_INDX(i,j,LDA)] += ALPHA * X[ix] * conj(Y[JY]);
