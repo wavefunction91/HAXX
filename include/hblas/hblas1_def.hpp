@@ -281,7 +281,7 @@ void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
  * Based on the BLAS implementation of ZDOTU by Jack Dongarra
  *   http://www.netlib.org/lapack/explore-html/db/d2d/zdotu_8f.html 
  *
- * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x_i y_i
+ * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x_i y_i \f$
  */
 template <typename _F>
 quaternion<_F> DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
@@ -318,7 +318,7 @@ quaternion<_F> DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
  * Based on the BLAS implementation of ZDOTU by Jack Dongarra
  *   http://www.netlib.org/lapack/explore-html/d6/db8/zdotc_8f.html
  *
- * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x^*_i y_i
+ * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x^*_i y_i \f$
  */
 template <typename _F>
 quaternion<_F> DOTC( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
