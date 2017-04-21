@@ -119,6 +119,8 @@ void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
           Y[i] += A[RANK2_INDX(i,j,LDA)] * htemp1;
 
           // FIXME: This will probably kill vectorization
+          //   Maybe just deal with the explicit left multiplication
+          //   of Alpha?
           // y_j = y_j + [alpha,A_{ij}] * x_j
           Y[i] += comm(ALPHA,A[RANK2_INDX(i,j,LDA)]) * X[jx];
 
@@ -139,6 +141,8 @@ void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
           Y[iy] += A[RANK2_INDX(i,j,LDA)] * htemp1;
 
           // FIXME: This will probably kill vectorization
+          //   Maybe just deal with the explicit left multiplication
+          //   of Alpha?
           // y_j = y_j + [alpha,A_{ij}] * x_j
           Y[iy] += comm(ALPHA,A[RANK2_INDX(i,j,LDA)]) * X[jx];
 
@@ -194,7 +198,133 @@ void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
     } // end INCX != 1
 
   } // end TRANS != 'N'
-};
+
+}; // end GEMV
+
+
+/**
+ *  Based on the BLAS implementation of ZGERU by
+ *    Jack Dongarra   (Argonne)
+ *    Jeremy Du Croz  (NAG)
+ *    Sven Hammarling (NAG)
+ *    Richard Hanson  (Sandia)
+ *
+ *  Performs the rank 1 operation
+ *
+ *  \f$ A_{ij} = A_{ij} + \alpha x_i y_j \f$ 
+ */
+// FIXME: In this implementaion, it has been implied that scalars
+// will always multiply from the left. Should generalize in such a
+// was to allow flexibility in ALPHA 
+template <typename _F, typename _AlphaF>
+void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
+  HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+  HAXX_INT LDA){
+
+  if( M == 0 or N == 0 or ALPHA == _AlphaF(0.)) return;
+
+  // FIXME: The original BLAS implementaion has logic to handle
+  //   negative strides. See further comments.
+  assert( INCX > 0 );
+  assert( INCY > 0 );
+
+
+  HAXX_INT i, j, ix;
+  
+  // FIXME: This parameter is effected in the orignal BLAS
+  //   implementaion by negative stride
+  HAXX_INT JY = 0;
+
+  quaternion<_F> htemp1;
+ 
+  if( INCX == 1 ) {
+
+    for( j = 0; j < N; ++j, JY += INCY )
+      if( Y[JY] != quaternion<_F>(0.) ) {
+//      htemp1 = ALPHA * Y[JY];
+        for( i = 0; i < M; ++i ) {
+          A[RANK2_INDX(i,j,LDA)] += ALPHA * X[i] * Y[JY];
+        }
+      }
+
+  } else { // end INCX == 1
+
+    // FIXME: This parameter is effected in the orignal BLAS
+    //   implementaion by negative stride
+    HAXX_INT KX = 0;
+
+    for( j = 0; j < N; ++j, JY += INCY )
+      if( Y[JY] != quaternion<_F>(0.) ) {
+//      htemp1 = ALPHA * Y[JY];
+        for( i = 0, ix = KX; i < M; ++i, ix += INCX ) {
+          A[RANK2_INDX(i,j,LDA)] += ALPHA * X[ix] * Y[JY];
+        }
+      }
+  } // end INCX != 1
+
+}
+
+/**
+ *  Based on the BLAS implementation of ZGERC by
+ *    Jack Dongarra   (Argonne)
+ *    Jeremy Du Croz  (NAG)
+ *    Sven Hammarling (NAG)
+ *    Richard Hanson  (Sandia)
+ *
+ *  Performs the rank 1 operation
+ *
+ *  \f$ A_{ij} = A_{ij} + \alpha x_i y^*_j \f$ 
+ */
+// FIXME: In this implementaion, it has been implied that scalars
+// will always multiply from the left. Should generalize in such a
+// was to allow flexibility in ALPHA 
+template <typename _F, typename _AlphaF>
+void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
+  HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY, quaternion<_F> *A, 
+  HAXX_INT LDA){
+
+  if( M == 0 or N == 0 or ALPHA == _AlphaF(0.)) return;
+
+  // FIXME: The original BLAS implementaion has logic to handle
+  //   negative strides. See further comments.
+  assert( INCX > 0 );
+  assert( INCY > 0 );
+
+
+  HAXX_INT i, j, ix;
+  
+  // FIXME: This parameter is effected in the orignal BLAS
+  //   implementaion by negative stride
+  HAXX_INT JY = 0;
+
+  quaternion<_F> htemp1;
+ 
+  if( INCX == 1 ) {
+
+    for( j = 0; j < N; ++j, JY += INCY )
+      if( Y[JY] != quaternion<_F>(0.) ) {
+//      htemp1 = ALPHA * Y[JY];
+        for( i = 0; i < M; ++i ) {
+          A[RANK2_INDX(i,j,LDA)] += ALPHA * X[i] * conj(Y[JY]);
+        }
+      }
+
+  } else { // end INCX == 1
+
+    // FIXME: This parameter is effected in the orignal BLAS
+    //   implementaion by negative stride
+    HAXX_INT KX = 0;
+
+    for( j = 0; j < N; ++j, JY += INCY )
+      if( Y[JY] != quaternion<_F>(0.) ) {
+//      htemp1 = ALPHA * Y[JY];
+        for( i = 0, ix = KX; i < M; ++i, ix += INCX ) {
+          A[RANK2_INDX(i,j,LDA)] += ALPHA * X[ix] * conj(Y[JY]);
+        }
+      }
+  } // end INCX != 1
+
+}
 
 }; // namespace HAXX
 

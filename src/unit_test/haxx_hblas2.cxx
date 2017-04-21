@@ -69,7 +69,10 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv)
     ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
     BETA(dis(gen),dis(gen),dis(gen),dis(gen));
 
-  std::cout << "ALPHA " << ALPHA << std::endl;
+  std::cout << "hblas2_gemv will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
   GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
     BETA,&Y[0],1);
 
@@ -84,5 +87,71 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv)
       HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
       //std::numeric_limits<double>::epsilon() * 4);
       1e-12);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_geru)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> AC(A);
+
+  HAXX::quaternion<double> ALPHA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::cout << "hblas2_geru will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  
+  GERU(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
+
+  for(int j = 0; j < HBLAS1_VECLEN; j++) 
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+
+    BOOST_CHECK_EQUAL(
+      ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+      A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+    );
+
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gerc)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> AC(A);
+
+  HAXX::quaternion<double> ALPHA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::cout << "hblas2_geru will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  
+  GERC(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
+
+  for(int j = 0; j < HBLAS1_VECLEN; j++) 
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+
+    BOOST_CHECK_EQUAL(
+      ALPHA*X[i]*HAXX::conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+      A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+    );
+
   }
 }
