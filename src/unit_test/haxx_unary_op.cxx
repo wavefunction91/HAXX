@@ -1,3 +1,12 @@
+/*
+ *  This file is a part of HAXX
+ *  
+ *  Copyright (c) 2017 David Williams-Young
+ *  All rights reserved.
+ *  
+ *  See LICENSE.txt 
+ */
+
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE HAXX_UNARY_OP
 
