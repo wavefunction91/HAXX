@@ -210,6 +210,8 @@ void COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
  *    http://www.netlib.org/lapack/explore-html/d9/dcd/daxpy_8f.html
  *
  *
+ *  \f$ y \in \mathbb{H} \qquad x,\alpha \in \mathbb{R},\mathbb{C},\mathbb{H} \f$
+ *
  *  SIDE == 'L'
  *
  *  \f$ y_i = \alpha x_i  + y_i\f$
@@ -218,8 +220,8 @@ void COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
  *
  *  \f$ y_i = x_i \alpha + y_i \f$
  */
-template <typename _F, typename _AlphaF>
-void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
+template <typename _F, typename _XF, typename _AlphaF>
+void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X, 
   HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY) {
 
   

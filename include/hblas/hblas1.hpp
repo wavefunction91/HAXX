@@ -45,8 +45,8 @@ namespace HAXX {
     quaternion<_F> *Y, HAXX_INT INCY);
 
   /// Scale a quaternion array and add it to another quaternion array
-  template <typename _F, typename _AlphaF>
-  void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
+  template <typename _F, typename _XF, typename _AlphaF>
+  void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X, 
     HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY);
 
   /// Perform an unaltered dot product of two quaternion arrays
