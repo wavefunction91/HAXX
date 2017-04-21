@@ -32,7 +32,7 @@ namespace HAXX {
  *
  */
 template <typename _F>
-void SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y, 
+void HBLAS_SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y, 
   HAXX_INT INCY) {
 
   if( N <= 0 ) return;
@@ -106,7 +106,7 @@ void SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y,
  *  
  */
 template <typename _F, typename _AlphaF>
-void SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
+void HBLAS_SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
   HAXX_INT INCX){
 
   if( N <= 0 or INCX <= 0 ) return;
@@ -164,7 +164,7 @@ void SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
  *    http://www.netlib.org/lapack/explore-html/da/d6c/dcopy_8f.html
  */
 template <typename _F>
-void COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
+void HBLAS_COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
   quaternion<_F> *Y, HAXX_INT INCY) {
 
   if( N <= 0 ) return;
@@ -221,7 +221,7 @@ void COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
  *  \f$ y_i = x_i \alpha + y_i \f$
  */
 template <typename _F, typename _XF, typename _AlphaF>
-void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X, 
+void HBLAS_AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X, 
   HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY) {
 
   
@@ -286,7 +286,7 @@ void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X,
  * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x_i y_i \f$
  */
 template <typename _F>
-quaternion<_F> DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
+quaternion<_F> HBLAS_DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
   quaternion<_F> *Y, HAXX_INT INCY){
 
   quaternion<_F> htemp(0.,0.,0.,0.);
@@ -323,7 +323,7 @@ quaternion<_F> DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
  * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x^*_i y_i \f$
  */
 template <typename _F>
-quaternion<_F> DOTC( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
+quaternion<_F> HBLAS_DOTC( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
   quaternion<_F> *Y, HAXX_INT INCY){
 
   quaternion<_F> htemp(0.,0.,0.,0.);

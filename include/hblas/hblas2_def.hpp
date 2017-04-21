@@ -44,7 +44,7 @@ namespace HAXX {
 // was to allow flexibility in both ALPHA and BETA
 template <typename _F,typename _MatF, typename _VecF, typename _AlphaF, 
   typename _BetaF>
-void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
+void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
   _MatF *A, HAXX_INT LDA, _VecF *X, HAXX_INT INCX, _BetaF BETA, 
   quaternion<_F> *Y, HAXX_INT INCY) {
 
@@ -222,7 +222,7 @@ void GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in ALPHA 
 template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
-void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
   HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
   HAXX_INT LDA){
 
@@ -286,7 +286,7 @@ void GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in ALPHA 
 template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
-void GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
+void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
   HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
   HAXX_INT LDA){
 

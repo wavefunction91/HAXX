@@ -73,13 +73,13 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
-  GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+  HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
     BETA,&Y[0],1);
 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
     HAXX::quaternion<double>
-      tmp = DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],HBLAS1_VECLEN,
-        &X[0],1);
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
+        HBLAS1_VECLEN,&X[0],1);
 
     // FIXME: epsilon check is too tight, what is a proper criteria here
     //   in relation to machine epsilon?
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(hblas2_geru)
   std::cout << "hblas2_geru will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   
-  GERU(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
+  HBLAS_GERU(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc)
   std::cout << "hblas2_geru will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   
-  GERC(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
+  HBLAS_GERC(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
