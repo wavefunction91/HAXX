@@ -3,6 +3,8 @@
 
 
 #include <complex> // Support for complex numbers
+#include <string>
+#include <sstream>
 
 // HAXX Namespace
 namespace HAXX {
@@ -191,6 +193,13 @@ template<typename _F, typename _CharT, class _Traits>
     return __os << __s.str();
   }
 
+template <typename _F>
+std::string to_string(quaternion<_F> &x) {
+  std::stringstream ss;
+  ss << x;
+  return ss.str();
+};
+
 /**
  *  @defgroup QQOp Quaternion - Quaternion Binary Operations
  *  Binary arithmetic operations between quaternion numbers
@@ -214,6 +223,9 @@ template <typename _F>
 inline quaternion<_F> operator-(const quaternion<_F>& __x);
 
 /// Check the equality of two quaternions
+template <typename _F>
+inline bool operator==(const quaternion<_F>&, const quaternion<_F>&);
+/// Check the inequality of two quaternions
 template <typename _F>
 inline bool operator==(const quaternion<_F>&, const quaternion<_F>&);
 
@@ -312,6 +324,7 @@ template <typename _F> inline quaternion<_F>  inv(const quaternion<_F>&);
 /* @} */ // quaternion
 
 }; // HAXX namespace
+
 
 
 #endif
