@@ -26,14 +26,44 @@ BOOST_AUTO_TEST_CASE(hblas1_swap)
 {
   // Random Quaternion vector
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
-  for(auto &x : X) x = dis(gen);
-  for(auto &x : Y) x = dis(gen);
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
-  std::vector<HAXX::quaternion<double>> XC(HBLAS1_VECLEN),YC(HBLAS1_VECLEN);
-  std::copy(X.begin(),X.end(),XC.begin());
-  std::copy(Y.begin(),Y.end(),YC.begin());
+  // Make copies
+  std::vector<HAXX::quaternion<double>> XC(X),YC(Y);
+  
+  // Index list
+  std::vector<int> indx(HBLAS1_VECLEN); 
+  std::iota(indx.begin(),indx.end(),0);
 
-  SWAP(HBLAS1_VECLEN,&X[0],1,&Y[0],1);
+
+  std::vector<size_t> strides = {1,2,3,5,9};
+
+  // Check swap when both strides are equal
+  for(int stride : strides) { 
+
+    std::copy(XC.begin(),XC.end(),X.begin());
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    int len = HBLAS1_VECLEN/stride;
+    SWAP(len,&X[0],stride,&Y[0],stride);
+  
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+          if(indx % stride == 0 and indx != len*stride ) 
+            return (X[indx] == YC[indx] and Y[indx] == XC[indx]);
+          else
+            return (X[indx] == XC[indx] and Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+  }
+
+  // FIXME: Need a test for when strides are not equal
 }
 
 BOOST_AUTO_TEST_CASE(hblas1_scal)
@@ -41,7 +71,8 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
   // Random Quaternion vector
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN);
-  for(auto &x : X) x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   // Random scaling factors
   double                   rAlpha = dis(gen);
@@ -77,80 +108,275 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
   }
 
-/*
+
   // Left scaling by real alpha
   for(auto stride : strides) {
-    std::copy(tmpX.begin(),tmpX.end(),X.begin());
-    SCAL('L',HBLAS1_VECLEN/stride,rAlpha,&tmpX[0],stride);
+    std::copy(X.begin(),X.end(),tmpX.begin());
+
+    auto len = HBLAS1_VECLEN/stride; 
+    SCAL('L',len,rAlpha,&tmpX[0],stride);
+
     BOOST_CHECK( 
       std::all_of(tmpX.begin(),tmpX.end(),
         [&](HAXX::quaternion<double> &x) {
           size_t indx = std::distance(&tmpX[0],&x);
-	  if(indx % stride == 0) return (x == X[indx]*rAlpha);
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (x == rAlpha*X[indx]);
 	  else return (x == X[indx]);
         }
       )
     );
+
   }
 
   // Right scaling by complex alpha
   for(auto stride : strides) {
-    std::copy(tmpX.begin(),tmpX.end(),X.begin());
-    SCAL('R',HBLAS1_VECLEN/stride,cAlpha,&tmpX[0],stride);
+    std::copy(X.begin(),X.end(),tmpX.begin());
+
+    auto len = HBLAS1_VECLEN/stride; 
+    SCAL('R',len,cAlpha,&tmpX[0],stride);
+
     BOOST_CHECK( 
       std::all_of(tmpX.begin(),tmpX.end(),
         [&](HAXX::quaternion<double> &x) {
           size_t indx = std::distance(&tmpX[0],&x);
-	  if(indx % stride == 0) return (x == X[indx]*cAlpha);
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (x == X[indx]*cAlpha);
 	  else return (x == X[indx]);
         }
       )
     );
+
   }
+
 
   // Left scaling by complex alpha
   for(auto stride : strides) {
-    std::copy(tmpX.begin(),tmpX.end(),X.begin());
-    SCAL('L',HBLAS1_VECLEN/stride,cAlpha,&tmpX[0],stride);
+    std::copy(X.begin(),X.end(),tmpX.begin());
+
+    auto len = HBLAS1_VECLEN/stride; 
+    SCAL('L',len,cAlpha,&tmpX[0],stride);
+
     BOOST_CHECK( 
       std::all_of(tmpX.begin(),tmpX.end(),
         [&](HAXX::quaternion<double> &x) {
           size_t indx = std::distance(&tmpX[0],&x);
-	  if(indx % stride == 0) return (x == cAlpha*X[indx]);
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (x == cAlpha*X[indx]);
 	  else return (x == X[indx]);
         }
       )
     );
+
   }
 
   // Right scaling by quaternion alpha
   for(auto stride : strides) {
-    std::copy(tmpX.begin(),tmpX.end(),X.begin());
-    SCAL('R',HBLAS1_VECLEN/stride,hAlpha,&tmpX[0],stride);
+    std::copy(X.begin(),X.end(),tmpX.begin());
+
+    auto len = HBLAS1_VECLEN/stride; 
+    SCAL('R',len,hAlpha,&tmpX[0],stride);
+
     BOOST_CHECK( 
       std::all_of(tmpX.begin(),tmpX.end(),
         [&](HAXX::quaternion<double> &x) {
           size_t indx = std::distance(&tmpX[0],&x);
-	  if(indx % stride == 0) return (x == X[indx]*hAlpha);
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (x == X[indx]*hAlpha);
 	  else return (x == X[indx]);
+        }
+      )
+    );
+
+  }
+
+
+  // Left scaling by quaternion alpha
+  for(auto stride : strides) {
+    std::copy(X.begin(),X.end(),tmpX.begin());
+
+    auto len = HBLAS1_VECLEN/stride; 
+    SCAL('L',len,hAlpha,&tmpX[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(tmpX.begin(),tmpX.end(),
+        [&](HAXX::quaternion<double> &x) {
+          size_t indx = std::distance(&tmpX[0],&x);
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (x == hAlpha*X[indx]);
+	  else return (x == X[indx]);
+        }
+      )
+    );
+
+  }
+
+};
+
+BOOST_AUTO_TEST_CASE(hblas1_copy)
+{
+  // Random Quaternion vector
+  std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+
+  // Index list
+  std::vector<int> indx(HBLAS1_VECLEN); 
+  std::iota(indx.begin(),indx.end(),0);
+
+
+
+  std::vector<size_t> strides = {1,2,3,5,9};
+  // Check swap when both strides are equal
+  for(int stride : strides) { 
+
+    std::fill(Y.begin(),Y.end(),HAXX::quaternion<double>(0));
+
+    int len = HBLAS1_VECLEN/stride;
+    COPY(len,&X[0],stride,&Y[0],stride);
+  
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+          if(indx % stride == 0 and indx != len*stride ) 
+            return (X[indx] == Y[indx]);
+          else
+            return (Y[indx] == HAXX::quaternion<double>(0));
+        }
+      )
+    );
+
+  }
+
+  // FIXME: Need a test for when strides are not equal
+}
+
+BOOST_AUTO_TEST_CASE(hblas1_axpy)
+{
+  // Random Quaternion vectors
+  std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  // Random scaling factors
+  double                   rAlpha = dis(gen);
+  std::complex<double>     cAlpha(dis(gen),dis(gen));
+  HAXX::quaternion<double> hAlpha(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::cout << "hblas1_axpy will test the following scaling factors:" <<
+    std::endl;
+  std::cout << "  real : " << rAlpha << std::endl;
+  std::cout << "  complex : " << cAlpha << std::endl;
+  std::cout << "  quaternion : " << hAlpha << std::endl;
+
+  // Index list
+  std::vector<int> indx(HBLAS1_VECLEN); 
+  std::iota(indx.begin(),indx.end(),0);
+
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+  std::vector<size_t> strides = {1,2,3,5,9};
+  //std::vector<size_t> strides = {1};
+  
+  for(auto stride : strides) {
+    auto len = HBLAS1_VECLEN/stride; 
+
+    // Right scaling by real alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('R',len,rAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + X[indx]*rAlpha);
+	  else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+    // Left scaling by real alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('L',len,rAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + rAlpha*X[indx]);
+	  else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+    // Right scaling by complex alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('R',len,cAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + X[indx]*cAlpha);
+	  else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+    // Left scaling by complex alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('L',len,cAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + cAlpha*X[indx]);
+	  else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+
+    // Right scaling by quaternion alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('R',len,hAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + X[indx]*hAlpha);
+	  else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+
+    // Left scaling by quaternion alpha
+    std::copy(YC.begin(),YC.end(),Y.begin());
+
+    AXPY('L',len,hAlpha,&X[0],stride,&Y[0],stride);
+
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+	  if(indx % stride == 0 and indx != len*stride ) 
+            return (Y[indx] == YC[indx] + hAlpha*X[indx]);
+	  else return (Y[indx] == YC[indx]);
         }
       )
     );
   }
 
-  // Left scaling by quaternion alpha
-  for(auto stride : strides) {
-    std::copy(tmpX.begin(),tmpX.end(),X.begin());
-    SCAL('L',HBLAS1_VECLEN/stride,hAlpha,&tmpX[0],stride);
-    BOOST_CHECK( 
-      std::all_of(tmpX.begin(),tmpX.end(),
-        [&](HAXX::quaternion<double> &x) {
-          size_t indx = std::distance(&tmpX[0],&x);
-	  if(indx % stride == 0) return (x == hAlpha*X[indx]);
-	  else return (x == X[indx]);
-        }
-      )
-    );
-  }
-*/
+
+  // FIXME: Need a test for when strides are not equal
+
 };

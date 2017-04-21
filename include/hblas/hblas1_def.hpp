@@ -241,7 +241,7 @@ void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
       if( N < HAXX_AXPY_UNROLL ) return;
     }
 
-    // FIXME: This assumes HAXX_SCAL_UNROLL = 4
+    // FIXME: This assumes HAXX_AXPY_UNROLL = 4
     if( isL )
       for( i = m; i < N; i += HAXX_AXPY_UNROLL ) {
         Y[i]   += ALPHA * X[i];
@@ -263,9 +263,9 @@ void AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
     //   negative increments. Unsure on what that accomplishes
 
     if( isL ) 
-      for( i = 0; i < N; ++i, ix += INCX, iy += INCY ) Y[i] += ALPHA * X[i];
+      for( i = 0; i < N; ++i, ix += INCX, iy += INCY ) Y[iy] += ALPHA * X[ix];
     else      
-      for( i = 0; i < N; ++i, ix += INCX, iy += INCY ) Y[i] += X[i] * ALPHA;
+      for( i = 0; i < N; ++i, ix += INCX, iy += INCY ) Y[iy] += X[ix] * ALPHA;
 
   }
 };
