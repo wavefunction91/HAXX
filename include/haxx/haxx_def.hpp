@@ -70,6 +70,7 @@ struct quaternion {
   /// Copy Constructor.
   constexpr quaternion(const quaternion&) = default;
 
+  ~quaternion() = default;
 
   /// Converting Constructor.
   template <typename _G>

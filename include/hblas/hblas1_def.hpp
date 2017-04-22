@@ -183,7 +183,7 @@ void HBLAS_COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
     }
 
     // FIXME: This assumes HAXX_COPY_UNROLL = 7
-    for( i = 0; i < N; i += HAXX_COPY_UNROLL ) {
+    for( i = m; i < N; i += HAXX_COPY_UNROLL ) {
       Y[i]   = X[i];
       Y[i+1] = X[i+1];
       Y[i+2] = X[i+2];
