@@ -26,10 +26,10 @@ namespace HAXX {
 /**
  *  Swaps the elements of two strided quaternion arrays of length N
  *
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementaion of DSWAP by Jack Dongarra
  *    http://www.netlib.org/lapack/explore-html/db/dd4/dswap_8f.html
- *
- *
  */
 template <typename _F>
 void HBLAS_SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y, 
@@ -92,6 +92,8 @@ void HBLAS_SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y,
 /**
  *  Scales a quaternion vector in place
  *
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementaion of DSCAL by Jack Dongarra
  *    http://www.netlib.org/lapack/explore-html/d4/dd0/dscal_8f.html 
  *
@@ -102,8 +104,6 @@ void HBLAS_SWAP(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, quaternion<_F> *Y,
  *  SIDE == 'R'
  *
  *  \f$ x_i = x_i \alpha  \f$
- *
- *  
  */
 template <typename _F, typename _AlphaF>
 void HBLAS_SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
@@ -160,6 +160,8 @@ void HBLAS_SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
 /**
  *  Copies the elememts from one quaternion vector to another
  *
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementaion of DCOPY by Jack Dongarra
  *    http://www.netlib.org/lapack/explore-html/da/d6c/dcopy_8f.html
  */
@@ -206,6 +208,8 @@ void HBLAS_COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
 };
 
 /**
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementaion of DCOPY by Jack Dongarra
  *    http://www.netlib.org/lapack/explore-html/d9/dcd/daxpy_8f.html
  *
@@ -280,8 +284,10 @@ void HBLAS_AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X,
 };
 
 /**
- * Based on the BLAS implementation of ZDOTU by Jack Dongarra
- *   http://www.netlib.org/lapack/explore-html/db/d2d/zdotu_8f.html 
+ *  Written by DBWY (4/2017)
+ *
+ *  Based on the BLAS implementation of ZDOTU by Jack Dongarra
+ *    http://www.netlib.org/lapack/explore-html/db/d2d/zdotu_8f.html 
  *
  * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x_i y_i \f$
  */
@@ -317,8 +323,10 @@ quaternion<_F> HBLAS_DOTU( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX,
 };
 
 /**
- * Based on the BLAS implementation of ZDOTU by Jack Dongarra
- *   http://www.netlib.org/lapack/explore-html/d6/db8/zdotc_8f.html
+ *  Written by DBWY (4/2017)
+ *
+ *  Based on the BLAS implementation of ZDOTU by Jack Dongarra
+ *    http://www.netlib.org/lapack/explore-html/d6/db8/zdotc_8f.html
  *
  * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x^*_i y_i \f$
  */

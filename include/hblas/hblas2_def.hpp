@@ -17,6 +17,8 @@
 namespace HAXX {
 
 /**
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementation of ZGEMV by
  *    Jack Dongarra   (Argonne)
  *    Jeremy Du Croz  (NAG)
@@ -38,6 +40,8 @@ namespace HAXX {
  *  TRANS = 'C'
  *
  *  \f$ y_i = \alpha A^*_{ji} x_j + \beta y_i\f$
+ *
+ *
  */
 // FIXME: In this implementaion, it has been implied that scalars
 // will always multiply from the left. Should generalize in such a
@@ -206,6 +210,8 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
 
 
 /**
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementation of ZGERU by
  *    Jack Dongarra   (Argonne)
  *    Jeremy Du Croz  (NAG)
@@ -270,6 +276,8 @@ void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
 }
 
 /**
+ *  Written by DBWY (4/2017)
+ *
  *  Based on the BLAS implementation of ZGERC by
  *    Jack Dongarra   (Argonne)
  *    Jeremy Du Croz  (NAG)
