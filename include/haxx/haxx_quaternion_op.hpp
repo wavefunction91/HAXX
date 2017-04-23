@@ -103,7 +103,7 @@ inline quaternion<_F> operator-(const quaternion<_F>& __x,
 };
 
 /**
- *  \f$r = pq \qquad r,p,q\in\mathbb{H} \f$
+ *  \f$ r = pq \qquad r,p,q\in\mathbb{H} \f$
  */
 template <typename _F>
 inline quaternion<_F> operator*(const quaternion<_F>& __x,

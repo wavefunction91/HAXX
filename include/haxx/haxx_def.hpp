@@ -226,11 +226,12 @@ inline quaternion<_F> operator-(const quaternion<_F>&, const quaternion<_F>&);
 
 /// Multiply two quaternion numbers
 template <typename _F>
-inline quaternion<_F> operator-(const quaternion<_F>&, const quaternion<_F>&);
+inline quaternion<_F> operator*(const quaternion<_F>&, const quaternion<_F>&);
 
 /// Negate a quaternion number
 template <typename _F>
 inline quaternion<_F> operator-(const quaternion<_F>& __x);
+
 
 /// Check the equality of two quaternions
 template <typename _F>
