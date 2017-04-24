@@ -29,7 +29,7 @@ namespace HAXX {
   /// Multiply a quaternion matrix by a quaternion matrix
   template <typename _F, typename _AMatF, typename _BMatF, typename _AlphaF, 
     typename _BetaF>
-  void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT, N, HAXX_INT K,
+  void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     _AlphaF ALPHA, _AMatF *A, HAXX_INT LDA, _BMatF *B, HAXX_INT LDB, 
     _BetaF BETA, quaternion<_F> *C, HAXX_INT LDC);
 
@@ -38,3 +38,5 @@ namespace HAXX {
   /* @} */ // HBLAS
 
 }; // namespace HAXX
+
+#endif
