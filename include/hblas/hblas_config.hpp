@@ -16,4 +16,12 @@
 
 #define RANK2_INDX(i,j,N) ( (i) + (j)*(N) )
 
+// Hardcoded unrolling parameters
+#define HAXX_SWAP_UNROLL 3
+#define HAXX_SCAL_UNROLL 5
+#define HAXX_COPY_UNROLL 7
+#define HAXX_AXPY_UNROLL 4
+
+#include <cassert>
+
 #endif
