@@ -61,6 +61,23 @@ inline quaternion<_F> comm(const quaternion<_F>& p, const quaternion<_F>& q){
 
 };
 
+template <typename _F> 
+inline quaternion<_F> comm(const quaternion<_F>& p, const std::complex<_F>& q){
+/*
+  std::complex<double> jPt(p.imag_j(),p.imag_k());
+  return quaternion<_F>(std::complex<double>(0.),2.*jPt*std::imag(q));
+*/
+  return p * q - q * p;
+};
+
+template <typename _F> 
+inline quaternion<_F> comm(const std::complex<_F>& p, const quaternion<_F>& q) {
+
+  return -comm(q,p);
+
+}
+
+
 };
 
 #endif

@@ -334,6 +334,14 @@ template <typename _F> inline quaternion<_F>  inv(const quaternion<_F>&);
 template <typename _F> 
   inline quaternion<_F> comm(const quaternion<_F>&, const quaternion<_F>&);
 
+/// Returns the commutator of a quaternion number and a complex number
+template <typename _F> 
+  inline quaternion<_F> comm(const quaternion<_F>&, const std::complex<_F>&);
+
+/// Returns the commutator of a quaternion number and a complex number
+template <typename _F> 
+  inline quaternion<_F> comm(const std::complex<_F>&, const quaternion<_F>&);
+
 /* @} */ // QAlg
 
 /* @} */ // quaternion
