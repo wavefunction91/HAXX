@@ -1,0 +1,37 @@
+os:
+  - linux
+language: cpp
+compiler:
+  - gcc
+  - clang
+env:
+  - GCC_VERSION=4.8
+  - GCC_VERSION=4.9
+  - GCC_VERSION=5
+matrix:
+  exclude:
+    - compiler: clang
+      env: GCC_VERSION=4.8
+    - compiler: clang
+      env: GCC_VERSION=4.9
+sudo: false
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.8
+      - boost-latest
+    packages:
+      - g++-4.8
+      - g++-4.9
+      - g++-5
+      - clang-3.8
+      - libboost1.55-all-dev
+      - cmake
+      - cmake-data
+install: true
+script:
+  - ./bin/travisci.sh
+after_failure:
+  - cat build/Testing/Temporary/LastTest.log
