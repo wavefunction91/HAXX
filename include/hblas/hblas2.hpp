@@ -11,12 +11,7 @@
 #define __INCLUDED_HBLAS2_HPP
 
 #include "haxx/haxx_def.hpp"
-
-#ifndef HAXX_INT
-  #define HAXX_INT int
-#endif
-
-#define RANK2_INDX(i,j,N) ( (i) + (j)*(N) )
+#include "hblas/hblas_config.hpp"
 
 namespace HAXX {
 
@@ -39,13 +34,15 @@ namespace HAXX {
     _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY);
 
   /// Perform the quaternion rank 1 operation with two general vectors
-  template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+  template <typename _F, typename _LeftVecF, typename _RightVecF, 
+    typename _AlphaF>
   void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
     HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
     HAXX_INT LDA);
 
   /// Perform the quaternion rank 1 operation with two general vectors
-  template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
+  template <typename _F, typename _LeftVecF, typename _RightVecF, 
+    typename _AlphaF>
   void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
     HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
     HAXX_INT LDA);

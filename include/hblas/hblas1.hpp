@@ -11,10 +11,7 @@
 #define __INCLUDED_HBLAS1_HPP
 
 #include "haxx/haxx_def.hpp"
-
-#ifndef HAXX_INT
-  #define HAXX_INT int
-#endif
+#include "hblas/hblas_config.hpp"
 
 namespace HAXX {
 
