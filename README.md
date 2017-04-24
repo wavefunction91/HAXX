@@ -21,7 +21,7 @@ generalizations that account for the loss of scalar commutivity in the
 quaternion numbers. A primary goal of HBLAS is not only to provide a
 convienient and efficient interface for quaternion-quaternion linear algebra, 
 but also to efficiently handle mixed-type (quaternion-real, quaternion-complex)
-linear algebra through the natural embeddings into the quaternion algebra.
+linear algebra through their natural embeddings into the quaternion algebra.
 
 
 HAXX is actively being developed with little focus on backwards compatibility
