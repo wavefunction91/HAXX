@@ -19,9 +19,9 @@
 #include <boost/iterator/counting_iterator.hpp>
 
 #include "haxx.hpp"
-#include "hblas/hblas1_def.hpp"
-#include "hblas/hblas2_def.hpp"
-#include "hblas/hblas3_def.hpp"
+#include "hblas/hblas1_impl.hpp"
+#include "hblas/hblas2_impl.hpp"
+#include "hblas/hblas3_impl.hpp"
 
 #include <random>
 #include <iterator>

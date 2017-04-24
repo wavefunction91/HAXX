@@ -15,12 +15,12 @@
  */
 
 // Level 1 HBLAS
-#include "hblas/hblas1.hpp"
+#include "hblas/hblas1_def.hpp"
 
 // Level 2 HBLAS
-#include "hblas/hblas2.hpp"
+#include "hblas/hblas2_def.hpp"
 
 // Level 3 HBLAS
-#include "hblas/hblas3.hpp"
+#include "hblas/hblas3_def.hpp"
 
 #endif
