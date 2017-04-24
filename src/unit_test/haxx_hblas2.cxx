@@ -50,7 +50,7 @@ std::vector<size_t> strides = {1,2,3,5,9};
 
 
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -80,6 +80,86 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv)
     HAXX::quaternion<double>
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
         HBLAS1_VECLEN,&X[0],1);
+
+    // FIXME: epsilon check is too tight, what is a proper criteria here
+    //   in relation to machine epsilon?
+    BOOST_CHECK_CLOSE(double(1.), 
+      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
+      //std::numeric_limits<double>::epsilon() * 4);
+      1e-12);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQ_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  HAXX::quaternion<double> 
+    ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
+    BETA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    // FIXME: epsilon check is too tight, what is a proper criteria here
+    //   in relation to machine epsilon?
+    BOOST_CHECK_CLOSE(double(1.), 
+      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
+      //std::numeric_limits<double>::epsilon() * 4);
+      1e-12);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQ_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  HAXX::quaternion<double> 
+    ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
+    BETA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
 
     // FIXME: epsilon check is too tight, what is a proper criteria here
     //   in relation to machine epsilon?

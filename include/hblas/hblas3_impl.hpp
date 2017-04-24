@@ -13,5 +13,4 @@
 // HBLAS_GEMM
 #include "hblas/hblas3/hblas_gemm_impl.hpp"
 
-
 #endif
