@@ -27,6 +27,7 @@
 #include <iterator>
 #include <iostream>
 #include <limits>
+#include <chrono>
 
 // Length constants
 #define HBLAS1_VECLEN 500
@@ -74,9 +75,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
 
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NNQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
@@ -117,9 +122,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
 
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TNQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
@@ -160,9 +169,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
 
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CNQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
@@ -203,8 +216,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NTQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -247,8 +265,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NCQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
@@ -292,8 +315,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TTQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -336,8 +364,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TCQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
@@ -381,8 +414,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CTQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -425,8 +463,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCQQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CCQQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
@@ -476,8 +519,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NNRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -520,8 +568,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TNRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -564,8 +617,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','N',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CNRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -608,8 +666,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NTRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -653,8 +716,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('N','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_NCRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
@@ -699,8 +767,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TTRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -744,8 +817,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('T','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_TCRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
@@ -790,8 +868,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','T',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CTRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
@@ -835,8 +918,13 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRQ_LDSame)
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
+  auto gemmStart = std::chrono::high_resolution_clock::now();
   HBLAS_GEMM('C','C',HBLAS1_VECLEN,HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
     HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,BETA,&C[0],HBLAS1_VECLEN);
+  auto gemmEnd = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
+  std::cout << "hblas3_gemm_square_CCRQ_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
 
