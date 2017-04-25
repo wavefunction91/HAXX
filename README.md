@@ -1,3 +1,5 @@
+https://travis-ci.org/wavefunction91/HAXX.svg?branch=master
+
 
 Synopsis
 ========
