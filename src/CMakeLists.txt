@@ -8,3 +8,4 @@
 #
 #add_subdirectory(scalar_ops)
 add_subdirectory(unit_test)
+add_subdirectory(fortran_bindings)

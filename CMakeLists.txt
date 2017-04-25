@@ -6,7 +6,7 @@
 #  See LICENSE.txt 
 #
 cmake_minimum_required(VERSION 3.0)
-project(HAXX CXX C)
+project(HAXX CXX C Fortran)
 set(HAXX_VERSION_MAJOR ALPHA)
 set(HAXX_VERSION_MINOR 1)
 set(HAXX_VERSION_PATCH 0)
