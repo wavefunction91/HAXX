@@ -10,14 +10,7 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE HAXX_UNARY_OP
 
-#ifndef _HAXX_UT_BUTF_NINCLUDED
-  #include <boost/test/included/unit_test.hpp>
-#else
-  #include <boost/test/unit_test.hpp>
-#endif
- 
-#include "haxx.hpp"
-#include <vector>
+#include "haxx_ut.hpp"
  
 // Real Unary Operators
 BOOST_AUTO_TEST_CASE(real_unary_assign)
