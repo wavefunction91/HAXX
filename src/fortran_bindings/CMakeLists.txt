@@ -1,1 +1,1 @@
-add_library(haxx_fortran STATIC hblas/hgemm.f util/lsame.f)
+add_library(haxx_fortran STATIC hblas/hblas3/hgemmrr.f util/lsame.f)

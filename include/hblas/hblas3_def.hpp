@@ -15,7 +15,7 @@
 
 extern "C" {
 
-  void hgemm_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
+  void hgemmrr_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
     const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*,const double*,const HAXX_INT*);
 
