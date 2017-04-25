@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.org/wavefunction91/HAXX.svg?branch=master)](https://travis-ci.org/wavefunction91/HAXX)
+[![Build Status](https://travis-ci.org/wavefunction91/HAXX.svg?branch=master)](https://travis-ci.org/wavefunction91/HAXX)
 
 
 Synopsis
