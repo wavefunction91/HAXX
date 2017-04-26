@@ -9,12 +9,12 @@ C
      $          BZERO, BONE
       INTEGER*4 M,N,K, LDA,LDB,LDC, I,J,L
       REAL*8    ALPHA, BETA
-      REAL*8    A(4,LDA,*), B(4,LDB,*), C(4,LDC,*)
+      Complex*16    A(2,LDA,*), B(2,LDB,*), C(2,LDC,*)
 C
-      REAL*8    HTMPS, HTMPI, HTMPJ, HTMPK
+      COMPLEX*16    HTMPS, HTMPJ
 C
-      REAL*8    ONE, ZERO
-      PARAMETER (ONE=1.0D+0, ZERO=0.0D+0)
+      COMPLEX*16    ONE, ZERO
+      PARAMETER (ONE=(1.0D+0,0.0D+0), ZERO=(0.0D+0,0.0D+0))
 C
 
       NOTA  = LSAME(TRANSA,'N')
@@ -42,16 +42,12 @@ C
           DO 10 I = 1,M
             C(1,I,J) = ZERO
             C(2,I,J) = ZERO
-            C(3,I,J) = ZERO
-            C(4,I,J) = ZERO
   10      CONTINUE
         ELSE
           DO 20 J = 1,N
           DO 20 I = 1,M
             C(1,I,J) = BETA * C(1,I,J) 
             C(2,I,J) = BETA * C(2,I,J) 
-            C(3,I,J) = BETA * C(3,I,J) 
-            C(4,I,J) = BETA * C(4,I,J) 
   20      CONTINUE
         ENDIF
         RETURN ! Nothing more to do
@@ -67,40 +63,23 @@ C
               DO 40 I = 1,M
                 C(1,I,J) = ZERO
                 C(2,I,J) = ZERO
-                C(3,I,J) = ZERO
-                C(4,I,J) = ZERO
   40          CONTINUE
             ELSEIF ( .NOT. BONE ) THEN
               DO 50 I = 1,M
                 C(1,I,J) = BETA * C(1,I,J) 
                 C(2,I,J) = BETA * C(2,I,J) 
-                C(3,I,J) = BETA * C(3,I,J) 
-                C(4,I,J) = BETA * C(4,I,J) 
   50          CONTINUE
             ENDIF
 C
             DO 60 L = 1,K
               HTMPS = ALPHA * B(1,L,J)
-              HTMPI = ALPHA * B(2,L,J)
-              HTMPJ = ALPHA * B(3,L,J)
-              HTMPK = ALPHA * B(4,L,J)
+              HTMPJ = ALPHA * B(2,L,J)
               DO 70 I = 1,M
 C               Hamilton Product
                 C(1,I,J) = C(1,I,J) + 
-     $            A(1,I,L)*HTMPS - A(2,I,L)*HTMPI - 
-     $            A(3,I,L)*HTMPJ - A(4,I,L)*HTMPK
-
+     $            A(1,I,L)*HTMPS - A(2,I,L)*CONJG(HTMPJ)
                 C(2,I,J) = C(2,I,J) + 
-     $            A(1,I,L)*HTMPI + A(2,I,L)*HTMPS +
-     $            A(3,I,L)*HTMPK - A(4,I,L)*HTMPJ
-
-                C(3,I,J) = C(3,I,J) + 
-     $            A(1,I,L)*HTMPJ - A(2,I,L)*HTMPK +
-     $            A(3,I,L)*HTMPS + A(4,I,L)*HTMPI
-
-                C(4,I,J) = C(4,I,J) + 
-     $            A(1,I,L)*HTMPK + A(2,I,L)*HTMPJ -
-     $            A(3,I,L)*HTMPI + A(4,I,L)*HTMPS
+     $            A(1,I,L)*HTMPJ + A(2,I,L)*CONJG(HTMPS)
   70          CONTINUE
   60        CONTINUE
   30      CONTINUE
@@ -111,34 +90,21 @@ C
           DO 80 J = 1,N
           DO 80 I = 1,M
             HTMPS = ZERO 
-            HTMPI = ZERO 
             HTMPJ = ZERO 
-            HTMPK = ZERO 
             DO 90 L = 1,K
 C             Hamilton Product (IMPLIED CONJ(A))
-              HTMPS = HTMPS + A(1,L,I)*B(1,L,J) + A(2,L,I)*B(2,L,J) +
-     $                        A(3,L,I)*B(3,L,J) + A(4,L,I)*B(4,L,J)
-
-              HTMPI = HTMPI + A(1,L,I)*B(2,L,J) - A(2,L,I)*B(1,L,J) -
-     $                        A(3,L,I)*B(4,L,J) + A(4,L,I)*B(3,L,J)
-
-              HTMPJ = HTMPJ + A(1,L,I)*B(3,L,J) + A(2,L,I)*B(4,L,J) -
-     $                        A(3,L,I)*B(1,L,J) - A(4,L,I)*B(2,L,J)
-
-              HTMPK = HTMPK + A(1,L,I)*B(4,L,J) - A(2,L,I)*B(3,L,J) +
-     $                        A(3,L,I)*B(2,L,J) - A(4,L,I)*B(1,L,J)
+              HTMPS = HTMPS + 
+     $          CONJG(A(1,L,I))*B(1,L,J) + A(2,L,I)*CONJG(B(2,L,J))
+              HTMPJ = HTMPJ + 
+     $          CONJG(A(1,L,I))*B(2,L,J) - A(2,L,I)*CONJG(B(1,L,J))
   90        CONTINUE
 C
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   80      CONTINUE
         ELSE
@@ -149,34 +115,21 @@ C
           DO 100 J = 1,N
           DO 100 I = 1,M
             HTMPS = ZERO 
-            HTMPI = ZERO 
             HTMPJ = ZERO 
-            HTMPK = ZERO 
             DO 110 L = 1,K
 C             Hamilton Product
-              HTMPS = HTMPS + A(1,L,I)*B(1,L,J) - A(2,L,I)*B(2,L,J) -
-     $                        A(3,L,I)*B(3,L,J) - A(4,L,I)*B(4,L,J)
-
-              HTMPI = HTMPI + A(1,L,I)*B(2,L,J) + A(2,L,I)*B(1,L,J) +
-     $                        A(3,L,I)*B(4,L,J) - A(4,L,I)*B(3,L,J)
-
-              HTMPJ = HTMPJ + A(1,L,I)*B(3,L,J) - A(2,L,I)*B(4,L,J) +
-     $                        A(3,L,I)*B(1,L,J) + A(4,L,I)*B(2,L,J)
-
-              HTMPK = HTMPK + A(1,L,I)*B(4,L,J) + A(2,L,I)*B(3,L,J) -
-     $                        A(3,L,I)*B(2,L,J) + A(4,L,I)*B(1,L,J)
+              HTMPS = HTMPS + 
+     $          A(1,L,I)*B(1,L,J) - A(2,L,I)*CONJG(B(2,L,J))
+              HTMPJ = HTMPJ + 
+     $          A(1,L,I)*B(2,L,J) + A(2,L,I)*CONJG(B(1,L,J))
   110       CONTINUE
 
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   100     CONTINUE
         ENDIF
@@ -190,40 +143,23 @@ C
               DO 130 I = 1,M
                 C(1,I,J) = ZERO
                 C(2,I,J) = ZERO
-                C(3,I,J) = ZERO
-                C(4,I,J) = ZERO
   130         CONTINUE
             ELSEIF ( .NOT. BONE ) THEN
               DO 140 I = 1,M
                 C(1,I,J) = BETA * C(1,I,J) 
                 C(2,I,J) = BETA * C(2,I,J) 
-                C(3,I,J) = BETA * C(3,I,J) 
-                C(4,I,J) = BETA * C(4,I,J) 
   140         CONTINUE
             ENDIF
 C
             DO 150 L = 1,K
-              HTMPS =  ALPHA * B(1,J,L)
-              HTMPI = -ALPHA * B(2,J,L)
-              HTMPJ = -ALPHA * B(3,J,L)
-              HTMPK = -ALPHA * B(4,J,L)
+              HTMPS =  ALPHA * CONJG(B(1,J,L))
+              HTMPJ = -ALPHA * B(2,J,L)
               DO 160 I = 1,M
 C               Hamilton Product
                 C(1,I,J) = C(1,I,J) + 
-     $            A(1,I,L)*HTMPS - A(2,I,L)*HTMPI -
-     $            A(3,I,L)*HTMPJ - A(4,I,L)*HTMPK
-
+     $            A(1,I,L)*HTMPS - A(2,I,L)*CONJG(HTMPJ)
                 C(2,I,J) = C(2,I,J) + 
-     $            A(1,I,L)*HTMPI + A(2,I,L)*HTMPS +
-     $            A(3,I,L)*HTMPK - A(4,I,L)*HTMPJ
-
-                C(3,I,J) = C(3,I,J) + 
-     $            A(1,I,L)*HTMPJ - A(2,I,L)*HTMPK +
-     $            A(3,I,L)*HTMPS + A(4,I,L)*HTMPI
-
-                C(4,I,J) = C(4,I,J) + 
-     $            A(1,I,L)*HTMPK + A(2,I,L)*HTMPJ -
-     $            A(3,I,L)*HTMPI + A(4,I,L)*HTMPS
+     $            A(1,I,L)*HTMPJ + A(2,I,L)*CONJG(HTMPS)
   160         CONTINUE
   150       CONTINUE
   120     CONTINUE
@@ -237,40 +173,23 @@ C
               DO 180 I = 1,M
                 C(1,I,J) = ZERO
                 C(2,I,J) = ZERO
-                C(3,I,J) = ZERO
-                C(4,I,J) = ZERO
   180         CONTINUE
             ELSEIF ( .NOT. BONE ) THEN
               DO 190 I = 1,M
                 C(1,I,J) = BETA * C(1,I,J) 
                 C(2,I,J) = BETA * C(2,I,J) 
-                C(3,I,J) = BETA * C(3,I,J) 
-                C(4,I,J) = BETA * C(4,I,J) 
   190         CONTINUE
             ENDIF
 C
             DO 200 L = 1,K
               HTMPS = ALPHA * B(1,J,L)
-              HTMPI = ALPHA * B(2,J,L)
-              HTMPJ = ALPHA * B(3,J,L)
-              HTMPK = ALPHA * B(4,J,L)
+              HTMPJ = ALPHA * B(2,J,L)
               DO 210 I = 1,M
 C               Hamilton Product
                 C(1,I,J) = C(1,I,J) + 
-     $            A(1,I,L)*HTMPS - A(2,I,L)*HTMPI -
-     $            A(3,I,L)*HTMPJ - A(4,I,L)*HTMPK
-
+     $            A(1,I,L)*HTMPS - A(2,I,L)*CONJG(HTMPJ)
                 C(2,I,J) = C(2,I,J) + 
-     $            A(1,I,L)*HTMPI + A(2,I,L)*HTMPS +
-     $            A(3,I,L)*HTMPK - A(4,I,L)*HTMPJ
-
-                C(3,I,J) = C(3,I,J) + 
-     $            A(1,I,L)*HTMPJ - A(2,I,L)*HTMPK +
-     $            A(3,I,L)*HTMPS + A(4,I,L)*HTMPI
-
-                C(4,I,J) = C(4,I,J) + 
-     $            A(1,I,L)*HTMPK + A(2,I,L)*HTMPJ -
-     $            A(3,I,L)*HTMPI + A(4,I,L)*HTMPS
+     $            A(1,I,L)*HTMPJ + A(2,I,L)*CONJG(HTMPS)
   210         CONTINUE
   200       CONTINUE
   170     CONTINUE
@@ -283,34 +202,22 @@ C
           DO 220 J = 1,N
           DO 220 I = 1,M
             HTMPS = ZERO 
-            HTMPI = ZERO 
             HTMPJ = ZERO 
-            HTMPK = ZERO 
             DO 230 L = 1,K
 C             Hamilton Product (IMPLIED CONJ(A) + CONJ(B))
-              HTMPS = HTMPS + A(1,L,I)*B(1,J,L) - A(2,L,I)*B(2,J,L) -
-     $                        A(3,L,I)*B(3,J,L) - A(4,L,I)*B(4,J,L)
-
-              HTMPI = HTMPI - A(1,L,I)*B(2,J,L) - A(2,L,I)*B(1,J,L) +
-     $                        A(3,L,I)*B(4,J,L) - A(4,L,I)*B(3,J,L)
-
-              HTMPJ = HTMPJ - A(1,L,I)*B(3,J,L) - A(2,L,I)*B(4,J,L) -
-     $                        A(3,L,I)*B(1,J,L) + A(4,L,I)*B(2,J,L)
-
-              HTMPK = HTMPK - A(1,L,I)*B(4,J,L) + A(2,L,I)*B(3,J,L) -
-     $                        A(3,L,I)*B(2,J,L) - A(4,L,I)*B(1,J,L)
+              HTMPS = HTMPS + 
+     $          CONJG(A(1,L,I))*CONJG(B(1,J,L)) - 
+     $          A(2,L,I)*CONJG(B(2,J,L))
+              HTMPJ = HTMPJ - 
+     $          CONJG(A(1,L,I))*B(2,J,L) - A(2,L,I)*B(1,J,L)
   230       CONTINUE
 C
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   220     CONTINUE
         ELSE
@@ -321,34 +228,21 @@ C
           DO 240 J = 1,N
           DO 240 I = 1,M
             HTMPS = ZERO 
-            HTMPI = ZERO 
             HTMPJ = ZERO 
-            HTMPK = ZERO 
             DO 250 L = 1,K
 C             Hamilton Product (IMPLIED CONJ(A))
-              HTMPS = HTMPS + A(1,L,I)*B(1,J,L) + A(2,L,I)*B(2,J,L) +
-     $                        A(3,L,I)*B(3,J,L) + A(4,L,I)*B(4,J,L)
-                                               
-              HTMPI = HTMPI + A(1,L,I)*B(2,J,L) - A(2,L,I)*B(1,J,L) -
-     $                        A(3,L,I)*B(4,J,L) + A(4,L,I)*B(3,J,L)
-                                               
-              HTMPJ = HTMPJ + A(1,L,I)*B(3,J,L) + A(2,L,I)*B(4,J,L) -
-     $                        A(3,L,I)*B(1,J,L) - A(4,L,I)*B(2,J,L)
-                                               
-              HTMPK = HTMPK + A(1,L,I)*B(4,J,L) - A(2,L,I)*B(3,J,L) +
-     $                        A(3,L,I)*B(2,J,L) - A(4,L,I)*B(1,J,L)
+              HTMPS = HTMPS + 
+     $          CONJG(A(1,L,I))*B(1,J,L) + A(2,L,I)*CONJG(B(2,J,L))
+              HTMPJ = HTMPJ + 
+     $          CONJG(A(1,L,I))*B(2,J,L) - A(2,L,I)*CONJG(B(1,J,L))
   250       CONTINUE
 C
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   240     CONTINUE
         ENDIF
@@ -365,30 +259,19 @@ C
             HTMPJ = ZERO 
             HTMPK = ZERO 
             DO 270 L = 1,K
-C             Hamilton Product
-              HTMPS = HTMPS + A(1,L,I)*B(1,J,L) + A(2,L,I)*B(2,J,L) +
-     $                        A(3,L,I)*B(3,J,L) + A(4,L,I)*B(4,J,L)
-
-              HTMPI = HTMPI - A(1,L,I)*B(2,J,L) + A(2,L,I)*B(1,J,L) -
-     $                        A(3,L,I)*B(4,J,L) + A(4,L,I)*B(3,J,L)
-
-              HTMPJ = HTMPJ - A(1,L,I)*B(3,J,L) + A(2,L,I)*B(4,J,L) +
-     $                        A(3,L,I)*B(1,J,L) - A(4,L,I)*B(2,J,L)
-
-              HTMPK = HTMPK - A(1,L,I)*B(4,J,L) - A(2,L,I)*B(3,J,L) +
-     $                        A(3,L,I)*B(2,J,L) + A(4,L,I)*B(1,J,L)
+C             Hamilton Product (IMPLIED CONJ(B))
+              HTMPS = HTMPS + 
+     $          A(1,L,I)*CONJG(B(1,J,L)) + A(2,L,I)*CONJG(B(2,J,L))
+              HTMPJ = HTMPJ - 
+     $          A(1,L,I)*B(2,J,L) + A(2,L,I)*B(1,J,L)
   270       CONTINUE
 
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   260     CONTINUE
         ELSE
@@ -398,34 +281,21 @@ C
           DO 280 J = 1,N
           DO 280 I = 1,M
             HTMPS = ZERO 
-            HTMPI = ZERO 
             HTMPJ = ZERO 
-            HTMPK = ZERO 
             DO 290 L = 1,K
 C             Hamilton Product
-              HTMPS = HTMPS + A(1,L,I)*B(1,J,L) - A(2,L,I)*B(2,J,L) -
-     $                        A(3,L,I)*B(3,J,L) - A(4,L,I)*B(4,J,L)
-
-              HTMPI = HTMPI + A(1,L,I)*B(2,J,L) + A(2,L,I)*B(1,J,L) +
-     $                        A(3,L,I)*B(4,J,L) - A(4,L,I)*B(3,J,L)
-
-              HTMPJ = HTMPJ + A(1,L,I)*B(3,J,L) - A(2,L,I)*B(4,J,L) +
-     $                        A(3,L,I)*B(1,J,L) + A(4,L,I)*B(2,J,L)
-
-              HTMPK = HTMPK + A(1,L,I)*B(4,J,L) + A(2,L,I)*B(3,J,L) -
-     $                        A(3,L,I)*B(2,J,L) + A(4,L,I)*B(1,J,L)
+              HTMPS = HTMPS + 
+     $          A(1,L,I)*B(1,J,L) - A(2,L,I)*CONJG(B(2,J,L))
+              HTMPJ = HTMPJ + 
+     $          A(1,L,I)*B(2,J,L) + A(2,L,I)*CONJG(B(1,J,L))
   290       CONTINUE
 
             IF( BZERO ) THEN
               C(1,I,J) = ALPHA * HTMPS
-              C(2,I,J) = ALPHA * HTMPI
-              C(3,I,J) = ALPHA * HTMPJ
-              C(4,I,J) = ALPHA * HTMPK
+              C(2,I,J) = ALPHA * HTMPJ
             ELSE
               C(1,I,J) = ALPHA * HTMPS + BETA * C(1,I,J)
-              C(2,I,J) = ALPHA * HTMPI + BETA * C(2,I,J)
-              C(3,I,J) = ALPHA * HTMPJ + BETA * C(3,I,J)
-              C(4,I,J) = ALPHA * HTMPK + BETA * C(4,I,J)
+              C(2,I,J) = ALPHA * HTMPJ + BETA * C(2,I,J)
             ENDIF
   280     CONTINUE
         ENDIF
