@@ -13,6 +13,28 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
+extern "C" {
+
+  void hscald_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*);
+  void hscalc_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*);
+  void hscalh_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*);
+
+  void hdotu_(const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*, const double*, const HAXX_INT*);
+  void hdotc_(const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*, const double*, const HAXX_INT*);
+
+  void haxpydh_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*);
+  void haxpych_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*);
+  void haxpyhh_(const char*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*);
+};
+
 namespace HAXX {
 
   /**

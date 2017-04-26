@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == X[indx]*rAlpha);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*rAlpha)  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == X[indx]*rAlpha);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*rAlpha)  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == X[indx]*cAlpha);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*cAlpha)  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == cAlpha*X[indx]);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(cAlpha*X[indx])  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -147,7 +147,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == X[indx]*hAlpha);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*hAlpha)  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (tmpX[indx] == hAlpha*X[indx]);
+            return (HAXX::norm(tmpX[indx])/HAXX::norm(hAlpha*X[indx])  - 1. < 1e-12);
 	  else return (tmpX[indx] == X[indx]);
         }
       )
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + X[indx]*rAlpha);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*rAlpha) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + rAlpha*X[indx]);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*rAlpha) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + X[indx]*cAlpha);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*cAlpha) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + cAlpha*X[indx]);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + cAlpha*X[indx]) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + X[indx]*hAlpha);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*hAlpha) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
 	  if(indx % stride == 0 and indx != len*stride ) 
-            return (Y[indx] == YC[indx] + hAlpha*X[indx]);
+            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + hAlpha*X[indx]) - 1. < 1e-12);
 	  else return (Y[indx] == YC[indx]);
         }
       )
@@ -349,8 +349,8 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
       dotcs = dotcs + HAXX::conj(X[j]) * Y[j];
     }
 
-    BOOST_CHECK_EQUAL(dotu,dotus);
-    BOOST_CHECK_EQUAL(dotc,dotcs);
+    BOOST_CHECK_CLOSE(1.,HAXX::norm(dotu)/HAXX::norm(dotus),1e-12);
+    BOOST_CHECK_CLOSE(1.,HAXX::norm(dotc)/HAXX::norm(dotcs),1e-12);
   }
 
   // FIXME: Need a test for when strides are not equal

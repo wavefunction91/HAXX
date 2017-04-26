@@ -6,7 +6,7 @@ C
 C
       CHARACTER TRANSA, TRANSB
       LOGICAL   NOTA, NOTB, CONJA, CONJB, AZERO, AONE,
-     $  BZERO, BONE
+     $          BZERO, BONE
       INTEGER*4 M,N,K, LDA,LDB,LDC, I,J,L
       REAL*8    ALPHA, BETA
       REAL*8    A(4,LDA,*), B(4,LDB,*), C(4,LDC,*)
