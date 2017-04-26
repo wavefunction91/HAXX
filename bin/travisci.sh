@@ -14,6 +14,6 @@ export CXXFLAGS="-std=c++11 -O3"
 export FC=gfortran
 
 mkdir build && cd build
-cmake -DBOOST_LIBRARYDIR='/usr/lib' ..
+cmake -DBOOST_LIBRARYDIR='/usr/lib' -DCMAKE_Fortran_FLAGS='-O3' ..
 make -j2
 make test
