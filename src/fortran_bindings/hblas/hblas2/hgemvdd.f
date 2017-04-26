@@ -223,7 +223,7 @@ C               Hamilton Product (IMPLIED CONJ(A))
             Y(2,JY) = Y(2,JY) + ALPHA * HTMPI
             Y(3,JY) = Y(3,JY) + ALPHA * HTMPJ
             Y(4,JY) = Y(4,JY) + ALPHA * HTMPK
-            JY = HY + INCY
+            JY = JY + INCY
   140     CONTINUE
         ENDIF
       ENDIF
