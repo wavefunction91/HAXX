@@ -355,8 +355,6 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, double ALPHA,
   quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
   double BETA, quaternion<double> *Y, HAXX_INT INCY) {
 
-  std::cout << " IN GEMV " << std::endl;
-
   hgemvdd_(&TRANS,&M,&N,&ALPHA,reinterpret_cast<double*>(A),&LDA,
     reinterpret_cast<double*>(X),&INCX,&BETA,reinterpret_cast<double*>(Y),
     &INCY);

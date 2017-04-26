@@ -923,20 +923,10 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
-
-/*
-  std::cout << "A\n";
-  for(auto &x : A) std::cout << x << std::endl;
-  std::cout << "B\n";
-  for(auto &x : B) std::cout << x << std::endl;
-  std::cout << "C\n";
-  for(auto &x : C) std::cout << x << std::endl;
-*/
-
 
   std::cout << "hblas3_gemm_square_NNRR_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
@@ -950,22 +940,16 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRR_LDSame)
   std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
   std::cout << "hblas3_gemm_square_NNRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
-        HBLAS1_VECLEN,&B[RANK2_INDX(0,j,HBLAS1_VECLEN)],1);
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    std::cout << ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)] << " " <<
-    C[RANK2_INDX(i,j,HBLAS1_VECLEN)] << std::endl;
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
 }
 
@@ -983,9 +967,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_TNRR_LDSame will use " << std::endl;
@@ -1000,21 +984,18 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRR_LDSame)
   std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
   std::cout << "hblas3_gemm_square_TNRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(0,j,HBLAS1_VECLEN)],1);
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
+
 }
 
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRR_LDSame)
@@ -1031,9 +1012,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_CNRR_LDSame will use " << std::endl;
@@ -1048,21 +1029,18 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRR_LDSame)
   std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
   std::cout << "hblas3_gemm_square_CNRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(0,j,HBLAS1_VECLEN)],1);
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
+
 }
 
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRR_LDSame)
@@ -1079,9 +1057,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_NTRR_LDSame will use " << std::endl;
@@ -1096,22 +1074,18 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRR_LDSame)
   std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
   std::cout << "hblas3_gemm_square_NTRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
-        HBLAS1_VECLEN,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
+
 }
 
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRR_LDSame)
@@ -1128,9 +1102,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_NCRR_LDSame will use " << std::endl;
@@ -1146,22 +1120,18 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRR_LDSame)
   std::cout << "hblas3_gemm_square_NCRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
   for(auto &x : B) x = HAXX::conj(x); 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
-        HBLAS1_VECLEN,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
+
 }
 
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRR_LDSame)
@@ -1178,9 +1148,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_TTRR_LDSame will use " << std::endl;
@@ -1195,22 +1165,18 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRR_LDSame)
   std::chrono::duration<double> gemmDur = gemmEnd - gemmStart;
   std::cout << "hblas3_gemm_square_TTRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
-
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
+
 }
 
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRR_LDSame)
@@ -1227,9 +1193,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_TCRR_LDSame will use " << std::endl;
@@ -1246,20 +1212,16 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRR_LDSame)
 
   for(auto &x : B) x = HAXX::conj(x); 
 
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
 }
 
@@ -1277,9 +1239,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_CTRR_LDSame will use " << std::endl;
@@ -1295,20 +1257,16 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRR_LDSame)
   std::cout << "hblas3_gemm_square_CTRR_LDSame GEMM took " << gemmDur.count() << " s\n";
 
 
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
 }
 
@@ -1326,9 +1284,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRR_LDSame)
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
 
   std::vector<HAXX::quaternion<double>> CC(C);
+  std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
 
   double BETA(dis(gen));
-
   double ALPHA(dis(gen));
 
   std::cout << "hblas3_gemm_square_CCRR_LDSame will use " << std::endl;
@@ -1345,19 +1303,15 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRR_LDSame)
 
   for(auto &x : B) x = HAXX::conj(x); 
 
-  for(int j = 0; j < HBLAS1_VECLEN; j++) 
-  for(int i = 0; i < HBLAS1_VECLEN; i++) {
-    HAXX::quaternion<double>
-      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
-        1,&B[RANK2_INDX(j,0,HBLAS1_VECLEN)],HBLAS1_VECLEN);
-
-
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-      HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+  for(int j = 0; j < HBLAS1_VECLEN; j++) {
+    HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
+      HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
+    for(auto i = 0; i < HBLAS1_VECLEN; i++) {
+      BOOST_CHECK_CLOSE(double(1.), 
+        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
+        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
+        //std::numeric_limits<double>::epsilon() * 4);
+        1e-12);
+    }
   }
 }
