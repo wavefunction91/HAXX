@@ -23,6 +23,7 @@ addons:
       - llvm-toolchain-precise-3.8
       - boost-latest
     packages:
+      - gfortran
       - g++-4.8
       - g++-4.9
       - g++-5

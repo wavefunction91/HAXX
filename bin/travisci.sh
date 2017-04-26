@@ -11,6 +11,7 @@ else
     export CXX=/usr/bin/clang++-3.8
 fi
 export CXXFLAGS="-std=c++11 -O3"
+export FC=gfortran
 
 mkdir build && cd build
 cmake -DBOOST_LIBRARYDIR='/usr/lib' ..
