@@ -16,7 +16,7 @@
 
 
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQ_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQ_LDSame)
     ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
     BETA(dis(gen),dis(gen),dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_NQ_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_NQQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQ_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQ_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQ_LDSame)
     ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
     BETA(dis(gen),dis(gen),dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_TQ_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_TQQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQ_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQ_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQ_LDSame)
     ALPHA(dis(gen),dis(gen),dis(gen),dis(gen)), 
     BETA(dis(gen),dis(gen),dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_CQ_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_CQQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQ_LDSame)
 
 
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NR_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NR_LDSame)
 
   double ALPHA(dis(gen));
 
-  std::cout << "hblas2_gemv_square_NR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_NRQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NR_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TR_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TRQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TR_LDSame)
 
   double ALPHA(dis(gen));
 
-  std::cout << "hblas2_gemv_square_TR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_TRQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TR_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CR_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CRQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CR_LDSame)
 
   double ALPHA(dis(gen));
 
-  std::cout << "hblas2_gemv_square_CR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_CRQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CR_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NC_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NCQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NC_LDSame)
 
   std::complex<double> ALPHA(dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_NR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_NCQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NC_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TC_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TCQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TC_LDSame)
 
   std::complex<double> ALPHA(dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_TR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_TCQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TC_LDSame)
   }
 }
 
-BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CC_LDSame)
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CCQ_LDSame)
 {
   // Random Quaternion vectors and matricies
   std::vector<HAXX::quaternion<double>> 
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CC_LDSame)
 
   std::complex<double> ALPHA(dis(gen),dis(gen));
 
-  std::cout << "hblas2_gemv_square_CR_LDSame will use " << std::endl;
+  std::cout << "hblas2_gemv_square_CCQ_LDSame will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   std::cout << "  BETA = " << BETA << std::endl;
   
@@ -384,6 +384,123 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CC_LDSame)
   }
 }
 
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRR_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  double BETA(dis(gen));
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_NRR_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+
+  
+  HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
+        HBLAS1_VECLEN,&X[0],1);
+
+    // FIXME: epsilon check is too tight, what is a proper criteria here
+    //   in relation to machine epsilon?
+    BOOST_CHECK_CLOSE(double(1.), 
+      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
+      //std::numeric_limits<double>::epsilon() * 4);
+      1e-12);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TRR_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  double BETA(dis(gen));
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_TRR_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    // FIXME: epsilon check is too tight, what is a proper criteria here
+    //   in relation to machine epsilon?
+    BOOST_CHECK_CLOSE(double(1.), 
+      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
+      //std::numeric_limits<double>::epsilon() * 4);
+      1e-12);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CRR_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  double BETA(dis(gen));
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_CRR_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    // FIXME: epsilon check is too tight, what is a proper criteria here
+    //   in relation to machine epsilon?
+    BOOST_CHECK_CLOSE(double(1.), 
+      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
+      //std::numeric_limits<double>::epsilon() * 4);
+      1e-12);
+  }
+}
 
 
 

@@ -13,6 +13,14 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
+extern "C" {
+
+  void hgemvdd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+};
+
 namespace HAXX {
 
   /**
