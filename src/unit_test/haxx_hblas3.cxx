@@ -944,11 +944,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRR_LDSame)
     HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 }
@@ -988,11 +989,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRR_LDSame)
     HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 
@@ -1033,11 +1035,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRR_LDSame)
     HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j*HBLAS1_VECLEN],1,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 
@@ -1078,11 +1081,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRR_LDSame)
     HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 
@@ -1124,11 +1128,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRR_LDSame)
     HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 
@@ -1169,11 +1174,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRR_LDSame)
     HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 
@@ -1216,11 +1222,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRR_LDSame)
     HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 }
@@ -1261,11 +1268,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRR_LDSame)
     HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 }
@@ -1307,11 +1315,12 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRR_LDSame)
     HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],
       HBLAS1_VECLEN,&B[j],HBLAS1_VECLEN,0.,&SCR[0],1);
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK_CLOSE(double(1.), 
-        HAXX::norm(SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]) / 
-        HAXX::norm(C[RANK2_INDX(i,j,HBLAS1_VECLEN)]),
-        //std::numeric_limits<double>::epsilon() * 4);
-        1e-12);
+      BOOST_CHECK( 
+        CMP_Q(
+          SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+          C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+        )
+      );
     }
   }
 }

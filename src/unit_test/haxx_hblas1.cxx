@@ -72,102 +72,63 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
   std::vector<HAXX::quaternion<double>> tmpX(HBLAS1_VECLEN);
 
+  auto chk_SCAL = [&](int stride, int len, char SIDE, char FIELD) {
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+          if(indx % stride == 0 and indx != len*stride ) {
+            if(FIELD == 'R' or FIELD == 'r')
+              return CMP_Q(tmpX[indx],X[indx]*rAlpha);
+            else if(FIELD == 'C' or FIELD == 'c') {
+              if(SIDE == 'R' or SIDE == 'r')
+                return CMP_Q(tmpX[indx],X[indx]*cAlpha);
+              else 
+                return CMP_Q(tmpX[indx],cAlpha*X[indx]);
+            } else {
+              if(SIDE == 'R' or SIDE == 'r')
+                return CMP_Q(tmpX[indx],X[indx]*hAlpha);
+              else 
+                return CMP_Q(tmpX[indx],hAlpha*X[indx]);
+            }
+          } else return (tmpX[indx] == X[indx]);
+        }
+      )
+    );
+  };
+
   for(auto stride : strides) {
 
+    auto len = HBLAS1_VECLEN/stride; 
 
     // Right scaling by real alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
-    auto len = HBLAS1_VECLEN/stride; 
     HBLAS_SCAL('R',len,rAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*rAlpha)  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
-
+    chk_SCAL(stride,len,'R','R');
 
     // Left scaling by real alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
     HBLAS_SCAL('L',len,rAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*rAlpha)  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
+    chk_SCAL(stride,len,'L','R');
 
     // Right scaling by complex alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
     HBLAS_SCAL('R',len,cAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*cAlpha)  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
-
+    chk_SCAL(stride,len,'R','C');
 
     // Left scaling by complex alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
     HBLAS_SCAL('L',len,cAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(cAlpha*X[indx])  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
+    chk_SCAL(stride,len,'L','C');
 
     // Right scaling by quaternion alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
     HBLAS_SCAL('R',len,hAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(X[indx]*hAlpha)  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
-
+    chk_SCAL(stride,len,'R','H');
 
     // Left scaling by quaternion alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-
     HBLAS_SCAL('L',len,hAlpha,&tmpX[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(tmpX[indx])/HAXX::norm(hAlpha*X[indx])  - 1. < 1e-12);
-	  else return (tmpX[indx] == X[indx]);
-        }
-      )
-    );
+    chk_SCAL(stride,len,'L','H');
 
   }
 
@@ -226,100 +187,66 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
 
   std::vector<HAXX::quaternion<double>> YC(Y);
   
+
+  auto chk_AXPY = [&](int stride, int len, char SIDE, char FIELD) {
+    BOOST_CHECK( 
+      std::all_of(indx.begin(),indx.end(),
+        [&](int indx) {
+          if(indx % stride == 0 and indx != len*stride ) {
+            if(FIELD == 'R' or FIELD == 'r')
+              return CMP_Q(Y[indx],YC[indx] + X[indx]*rAlpha);
+            else if(FIELD == 'C' or FIELD == 'c') {
+              if(SIDE == 'R' or SIDE == 'r')
+                return CMP_Q(Y[indx],YC[indx] + X[indx]*cAlpha);
+              else 
+                return CMP_Q(Y[indx],YC[indx] + cAlpha*X[indx]);
+            } else {
+              if(SIDE == 'R' or SIDE == 'r')
+                return CMP_Q(Y[indx],YC[indx] + X[indx]*hAlpha);
+              else 
+                return CMP_Q(Y[indx],YC[indx] + hAlpha*X[indx]);
+            }
+          } else return (Y[indx] == YC[indx]);
+        }
+      )
+    );
+  };
+
   // Both strides equal
   for(auto stride : strides) {
     auto len = HBLAS1_VECLEN/stride; 
 
     // Right scaling by real alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('R',len,rAlpha,&X[0],stride,&Y[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*rAlpha) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
+    chk_AXPY(stride,len,'R','R');
 
     // Left scaling by real alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('L',len,rAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPY(stride,len,'L','R');
 
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*rAlpha) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
 
     // Right scaling by complex alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('R',len,cAlpha,&X[0],stride,&Y[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*cAlpha) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
+    chk_AXPY(stride,len,'R','C');
 
     // Left scaling by complex alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('L',len,cAlpha,&X[0],stride,&Y[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + cAlpha*X[indx]) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
+    chk_AXPY(stride,len,'L','C');
 
 
     // Right scaling by quaternion alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('R',len,hAlpha,&X[0],stride,&Y[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + X[indx]*hAlpha) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
+    chk_AXPY(stride,len,'R','H');
 
     // Left scaling by quaternion alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-
     HBLAS_AXPY('L',len,hAlpha,&X[0],stride,&Y[0],stride);
-
-    BOOST_CHECK( 
-      std::all_of(indx.begin(),indx.end(),
-        [&](int indx) {
-	  if(indx % stride == 0 and indx != len*stride ) 
-            return (HAXX::norm(Y[indx])/HAXX::norm(YC[indx] + hAlpha*X[indx]) - 1. < 1e-12);
-	  else return (Y[indx] == YC[indx]);
-        }
-      )
-    );
+    chk_AXPY(stride,len,'L','H');
   }
 
 
@@ -349,8 +276,8 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
       dotcs = dotcs + HAXX::conj(X[j]) * Y[j];
     }
 
-    BOOST_CHECK_CLOSE(1.,HAXX::norm(dotu)/HAXX::norm(dotus),1e-12);
-    BOOST_CHECK_CLOSE(1.,HAXX::norm(dotc)/HAXX::norm(dotcs),1e-12);
+    BOOST_CHECK(CMP_Q(dotu,dotus));
+    BOOST_CHECK(CMP_Q(dotc,dotcs));
   }
 
   // FIXME: Need a test for when strides are not equal

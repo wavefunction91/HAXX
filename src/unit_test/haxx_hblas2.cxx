@@ -47,12 +47,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
         HBLAS1_VECLEN,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -87,12 +82,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -127,12 +117,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQQ_LDSame)
       tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -170,12 +155,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
         HBLAS1_VECLEN,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -211,12 +191,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TRQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -252,12 +227,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CRQ_LDSame)
       tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -293,12 +263,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NCQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
         HBLAS1_VECLEN,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -334,12 +299,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TCQ_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -375,12 +335,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CCQ_LDSame)
       tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -415,12 +370,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRR_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
         HBLAS1_VECLEN,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -454,12 +404,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TRR_LDSame)
       tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -493,12 +438,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CRR_LDSame)
       tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
         1,&X[0],1);
 
-    // FIXME: epsilon check is too tight, what is a proper criteria here
-    //   in relation to machine epsilon?
-    BOOST_CHECK_CLOSE(double(1.), 
-      HAXX::norm(ALPHA*tmp + BETA*YC[i]) / HAXX::norm(Y[i]),
-      //std::numeric_limits<double>::epsilon() * 4);
-      1e-12);
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
   }
 }
 
@@ -531,9 +471,11 @@ BOOST_AUTO_TEST_CASE(hblas2_geru_square_Q)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_EQUAL(
-      ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
-      A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }
@@ -564,9 +506,11 @@ BOOST_AUTO_TEST_CASE(hblas2_geru_square_R)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_CLOSE(double(1.),
-      HAXX::norm(ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)])/
-      HAXX::norm(A[RANK2_INDX(i,j,HBLAS1_VECLEN)]),1e-12
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }
@@ -589,7 +533,7 @@ BOOST_AUTO_TEST_CASE(hblas2_geru_square_C)
 
   std::complex<double> ALPHA(dis(gen),dis(gen));
 
-  std::cout << "hblas2_geru_square_R will use " << std::endl;
+  std::cout << "hblas2_geru_square_C will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   
   HBLAS_GERU(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
@@ -597,9 +541,11 @@ BOOST_AUTO_TEST_CASE(hblas2_geru_square_C)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_CLOSE(double(1.),
-      HAXX::norm(ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)])/
-      HAXX::norm(A[RANK2_INDX(i,j,HBLAS1_VECLEN)]),1e-12
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*Y[j] + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }
@@ -630,9 +576,11 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_Q)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_EQUAL(
-      ALPHA*X[i]*HAXX::conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
-      A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }
@@ -655,7 +603,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_R)
 
   double ALPHA(dis(gen));
 
-  std::cout << "hblas2_geru_square_R will use " << std::endl;
+  std::cout << "hblas2_gerc_square_R will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   
   HBLAS_GERC(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
@@ -663,9 +611,11 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_R)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_CLOSE(double(1.),
-      HAXX::norm(ALPHA*X[i]*HAXX::conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)])/
-      HAXX::norm(A[RANK2_INDX(i,j,HBLAS1_VECLEN)]),1e-12
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }
@@ -688,7 +638,7 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_C)
 
   std::complex<double> ALPHA(dis(gen),dis(gen));
 
-  std::cout << "hblas2_geru_square_C will use " << std::endl;
+  std::cout << "hblas2_gerc_square_C will use " << std::endl;
   std::cout << "  ALPHA = " << ALPHA << std::endl;
   
   HBLAS_GERC(HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&X[0],1,&Y[0],1,&A[0],HBLAS1_VECLEN);
@@ -696,9 +646,11 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_C)
   for(int j = 0; j < HBLAS1_VECLEN; j++) 
   for(int i = 0; i < HBLAS1_VECLEN; i++) {
 
-    BOOST_CHECK_CLOSE(double(1.),
-      HAXX::norm(ALPHA*X[i]*HAXX::conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)])/
-      HAXX::norm(A[RANK2_INDX(i,j,HBLAS1_VECLEN)]),1e-12
+    BOOST_CHECK(
+      CMP_Q(
+        ALPHA*X[i]*conj(Y[j]) + AC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
+        A[RANK2_INDX(i,j,HBLAS1_VECLEN)]
+      )
     );
 
   }

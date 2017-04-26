@@ -41,3 +41,6 @@ std::vector<int> indx(boost::counting_iterator<int>(0),
 // Strides to be tested
 std::vector<size_t> strides = {1,2,3,5,9};
 
+#define COMPARE_TOL 1e-12
+//#define CMP_Q(a,b) (HAXX::norm(a)/HAXX::norm(b) - 1. < COMPARE_TOL)
+#define CMP_Q(a,b) ( HAXX::norm(((a) * HAXX::inv(b))- 1.) < COMPARE_TOL )

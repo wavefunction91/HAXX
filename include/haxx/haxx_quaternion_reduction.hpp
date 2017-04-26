@@ -52,6 +52,17 @@ inline quaternion<_F> inv(const quaternion<_F>& __q) {
 };
 
 /**
+ *  \f$ r = \dfrac{q}{\vert\vert q \vert\vert} \f$
+ */
+template <typename _F>
+inline quaternion<_F> versor(const quaternion<_F>& __q) {
+
+  _F nrm = norm(__q);
+  return __q / nrm;
+
+};
+
+/**
  *  \f$ [p,q] = pq - qp \f$
  */
 template <typename _F>
