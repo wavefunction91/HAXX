@@ -407,6 +407,28 @@ void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
 };
 
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  std::complex<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  double BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  hgemmzd_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
+    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
+    &LDB,&BETA, reinterpret_cast<double*>(C),&LDC);
+
+};
+
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  quaternion<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  double BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  hgemmhd_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
+    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
+    &LDB,&BETA, reinterpret_cast<double*>(C),&LDC);
+
+};
+
 }; // namespace HAXX
 
 #endif

@@ -19,6 +19,14 @@ extern "C" {
     const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*,const double*,const HAXX_INT*);
 
+  void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*,const double*,const HAXX_INT*);
+
+  void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*,const double*,const HAXX_INT*);
+
 };
 
 namespace HAXX {
