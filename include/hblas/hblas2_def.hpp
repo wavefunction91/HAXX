@@ -26,6 +26,30 @@ extern "C" {
   void hgemvhd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
     const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*, const double*, const HAXX_INT*);
+
+  void hgerud_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
+
+  void hgeruz_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
+
+  void hgeruh_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
+
+  void hgercd_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
+
+  void hgercz_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
+
+  void hgerch_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
+    const HAXX_INT*);
 };
 
 namespace HAXX {

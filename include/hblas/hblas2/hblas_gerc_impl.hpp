@@ -128,6 +128,36 @@ void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _F ALPHA, _LeftVecF *X,
 
 }
 
+template <>
+void HBLAS_GERC(HAXX_INT M, HAXX_INT N, double ALPHA, quaternion<double> *X,
+  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
+  HAXX_INT LDA){
+
+  hgercd_(&M,&N,&ALPHA,reinterpret_cast<double*>(X),&INCX,
+    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
+    &LDA);
+}
+
+template <>
+void HBLAS_GERC(HAXX_INT M, HAXX_INT N, std::complex<double> ALPHA, quaternion<double> *X,
+  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
+  HAXX_INT LDA){
+
+  hgercz_(&M,&N,reinterpret_cast<double*>(&ALPHA),reinterpret_cast<double*>(X),&INCX,
+    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
+    &LDA);
+}
+
+template <>
+void HBLAS_GERC(HAXX_INT M, HAXX_INT N, quaternion<double> ALPHA, quaternion<double> *X,
+  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
+  HAXX_INT LDA){
+
+  hgerch_(&M,&N,reinterpret_cast<double*>(&ALPHA),reinterpret_cast<double*>(X),&INCX,
+    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
+    &LDA);
+}
+
 }; // namspace HAXX
 
 #endif
