@@ -13,12 +13,17 @@ set(HAXX_VERSION_PATCH 0)
 
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_BINARY_DIR}/include")
+#include_directories("${PROJECT_BINARY_DIR}/include")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   message(STATUS "${CMAKE_CXX_COMPILER_ID} Recognized as CLANG: Adding -D_HAXX_UT_BUTF_NINCLUDED")
   add_definitions("-D_HAXX_UT_BUTF_NINCLUDED")
 endif()
+
+include(HAXXCompilerFlags)
+
 
 enable_testing()
 add_subdirectory(src)
