@@ -1,4 +1,4 @@
-      Subroutine HGEMVDD(TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA,
+      Subroutine HGEMVZD(TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA,
      $  Y, INCY)
 C
       LOGICAL LSAME
@@ -7,16 +7,13 @@ C
       CHARACTER TRANS
       LOGICAL   NOCONJ, AZERO,AONE,BZERO,BONE
       INTEGER*4 M,N, LDA,INCX,INCY, LENX,LENY, I,J,IY,JX,IX,JY, KX,KY
-      REAL*8    ALPHA,BETA
-      COMPLEX*16    A(2,LDA,*), X(2,*), Y(2,*)
+      REAL*8    BETA
+      COMPLEX*16    A(2,LDA,*), X(2,*), Y(2,*), ALPHA
 C
-      COMPLEX*16    HTMPS, HTMPJ
+      COMPLEX*16    HTMP1S, HTMP1J, HTMP2S, HTMP2J
 C
       COMPLEX*16    ONE, ZERO
       PARAMETER (ONE=(1.0D+0,0.0D+0), ZERO=(0.0D+0,0.0D+0))
-C
-      IF ( (M.EQ.0) .OR. (N.EQ.0) .OR. 
-     $     ( (ALPHA.EQ.ZERO) .AND. (BETA.EQ.ONE) ) ) RETURN
 C
       NOCONJ = LSAME('T',TRANS)
       IF ( LSAME('T',TRANS) ) THEN
@@ -31,6 +28,10 @@ C
       AONE  = ALPHA.EQ.ONE
       BZERO = BETA.EQ.ZERO
       BONE  = BETA.EQ.ONE
+C
+      IF ( (M.EQ.0) .OR. (N.EQ.0) .OR. 
+     $     ( AZERO .AND. BONE ) ) RETURN
+C
 C
       IF ( INCX.GT.0 ) THEN
         KX = 1
@@ -82,28 +83,28 @@ C
         JX = KX
         IF ( INCY.EQ.1 ) THEN
           DO 60 J = 1,N
-            HTMPS = ALPHA * X(1,JX)
-            HTMPJ = ALPHA * X(2,JX)
+            HTMP1S = ALPHA * X(1,JX)
+            HTMP1J = ALPHA * X(2,JX)
+            HTMP2S = ALPHA * CONJG(X(1,JX))
+            HTMP2J = ALPHA * CONJG(X(2,JX))
             Do 50 I = 1,M
 C             Hamilton Product
-              Y(1,I) = Y(1,I) + 
-     $          A(1,I,J)*HTMPS - A(2,I,J)*CONJG(HTMPJ)
-              Y(2,I) = Y(2,I) + 
-     $          A(1,I,J)*HTMPJ + A(2,I,J)*CONJG(HTMPS)
+              Y(1,I) = Y(1,I) + A(1,I,J)*HTMP1S - A(2,I,J)*HTMP2J
+              Y(2,I) = Y(2,I) + A(1,I,J)*HTMP1J + A(2,I,J)*HTMP2S 
   50        CONTINUE 
             JX = JX + INCX
   60      CONTINUE
         ELSE
           DO 80 J = 1,N
-            HTMPS = ALPHA * X(1,JX)
-            HTMPJ = ALPHA * X(2,JX)
+            HTMP1S = ALPHA * X(1,JX)
+            HTMP1J = ALPHA * X(2,JX)
+            HTMP2S = ALPHA * CONJG(X(1,JX))
+            HTMP2J = ALPHA * CONJG(X(2,JX))
             IY = KY
             Do 70 I = 1,M
 C             Hamilton Product
-              Y(1,IY) = Y(1,IY) + 
-     $          A(1,I,J)*HTMPS - A(2,I,J)*CONJG(HTMPJ)
-              Y(2,IY) = Y(2,IY) + 
-     $          A(1,I,J)*HTMPJ + A(2,I,J)*CONJG(HTMPS)
+              Y(1,IY) = Y(1,IY) + A(1,I,J)*HTMP1S - A(2,I,J)*HTMP2J
+              Y(2,IY) = Y(2,IY) + A(1,I,J)*HTMP1J + A(2,I,J)*HTMP2S
               IY = IY + INCY
   70        CONTINUE 
             JX = JX + INCX
@@ -113,53 +114,55 @@ C             Hamilton Product
         JY = KY
         IF ( INCX.EQ.1 ) THEN
           DO 110 J = 1,N
-            HTMPS = ZERO
-            HTMPJ = ZERO
+            HTMP1S = ZERO
+            HTMP1J = ZERO
             IF ( NOCONJ ) THEN
               DO 90 I = 1,M
 C             Hamilton Product
-                HTMPS = HTMPS + A(1,I,J)*X(1,I) - A(2,I,J)*CONJG(X(2,I))
-                HTMPJ = HTMPJ + A(1,I,J)*X(2,I) + A(2,I,J)*CONJG(X(1,I))
+                HTMP1S = HTMP1S + 
+     $            A(1,I,J)*X(1,I) - A(2,I,J)*CONJG(X(2,I))
+                HTMP1J = HTMP1J + 
+     $            A(1,I,J)*X(2,I) + A(2,I,J)*CONJG(X(1,I))
   90          CONTINUE
             ELSE
               DO 100 I = 1,M
 C               Hamilton Product (IMPLIED CONJ(A))
-                HTMPS = HTMPS + 
+                HTMP1S = HTMP1S + 
      $            CONJG(A(1,I,J))*X(1,I) + A(2,I,J)*CONJG(X(2,I))
-                HTMPJ = HTMPJ + 
+                HTMP1J = HTMP1J + 
      $            CONJG(A(1,I,J))*X(2,I) - A(2,I,J)*CONJG(X(1,I))
   100         CONTINUE
             ENDIF
-            Y(1,JY) = Y(1,JY) + ALPHA * HTMPS
-            Y(2,JY) = Y(2,JY) + ALPHA * HTMPJ
+            Y(1,JY) = Y(1,JY) + ALPHA*HTMP1S
+            Y(2,JY) = Y(2,JY) + ALPHA*HTMP1J
             JY = JY + INCY
   110     CONTINUE
         ELSE
           DO 140 J = 1,N
-            HTMPS = ZERO
-            HTMPJ = ZERO
+            HTMP1S = ZERO
+            HTMP1J = ZERO
             IX = KX
             IF ( NOCONJ ) THEN
               DO 120 I = 1,M
 C             Hamilton Product
-                HTMPS = HTMPS + 
+                HTMP1S = HTMP1S + 
      $            A(1,I,J)*X(1,IX) - A(2,I,J)*CONJG(X(2,IX))
-                HTMPJ = HTMPJ + 
+                HTMP1J = HTMP1J + 
      $            A(1,I,J)*X(2,IX) + A(2,I,J)*CONJG(X(1,IX))
                 IX = IX + INCX
   120         CONTINUE
             ELSE
               DO 130 I = 1,M
 C               Hamilton Product (IMPLIED CONJ(A))
-                HTMPS = HTMPS + 
+                HTMP1S = HTMP1S + 
      $            CONJG(A(1,I,J))*X(1,IX) + A(2,I,J)*CONJG(X(2,IX))
-                HTMPJ = HTMPJ + 
+                HTMP1J = HTMP1J + 
      $            CONJG(A(1,I,J))*X(2,IX) - A(2,I,J)*CONJG(X(1,IX))
                 IX = IX + INCX
   130         CONTINUE
             ENDIF
-            Y(1,JY) = Y(1,JY) + ALPHA * HTMPS
-            Y(2,JY) = Y(2,JY) + ALPHA * HTMPJ
+            Y(1,JY) = Y(1,JY) + ALPHA*HTMP1S
+            Y(2,JY) = Y(2,JY) + ALPHA*HTMP1J
             JY = JY + INCY
   140     CONTINUE
         ENDIF
