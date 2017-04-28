@@ -15,17 +15,50 @@
 
 extern "C" {
 
-  void hgemmdd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*,const double*,const HAXX_INT*);
+  void hgemmdd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
 
-  void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*,const double*,const HAXX_INT*);
+  void hgemmdz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
 
-  void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*,const double*,const HAXX_INT*);
+  void hgemmdh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmzz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmzh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmhz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
+
+  void hgemmhh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+    const HAXX_INT*, const double*, const double*, const HAXX_INT*, 
+    const double*, const HAXX_INT*, const double*, const double*,
+    const HAXX_INT*);
 
 };
 

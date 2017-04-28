@@ -19,13 +19,42 @@ extern "C" {
     const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*, const double*, const HAXX_INT*);
 
+  void hgemvdz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+  void hgemvdh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
   void hgemvzd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+  void hgemvzz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+  void hgemvzh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
     const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*, const double*, const HAXX_INT*);
 
   void hgemvhd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
     const double*, const HAXX_INT*, const double*, const HAXX_INT*,
     const double*, const double*, const HAXX_INT*);
+
+  void hgemvhz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+  void hgemvhh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
+    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
+    const double*, const double*, const HAXX_INT*);
+
+
+
+
+
 
   void hgerud_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
     const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
@@ -38,6 +67,9 @@ extern "C" {
   void hgeruh_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
     const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
     const HAXX_INT*);
+
+
+
 
   void hgercd_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
     const HAXX_INT*, const double*, const HAXX_INT*, const double*, 

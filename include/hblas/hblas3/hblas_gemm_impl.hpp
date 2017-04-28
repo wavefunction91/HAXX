@@ -401,8 +401,33 @@ void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   double ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
   double BETA, quaternion<double> *C, HAXX_INT LDC){
 
+  std::cout << " IN SDD" << std::endl;
   hgemmdd_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,reinterpret_cast<double*>(A),
     &LDA,reinterpret_cast<double*>(B),&LDB,&BETA,
+    reinterpret_cast<double*>(C),&LDC);
+
+};
+
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  double ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  std::complex<double> BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  std::cout << " IN SDZ" << std::endl;
+  hgemmdz_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,reinterpret_cast<double*>(A),
+    &LDA,reinterpret_cast<double*>(B),&LDB,reinterpret_cast<double*>(&BETA),
+    reinterpret_cast<double*>(C),&LDC);
+
+};
+
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  double ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  quaternion<double> BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  std::cout << " IN SDH" << std::endl;
+  hgemmdh_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,reinterpret_cast<double*>(A),
+    &LDA,reinterpret_cast<double*>(B),&LDB,reinterpret_cast<double*>(&BETA),
     reinterpret_cast<double*>(C),&LDC);
 
 };
@@ -420,12 +445,49 @@ void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
 template<>
 void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  std::complex<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  std::complex<double> BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  std::cout << " IN SZZ" << std::endl;
+  hgemmzz_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
+    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
+    &LDB,reinterpret_cast<double*>(&BETA), reinterpret_cast<double*>(C),&LDC);
+
+};
+
+/*
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  std::complex<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  quaternion<double> BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  std::cout << " IN SZH" << std::endl;
+  hgemmzh_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
+    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
+    &LDB,reinterpret_cast<double*>(&BETA), reinterpret_cast<double*>(C),&LDC);
+
+};
+*/
+
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   quaternion<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
   double BETA, quaternion<double> *C, HAXX_INT LDC){
 
   hgemmhd_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
     reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
     &LDB,&BETA, reinterpret_cast<double*>(C),&LDC);
+
+};
+
+template<>
+void HBLAS_GEMM(char TRANSA, char TRANSB, HAXX_INT M, HAXX_INT N, HAXX_INT K,
+  quaternion<double> ALPHA, quaternion<double> *A, HAXX_INT LDA, quaternion<double> *B, HAXX_INT LDB, 
+  std::complex<double> BETA, quaternion<double> *C, HAXX_INT LDC){
+
+  hgemmhz_(&TRANSA,&TRANSB,&M,&N,&K,reinterpret_cast<double*>(&ALPHA),
+    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(B),
+    &LDB,reinterpret_cast<double*>(&BETA), reinterpret_cast<double*>(C),&LDC);
 
 };
 

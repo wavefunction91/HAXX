@@ -339,6 +339,326 @@ BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CCQ_LDSame)
   }
 }
 
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NQC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  HAXX::quaternion<double> 
+    ALPHA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_NQC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
+        HBLAS1_VECLEN,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TQC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  HAXX::quaternion<double> 
+    ALPHA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_TQC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CQC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  HAXX::quaternion<double> 
+    ALPHA(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_CQC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_NRC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
+        HBLAS1_VECLEN,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TRC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_TRC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CRC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  double ALPHA(dis(gen));
+
+  std::cout << "hblas2_gemv_square_CRC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NCC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::complex<double> ALPHA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_NCC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('N',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(i,0,HBLAS1_VECLEN)],
+        HBLAS1_VECLEN,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_TCC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::complex<double> ALPHA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_TCC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('T',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
+BOOST_AUTO_TEST_CASE(hblas2_gemv_square_CCC_LDSame)
+{
+  // Random Quaternion vectors and matricies
+  std::vector<HAXX::quaternion<double>> 
+    X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN), A(HBLAS2_MATLEN);
+
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : Y)
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  std::vector<HAXX::quaternion<double>> YC(Y);
+
+  std::complex<double> BETA(dis(gen),dis(gen));
+
+  std::complex<double> ALPHA(dis(gen),dis(gen));
+
+  std::cout << "hblas2_gemv_square_CCC_LDSame will use " << std::endl;
+  std::cout << "  ALPHA = " << ALPHA << std::endl;
+  std::cout << "  BETA = " << BETA << std::endl;
+  
+  HBLAS_GEMV('C',HBLAS1_VECLEN,HBLAS1_VECLEN,ALPHA,&A[0],HBLAS1_VECLEN,&X[0],1,
+    BETA,&Y[0],1);
+
+  for(int i = 0; i < HBLAS1_VECLEN; i++) {
+    HAXX::quaternion<double>
+      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(0,i,HBLAS1_VECLEN)],
+        1,&X[0],1);
+
+    BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));
+  }
+}
+
 BOOST_AUTO_TEST_CASE(hblas2_gemv_square_NRR_LDSame)
 {
   // Random Quaternion vectors and matricies
