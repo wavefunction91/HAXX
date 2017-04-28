@@ -34,6 +34,17 @@ std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
+template <typename _F> _F genRandom();
+template<> double genRandom<double>(){ return double(dis(gen)); }
+template<> std::complex<double> genRandom<std::complex<double>>(){ 
+  return std::complex<double>(dis(gen),dis(gen)); 
+}
+template<> HAXX::quaternion<double> genRandom<HAXX::quaternion<double>>(){ 
+  return HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen)); 
+}
+
+
+
 // Index list for HBLAS1 UT conformation
 std::vector<int> indx(boost::counting_iterator<int>(0),
   boost::counting_iterator<int>(HBLAS1_VECLEN));
