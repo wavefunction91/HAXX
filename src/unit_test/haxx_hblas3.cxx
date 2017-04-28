@@ -312,6 +312,9 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCCQ_LDSame) {
   hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'C','C'>();
 }
 
+
+
+
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNQQ_LDSame) {
   hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'N','N'>();
 }

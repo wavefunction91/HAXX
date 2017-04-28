@@ -10,7 +10,7 @@ set(HBLAS2_SRC
 set(HBLAS3_SRC 
   hblas/hblas3/hgemmdd.f hblas/hblas3/hgemmzd.f hblas/hblas3/hgemmhd.f
   hblas/hblas3/hgemmdz.f hblas/hblas3/hgemmzz.f hblas/hblas3/hgemmhz.f
-  hblas/hblas3/hgemmdh.f) #hblas/hblas3/hgemmzh.f hblas/hblas3/hgemmhh.f)
+  hblas/hblas3/hgemmdh.f hblas/hblas3/hgemmzh.f hblas/hblas3/hgemmhh.f)
 
 add_library(haxx_fortran STATIC ${HBLAS1_SRC} ${HBLAS2_SRC} 
   ${HBLAS3_SRC} util/lsame.f)
