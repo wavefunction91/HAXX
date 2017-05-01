@@ -12,5 +12,7 @@ set(HBLAS3_SRC
   hblas/hblas3/hgemmdz.f hblas/hblas3/hgemmzz.f hblas/hblas3/hgemmhz.f
   hblas/hblas3/hgemmdh.f hblas/hblas3/hgemmzh.f hblas/hblas3/hgemmhh.f)
 
+set(UTIL_SRC util/lsame.f util/hzexp.f util/hdexp.f)
+
 add_library(haxx_fortran STATIC ${HBLAS1_SRC} ${HBLAS2_SRC} 
-  ${HBLAS3_SRC} util/lsame.f)
+  ${HBLAS3_SRC} ${UTIL_SRC})

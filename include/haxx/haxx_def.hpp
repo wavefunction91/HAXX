@@ -14,6 +14,7 @@
 #include <complex> // Support for complex numbers
 #include <string>
 #include <sstream>
+#include <array>
 
 // HAXX Namespace
 namespace HAXX {
