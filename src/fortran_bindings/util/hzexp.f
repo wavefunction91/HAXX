@@ -1,3 +1,11 @@
+C 
+C     This file is a part of HAXX
+C     
+C     Copyright (c) 2017 David Williams-Young
+C     All rights reserved.
+C     
+C     See LICENSE.txt 
+C
       Subroutine HZEXP(M, N, A, LDA, B, LDB)
 C
       IMPLICIT COMPLEX*16(A-H,O,Z)

@@ -1,3 +1,11 @@
+C 
+C     This file is a part of HAXX
+C     
+C     Copyright (c) 2017 David Williams-Young
+C     All rights reserved.
+C     
+C     See LICENSE.txt 
+C
       Subroutine HGERUD(M, N, ALPHA, X, INCX, Y, INCY, A, LDA)
 C      
       LOGICAL    AZERO,AONE

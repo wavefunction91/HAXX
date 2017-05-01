@@ -1,3 +1,11 @@
+C 
+C     This file is a part of HAXX
+C     
+C     Copyright (c) 2017 David Williams-Young
+C     All rights reserved.
+C     
+C     See LICENSE.txt 
+C
 #define HBLAS_USE_COMPLEX
       Subroutine HGEMMDH(TRANSA, TRANSB, M, N, K, ALPHA, A, LDA,
      $  B, LDB, BETA, C, LDC)

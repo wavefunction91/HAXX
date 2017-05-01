@@ -9,6 +9,8 @@
 #set(Boost_USE_STATIC_LIBS ON)
 
 
+message( STATUS "HAXX WILL BUILD BENCHMARK EXECUTABLES" )
+
 add_executable(gemm gemm.cxx)
 
 include(ExternalProject)
