@@ -27,6 +27,9 @@ extern "C" {
   void hdotc_(const double*, const HAXX_INT*, const double*, 
     const HAXX_INT*, const double*, const HAXX_INT*);
 
+  double dhnrm2_(const HAXX_INT*, const HAXX::quaternion<double>*, 
+    const HAXX_INT*);
+
   void haxpydh_(const char*, const HAXX_INT*, const double*,
     const double*, const HAXX_INT*, const double*, const HAXX_INT*);
   void haxpych_(const char*, const HAXX_INT*, const double*,
@@ -77,6 +80,11 @@ namespace HAXX {
   template <typename _F>
   quaternion<_F> HBLAS_DOTC( HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
     quaternion<_F> *Y, HAXX_INT INCY);
+
+
+  /// Return the 2-norm of a quaternion vector
+  template <typename _F>
+  _F HBLAS_NRM2( HAXX_INT N, quaternion<_F> *X, HAXX_INT INC_X );
 
   /* @} */ // HBLAS1
 

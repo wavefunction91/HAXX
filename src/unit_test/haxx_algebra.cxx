@@ -68,6 +68,7 @@ BOOST_AUTO_TEST_CASE(norm)
 
 };
 
+/*
 BOOST_AUTO_TEST_CASE(hpow)
 {
   double a = genRandom<double>();
@@ -90,4 +91,15 @@ BOOST_AUTO_TEST_CASE(hsqrt)
   HAXX::quaternion<double> prod1 = qr * qr;
 
   BOOST_CHECK( CMP_Q(prod1,q) );
+
+
+  double a = genRandom<double>();
+  HAXX::quaternion<double> qa(a);
+  HAXX::quaternion<double> qar = HAXX::sqrt(qa);
+
+  HAXX::quaternion<double> prod2 = qar * qar;
+  
+  std::cout << qa << "," << prod2 << "," << qa - prod2 << std::endl;
+  BOOST_CHECK( CMP_Q(prod2,qa) );
 };
+*/

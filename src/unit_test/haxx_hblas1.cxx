@@ -282,3 +282,17 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
 
   // FIXME: Need a test for when strides are not equal
 }
+
+BOOST_AUTO_TEST_CASE(hblas1_nrm2)
+{
+
+  std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN);
+  for(auto &x : X) 
+    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+  // FIXME: Need a test for strided data
+  double nrm2 = HBLAS_NRM2(HBLAS1_VECLEN,&X[0],1);
+  HAXX::quaternion<double> tmp  = HBLAS_DOTC(HBLAS1_VECLEN,&X[0],1,&X[0],1);
+  
+  BOOST_CHECK_CLOSE(nrm2,std::sqrt(tmp.real()),COMPARE_TOL);
+}

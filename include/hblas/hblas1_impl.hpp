@@ -30,4 +30,7 @@
 // HBLAS_DOTC
 #include "hblas/hblas1/hblas_dotc_impl.hpp"
 
+// HBLAS_NRM2
+#include "hblas/hblas1/hblas_nrm2_impl.hpp"
+
 #endif
