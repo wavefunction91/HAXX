@@ -68,4 +68,26 @@ BOOST_AUTO_TEST_CASE(norm)
 
 };
 
+BOOST_AUTO_TEST_CASE(hpow)
+{
+  double a = genRandom<double>();
+  HAXX::quaternion<double> q = genRandom<HAXX::quaternion<double>>();
 
+  HAXX::quaternion<double> qa = HAXX::pow(q,a);
+  HAXX::quaternion<double> qma = HAXX::pow(q,-a);
+
+  HAXX::quaternion<double> prod1 = qa * qma;
+  HAXX::quaternion<double> prod2 = qma * qa;
+
+  BOOST_CHECK( CMP_Q(prod1,prod2) );
+  BOOST_CHECK( CMP_Q(prod1,HAXX::quaternion<double>(1.))    );
+};
+
+BOOST_AUTO_TEST_CASE(hsqrt)
+{
+  HAXX::quaternion<double> q = genRandom<HAXX::quaternion<double>>();
+  HAXX::quaternion<double> qr = HAXX::sqrt(q);
+  HAXX::quaternion<double> prod1 = qr * qr;
+
+  BOOST_CHECK( CMP_Q(prod1,q) );
+};

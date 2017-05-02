@@ -348,6 +348,22 @@ template <typename _F>
 
 /* @} */ // QAlg
 
+/**
+ * @defgroup QFun Functions of Quaternion Variables
+ * Defines various functions of quaternion variables
+ * @{
+ */
+
+/// Returns the power of a quaternion raised to some real exponent
+template <typename _F>
+  inline quaternion<_F> pow(const quaternion<_F>&, const _F&);
+
+/// Returns the square root of a quaternion
+template <typename _F>
+  inline quaternion<_F> sqrt(const quaternion<_F> &);
+
+/* @} */ // QFun
+
 /* @} */ // quaternion
 
 }; // HAXX namespace

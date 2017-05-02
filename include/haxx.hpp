@@ -26,5 +26,7 @@
 // Quaternion Reduction
 #include "haxx/haxx_quaternion_reduction.hpp"
 
+// Quaternion Functions
+#include "haxx/haxx_functions.hpp"
 
 #endif
