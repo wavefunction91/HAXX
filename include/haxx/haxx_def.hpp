@@ -239,7 +239,7 @@ template <typename _F>
 inline bool operator==(const quaternion<_F>&, const quaternion<_F>&);
 /// Check the inequality of two quaternions
 template <typename _F>
-inline bool operator==(const quaternion<_F>&, const quaternion<_F>&);
+inline bool operator!=(const quaternion<_F>&, const quaternion<_F>&);
 
 /* @} */ // QQOp
 
@@ -281,6 +281,19 @@ inline quaternion<_F> operator/(const quaternion<_F>&, const _F&);
 /// Divide a real number by a quaternion number
 template <typename _F>
 inline quaternion<_F> operator*(const _F&, const quaternion<_F>&);
+
+/// Check the equality of two quaternions
+template <typename _F>
+inline bool operator==(const quaternion<_F>&, const _F&);
+/// Check the equality of two quaternions
+template <typename _F>
+inline bool operator==(const _F&, const quaternion<_F>&);
+/// Check the inequality of two quaternions
+template <typename _F>
+inline bool operator!=(const quaternion<_F>&, const _F&);
+/// Check the inequality of two quaternions
+template <typename _F>
+inline bool operator!=(const _F&, const quaternion<_F>&);
 
 /* @} */ // QROp
 

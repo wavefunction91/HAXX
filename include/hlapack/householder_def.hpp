@@ -30,8 +30,11 @@ namespace HAXX {
 
   /// Generates a quaternion elementary (Householder) reflector H of order N
   template < typename _F >
+/*
   quaternion<_F> HLAPACK_LARFG(HAXX_INT N, quaternion<_F>& ALPHA, 
     quaternion<_F> *X, HAXX_INT INCX);
+*/
+  _F HLAPACK_LARFG(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX);
 
   template < typename _F >
   void HLAPACK_LARF(char SIDE, HAXX_INT M, HAXX_INT N, quaternion<_F> *V,
