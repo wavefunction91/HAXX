@@ -8,8 +8,6 @@
 #include "hlapack/householder_impl.hpp"
 
 
-//#undef HBLAS1_VECLEN
-//#define HBLAS1_VECLEN 10
 BOOST_AUTO_TEST_CASE(hlapack_larfg)
 {
   std::vector<HAXX::quaternion<double>> 
