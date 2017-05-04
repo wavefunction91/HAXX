@@ -39,6 +39,7 @@ void HLAPACK_LARF(char SIDE, HAXX_INT M, HAXX_INT N, quaternion<_F> *V,
   } else {
 
     HBLAS_GEMV('N',M,N,_F(1.),C,LDC,V,INCV,_F(0.),WORK,1);
+    // FIXME: This assumes that TAU is real
     HBLAS_GERC(M,N,-TAU,WORK,1,V,INCV,C,LDC);
 
   }
