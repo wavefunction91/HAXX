@@ -29,8 +29,6 @@ addons:
       - g++-5
       - clang-3.8
       - libboost1.55-all-dev
-      - cmake
-      - cmake-data
 install: true
 script:
   - ./bin/travisci.sh
