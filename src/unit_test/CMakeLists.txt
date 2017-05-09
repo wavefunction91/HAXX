@@ -6,7 +6,10 @@
 #
 #  See LICENSE.txt 
 #
-set(Boost_USE_STATIC_LIBS ON)
+
+if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(Boost_USE_STATIC_LIBS ON)
+endif()
 
 message( STATUS "HAXX WILL BUILD TEST EXECUTABLES" )
 find_package (Boost COMPONENTS unit_test_framework REQUIRED)
