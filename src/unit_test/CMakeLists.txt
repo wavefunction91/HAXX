@@ -6,7 +6,7 @@
 #
 #  See LICENSE.txt 
 #
-#set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_LIBS ON)
 
 message( STATUS "HAXX WILL BUILD TEST EXECUTABLES" )
 find_package (Boost COMPONENTS unit_test_framework REQUIRED)

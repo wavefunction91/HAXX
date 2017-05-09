@@ -11,7 +11,7 @@
 #define __INCLUDED_HBLAS_CONFIG_HPP
 
 #ifndef HAXX_INT
-  #define HAXX_INT int
+  #define HAXX_INT int32_t
 #endif
 
 #define RANK2_INDX(i,j,N) ( (i) + (j)*(N) )
