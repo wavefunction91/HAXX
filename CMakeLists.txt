@@ -30,3 +30,10 @@ option( HAXX_ENABLE_TESTING   "Enable build of HAXX / HBLAS Unit Tests" ON )
 
 enable_testing()
 add_subdirectory(src)
+
+
+# Install Headers
+install(FILES ${PROJECT_SOURCE_DIR}/include/haxx.hpp DESTINATION include)
+install(FILES ${PROJECT_SOURCE_DIR}/include/hblas.hpp DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/haxx DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/hblas DESTINATION include)

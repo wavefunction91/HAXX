@@ -16,3 +16,7 @@ set(UTIL_SRC util/lsame.f util/hzexp.f util/hdexp.f)
 
 add_library(haxx_fortran STATIC ${HBLAS1_SRC} ${HBLAS2_SRC} 
   ${HBLAS3_SRC} ${UTIL_SRC})
+
+
+# Install FORTRAN library
+install(TARGETS haxx_fortran DESTINATION lib)
