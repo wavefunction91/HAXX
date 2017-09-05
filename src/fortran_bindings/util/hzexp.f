@@ -6,7 +6,7 @@ C     All rights reserved.
 C     
 C     See LICENSE.txt 
 C
-      Subroutine HZEXP(M, N, A, LDA, B, LDB)
+      Subroutine HZEXP1(M, N, A, LDA, B, LDB)
 C
       IMPLICIT COMPLEX*16(A-H,O,Z)
       DIMENSION A(2,LDA,*), B(LDB,*)
@@ -24,5 +24,22 @@ C
   10    CONTINUE
         JB = JB + 2
   20  CONTINUE
+C
+      END
+C
+C
+C
+      Subroutine HZEXP2(M, N, A, LDA, B, LDB)
+C
+      IMPLICIT COMPLEX*16(A-H,O,Z)
+      DIMENSION A(2,LDA,*), B(LDB,*)
+C
+      Do 10 J = 1,N
+      Do 10 I = 1,M
+        B(I,J)     =  A(1,I,J)
+        B(I+M,J+N) =  CONJG(A(1,I,J))
+        B(I,J+N)   =  A(2,I,J)
+        B(I+M,J)   = -CONJG(A(2,I,J))
+  10  CONTINUE
 C
       END

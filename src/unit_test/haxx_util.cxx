@@ -1,0 +1,64 @@
+/*
+ *  This file is a part of HAXX
+ *  
+ *  Copyright (c) 2017 David Williams-Young
+ *  All rights reserved.
+ *  
+ *  See LICENSE.txt 
+ */
+
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE HAXX_BLAS3
+
+#include "haxx_ut.hpp"
+#include "hblas/hblas_util_impl.hpp"
+#include "hblas/hblas3_impl.hpp"
+
+
+void ComplexExpandTest(char ORDER) {
+
+  std::vector<HAXX::quaternion<double>> A(HBLAS2_MATLEN);
+  std::vector<HAXX::quaternion<double>> B(HBLAS2_MATLEN);
+  std::vector<HAXX::quaternion<double>> C(HBLAS2_MATLEN);
+  
+  std::vector<std::complex<double>> AC(4*HBLAS2_MATLEN);
+  std::vector<std::complex<double>> BC(4*HBLAS2_MATLEN);
+  std::vector<std::complex<double>> CC(4*HBLAS2_MATLEN);
+  std::vector<std::complex<double>> PC(4*HBLAS2_MATLEN);
+
+  for(auto &x : A) x = genRandom<HAXX::quaternion<double>>();
+  for(auto &x : B) x = genRandom<HAXX::quaternion<double>>();
+
+  HBLAS_COMPLEX_EXPAND(ORDER,HBLAS1_VECLEN,HBLAS1_VECLEN,&A[0],HBLAS1_VECLEN,
+    &AC[0],2*HBLAS1_VECLEN);
+  HBLAS_COMPLEX_EXPAND(ORDER,HBLAS1_VECLEN,HBLAS1_VECLEN,&B[0],HBLAS1_VECLEN,
+    &BC[0],2*HBLAS1_VECLEN);
+
+
+  // Quaternion multiplication
+  HBLAS_GEMM('N','N', HBLAS1_VECLEN, HBLAS1_VECLEN, HBLAS1_VECLEN,
+    1., &A[0], HBLAS1_VECLEN, &B[0], HBLAS1_VECLEN, 0., &C[0],
+    HBLAS1_VECLEN);
+  
+  // Complex multiplication (FIXME: Should use ZGEMM here)
+  for(auto i = 0; i < 2*HBLAS1_VECLEN; i++)
+  for(auto j = 0; j < 2*HBLAS1_VECLEN; j++) {
+    CC[i + j*2*HBLAS1_VECLEN]  = 0.;
+  for(auto k = 0; k < 2*HBLAS1_VECLEN; k++)
+    CC[i + j*2*HBLAS1_VECLEN]  += 
+      AC[i + k*2*HBLAS1_VECLEN] * BC[k + j*2*HBLAS1_VECLEN];
+  }
+
+  // Expand product to complex
+  HBLAS_COMPLEX_EXPAND(ORDER,HBLAS1_VECLEN,HBLAS1_VECLEN,&C[0],HBLAS1_VECLEN,
+    &PC[0],2*HBLAS1_VECLEN);
+  
+
+  for(auto i = 0; i < 4*HBLAS2_MATLEN; i++)
+    BOOST_CHECK( std::norm(CC[i] / PC[i] - 1.) < COMPARE_TOL );
+
+};
+
+
+BOOST_AUTO_TEST_CASE(Complex_Expand1) { ComplexExpandTest('F'); };
+BOOST_AUTO_TEST_CASE(Complex_Expand2) { ComplexExpandTest('S'); };
