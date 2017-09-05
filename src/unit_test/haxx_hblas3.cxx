@@ -15,19 +15,17 @@
 #include "hblas/hblas2_impl.hpp"
 #include "hblas/hblas3_impl.hpp"
 
-template <typename _AlphaF, typename _BetaF, char _TA, char _TB>
+template <typename _AF, typename _BF, typename _AlphaF, typename _BetaF, char _TA, char _TB>
 void hblas3_gemm_square_LDSame() {
 
   // Random Quaternion vectors and matricies
-  std::vector<HAXX::quaternion<double>> 
-    A(HBLAS2_MATLEN), B(HBLAS2_MATLEN), C(HBLAS2_MATLEN);
+  std::vector<_AF> A(HBLAS2_MATLEN);
+  std::vector<_BF> B(HBLAS2_MATLEN);
+  std::vector<HAXX::quaternion<double>> C(HBLAS2_MATLEN);
 
-  for(auto &x : A) 
-    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
-  for(auto &x : B) 
-    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
-  for(auto &x : C) 
-    x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  for(auto &x : A) x = genRandom<_AF>();
+  for(auto &x : B) x = genRandom<_BF>();
+  for(auto &x : C) x = genRandom<HAXX::quaternion<double>>();
 
   std::vector<HAXX::quaternion<double>> CC(C);
   std::vector<HAXX::quaternion<double>> SCR(HBLAS1_VECLEN);
@@ -37,7 +35,19 @@ void hblas3_gemm_square_LDSame() {
 
   std::stringstream ss;
 
-  ss << "hblas3_gemm_square_" << _TA << _TB;
+  ss << "hblas3_gemm_square_";
+  if(std::is_same<double,_AF>::value) ss << "R";
+  else if(std::is_same<std::complex<double>,_AF>::value) ss << "C";
+  else ss << "Q";
+  if(std::is_same<double,_BF>::value) ss << "R";
+  else if(std::is_same<std::complex<double>,_BF>::value) ss << "C";
+  else ss << "Q";
+
+
+  ss << _TA << _TB;
+
+
+
   if(std::is_same<double,_AlphaF>::value) ss << "R";
   else if(std::is_same<std::complex<double>,_AlphaF>::value) ss << "C";
   else ss << "Q";
@@ -82,263 +92,305 @@ void hblas3_gemm_square_LDSame() {
       );
     }
   }
+
 };
 
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'N','N'>();
+
+// Quaternion-Quaternion matrix-matrix multiplication
+
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRR_LDSame) {
-  hblas3_gemm_square_LDSame<double,double,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCRR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,double,'C','C'>();
 }
 
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'N','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCCR_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,double,'C','C'>();
-}
-
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'N','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'N','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'N','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'T','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'T','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'T','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'C','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'C','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCQR_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,double,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCCR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,double,'C','C'>();
 }
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'N','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRC_LDSame) {
-  hblas3_gemm_square_LDSame<double,std::complex<double>,'C','C'>();
-}
-
-
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'N','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'N','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'N','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'T','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'T','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'T','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'C','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'C','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCCC_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,std::complex<double>,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCQR_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,double,'C','C'>();
 }
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'N','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCQC_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,std::complex<double>,'C','C'>();
-}
-
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'N','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'N','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'N','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'T','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'T','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'T','C'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'C','N'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'C','T'>();
-}
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCRQ_LDSame) {
-  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCRC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,std::complex<double>,'C','C'>();
 }
 
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'N','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCCQ_LDSame) {
-  hblas3_gemm_square_LDSame<std::complex<double>,HAXX::quaternion<double>,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCCC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,std::complex<double>,'C','C'>();
+}
+
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'N','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'N','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'N','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'T','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'T','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'T','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'C','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'C','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCQC_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,'C','C'>();
+}
+
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'N','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'N','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'N','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'T','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'T','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'T','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'C','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'C','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCRQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,double,HAXX::quaternion<double>,'C','C'>();
+}
+
+
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'N','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'N','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'N','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'T','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'T','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'T','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'C','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'C','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCCQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,std::complex<double>,HAXX::quaternion<double>,'C','C'>();
 }
 
 
 
 
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NNQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'N','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNNQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'N','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NTQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'N','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNTQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'N','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_NCQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'N','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHNCQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'N','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TNQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'T','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTNQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'T','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TTQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'T','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTTQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'T','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_TCQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'T','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHTCQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'T','C'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CNQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'C','N'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCNQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'C','N'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CTQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'C','T'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCTQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'C','T'>();
 }
-BOOST_AUTO_TEST_CASE(hblas3_gemm_square_CCQQ_LDSame) {
-  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,'C','C'>();
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_HHCCQQ_LDSame) {
+  hblas3_gemm_square_LDSame<HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,HAXX::quaternion<double>,'C','C'>();
+}
+
+
+
+
+
+// Real-Quaternion matrix-matrix multiplication
+
+
+
+
+
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHNNRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'N','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHNTRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'N','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHNCRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'N','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHTNRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'T','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHTTRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'T','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHTCRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'T','C'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHCNRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'C','N'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHCTRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'C','T'>();
+}
+BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHCCRR_LDSame) {
+  hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'C','C'>();
 }

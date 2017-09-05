@@ -85,8 +85,6 @@ void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _F ALPHA, _LeftVecF *X,
   HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
   HAXX_INT LDA){
 
-  std::cout << " IN SPEC" << std::endl;
-
   if( M == 0 or N == 0 or ALPHA == 0.) return;
 
   // FIXME: The original BLAS implementaion has logic to handle

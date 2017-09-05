@@ -21,6 +21,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   const HAXX_INT LDA, _BMatF * const B, const HAXX_INT LDB, 
   const _BetaF BETA, quaternion<_F> * const C, const HAXX_INT LDC){
 
+
   bool NOTA  = TRANSA == 'N';
   bool NOTB  = TRANSB == 'N';
   bool CONJA = TRANSA == 'C';
@@ -60,7 +61,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   HAXX_INT i,j,l;
   quaternion<_F> htemp;
 
-  quaternion<_F> *CCol, *BCol, *ACol, *BRow;
+  quaternion<_F> *CCol; 
+  _BMatF *BCol, *BRow;
+  _AMatF *ACol;
 
   // If ALPHA is zero
   if( AlphaIsZero ) {
@@ -104,7 +107,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * BCol[l];
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * BCol[l];
   
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -141,7 +144,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( l = 0; l < K; ++l ) {
           ACol = A + l*LDA;
           BCol = B + l*LDB;
-          for( i = 0; i < M; ++i ) CCol[i] += ALPHA * ACol[i] * conj(BCol[j]);
+          for( i = 0; i < M; ++i ) CCol[i] += ALPHA * ACol[i] * SmartConj(BCol[j]);
         }
       } // end loop-j
     } else { // end CONJB
@@ -171,7 +174,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * conj(BRow[l*LDB]);
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * SmartConj(BRow[l*LDB]);
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -184,7 +187,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * BRow[l*LDB];
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * BRow[l*LDB];
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -200,7 +203,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += ACol[l] * conj(BRow[l*LDB]);
+          for( l = 0; l < K; ++l ) htemp += ACol[l] * SmartConj(BRow[l*LDB]);
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -229,6 +232,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   const HAXX_INT N, const HAXX_INT K, const _F ALPHA, _AMatF * const A, 
   const HAXX_INT LDA, _BMatF * const B, const HAXX_INT LDB, const _BetaF BETA, 
   quaternion<_F> * const C, const HAXX_INT LDC){
+
 
   bool NOTA  = TRANSA == 'N';
   bool NOTB  = TRANSB == 'N';
@@ -269,7 +273,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   HAXX_INT i,j,l;
   quaternion<_F> htemp;
 
-  quaternion<_F> *CCol, *BCol, *ACol, *BRow;
+  quaternion<_F> *CCol; 
+  _BMatF *BCol, *BRow;
+  _AMatF *ACol;
 
   // If ALPHA is zero
   if( AlphaIsZero ) {
@@ -314,7 +320,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * BCol[l];
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * BCol[l];
   
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -348,7 +354,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
          
         for( l = 0; l < K; ++l ) {
           ACol = A + l*LDA;
-          htemp = ALPHA * conj(B[RANK2_INDX(j,l,LDB)]);
+          htemp = ALPHA * SmartConj(B[RANK2_INDX(j,l,LDB)]);
           for( i = 0; i < M; ++i ) CCol[i] += ACol[i] * htemp;
         }
       } // end loop-j
@@ -379,7 +385,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * conj(BRow[l*LDB]);
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * SmartConj(BRow[l*LDB]);
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -392,7 +398,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += conj(ACol[l]) * BRow[l*LDB];
+          for( l = 0; l < K; ++l ) htemp += SmartConj(ACol[l]) * BRow[l*LDB];
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];
@@ -408,7 +414,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         for( i = 0; i < M; ++i ) { 
           ACol = A + i*LDA;
           htemp = 0.;
-          for( l = 0; l < K; ++l ) htemp += ACol[l] * conj(BRow[l*LDB]);
+          for( l = 0; l < K; ++l ) htemp += ACol[l] * SmartConj(BRow[l*LDB]);
 
           if( BetaIsZero ) CCol[i] = ALPHA*htemp;
           else             CCol[i] = ALPHA*htemp + BETA*CCol[i];

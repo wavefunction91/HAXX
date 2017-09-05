@@ -177,7 +177,7 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
             htemp1 += A[RANK2_INDX(i,j,LDA)] * X[i];
         else
           for( i = 0; i < M; ++i) 
-            htemp1 += conj(A[RANK2_INDX(i,j,LDA)]) * X[i];
+            htemp1 += SmartConj(A[RANK2_INDX(i,j,LDA)]) * X[i];
 
         Y[jy] += ALPHA * htemp1;
 
@@ -194,7 +194,7 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
             htemp1 += A[RANK2_INDX(i,j,LDA)] * X[ix];
         else
           for( i = 0, ix = KX; i < M; ++i, ix += INCX) 
-            htemp1 += conj(A[RANK2_INDX(i,j,LDA)]) * X[ix];
+            htemp1 += SmartConj(A[RANK2_INDX(i,j,LDA)]) * X[ix];
 
         Y[jy] += ALPHA * htemp1;
 
@@ -321,7 +321,7 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _F ALPHA,
             htemp1 += A[RANK2_INDX(i,j,LDA)] * X[i];
         else
           for( i = 0; i < M; ++i) 
-            htemp1 += conj(A[RANK2_INDX(i,j,LDA)]) * X[i];
+            htemp1 += SmartConj(A[RANK2_INDX(i,j,LDA)]) * X[i];
 
         Y[jy] += ALPHA * htemp1;
 
@@ -338,7 +338,7 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _F ALPHA,
             htemp1 += A[RANK2_INDX(i,j,LDA)] * X[ix];
         else
           for( i = 0, ix = KX; i < M; ++i, ix += INCX) 
-            htemp1 += conj(A[RANK2_INDX(i,j,LDA)]) * X[ix];
+            htemp1 += SmartConj(A[RANK2_INDX(i,j,LDA)]) * X[ix];
 
         Y[jy] += ALPHA * htemp1;
 

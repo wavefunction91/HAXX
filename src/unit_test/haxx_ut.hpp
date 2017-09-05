@@ -24,7 +24,7 @@
 #include <chrono>
 
 // Length constants
-#define HBLAS1_VECLEN 500
+#define HBLAS1_VECLEN 100
 #define HBLAS2_MATLEN (HBLAS1_VECLEN) * (HBLAS1_VECLEN)
 #define HBLAS1_RAND_MIN -20
 #define HBLAS1_RAND_MAX 54

@@ -346,9 +346,39 @@ template <typename _F>
 template <typename _F> 
   inline quaternion<_F> comm(const std::complex<_F>&, const quaternion<_F>&);
 
+/// Returns the commutator of a quaternion number and a real number
+template <typename _F> 
+  inline quaternion<_F> comm(const quaternion<_F>&, const _F&);
+
+/// Returns the commutator of a quaternion number and a real number
+template <typename _F> 
+  inline quaternion<_F> comm(const _F&, const quaternion<_F>&);
+
 /* @} */ // QAlg
 
 /* @} */ // quaternion
+
+
+
+/**
+ *  @defgroup MiscFunctions Miscellaneous Function Overloads and Replacements
+ *  Various overloads / replacements of standard functions
+ *
+ *  @{
+ */
+
+template <typename _F> inline _F SmartConj( _F& );
+template<> inline double SmartConj( double &x ) { return x; }
+template<> 
+  inline std::complex<double> SmartConj( std::complex<double> &x ) { 
+    return std::conj(x); 
+  }
+template<> 
+  inline quaternion<double> SmartConj( quaternion<double> &x ) { 
+    return conj(x); 
+  }
+
+/* @} */ // MiscFunctions 
 
 }; // HAXX namespace
 

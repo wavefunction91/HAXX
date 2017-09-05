@@ -89,6 +89,21 @@ inline quaternion<_F> comm(const std::complex<_F>& p, const quaternion<_F>& q) {
 }
 
 
+template <typename _F> 
+inline quaternion<_F> comm(const _F& p, const quaternion<_F>& q) {
+
+  return quaternion<_F>(0.);
+
+}
+
+template <typename _F> 
+inline quaternion<_F> comm(const quaternion<_F>& q, const _F& p) {
+
+  return quaternion<_F>(0.);
+
+}
+
+
 };
 
 #endif
