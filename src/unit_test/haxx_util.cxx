@@ -59,6 +59,33 @@ void ComplexExpandTest(char ORDER) {
 
 };
 
+void ComplexContractTest(char ORDER, char UPLO) {
+
+  std::vector<HAXX::quaternion<double>> A(HBLAS2_MATLEN);
+  std::vector<HAXX::quaternion<double>> B(HBLAS2_MATLEN);
+  
+  std::vector<std::complex<double>> AC(4*HBLAS2_MATLEN);
+
+  for(auto &x : A) x = genRandom<HAXX::quaternion<double>>();
+
+  // A -> AC
+  HBLAS_COMPLEX_EXPAND(ORDER,HBLAS1_VECLEN,HBLAS1_VECLEN,&A[0],HBLAS1_VECLEN,
+    &AC[0],2*HBLAS1_VECLEN);
+
+  // AC -> B
+  HBLAS_COMPLEX_CONTRACT(ORDER,UPLO,HBLAS1_VECLEN,HBLAS1_VECLEN,&B[0],
+    HBLAS1_VECLEN,&AC[0],2*HBLAS1_VECLEN);
+
+
+  // Compare A and B
+  for(auto i = 0; i < HBLAS2_MATLEN; i++)
+    BOOST_CHECK( CMP_Q(A[i],B[i]) );
+}
+
 
 BOOST_AUTO_TEST_CASE(Complex_Expand1) { ComplexExpandTest('F'); };
 BOOST_AUTO_TEST_CASE(Complex_Expand2) { ComplexExpandTest('S'); };
+BOOST_AUTO_TEST_CASE(Complex_Contract1) { ComplexContractTest('F','U'); };
+BOOST_AUTO_TEST_CASE(Complex_Contract2) { ComplexContractTest('S','U'); };
+BOOST_AUTO_TEST_CASE(Complex_Contract3) { ComplexContractTest('F','L'); };
+BOOST_AUTO_TEST_CASE(Complex_Contract4) { ComplexContractTest('S','L'); };

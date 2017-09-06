@@ -10,8 +10,9 @@
 #ifndef __INCLUDED_HBLAS_UTIL_IMPL_HPP
 #define __INCLUDED_HBLAS_UTIL_IMPL_HPP
 
-// Expand functions
+// Expand/Contract functions
 #include "hblas/util/expand_impl.hpp"
+#include "hblas/util/contract_impl.hpp"
 
 #endif
 

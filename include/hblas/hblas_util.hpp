@@ -22,6 +22,10 @@ extern "C" {
   void hdexp_(const int*, const int*, HAXX::quaternion<double>*, const int*,
     double*, const int*);
 
+  void hzcon1_(const char*, const int*, const int*, HAXX::quaternion<double>*, 
+    const int*, std::complex<double>*, const int*);
+  void hzcon2_(const char*, const int*, const int*, HAXX::quaternion<double>*, 
+    const int*, std::complex<double>*, const int*);
 }
 
 namespace HAXX {
@@ -48,6 +52,11 @@ namespace HAXX {
   void HBLAS_REAL_EXPAND(HAXX_INT M, HAXX_INT N, quaternion<_F> *A,
     HAXX_INT LDA, _F *B, HAXX_INT LDB);
 
+  /// Contract a complex matrix (of proper symmetry) to a quaternion
+  /// matrix
+  template <typename _F>
+  void HBLAS_COMPLEX_CONTRACT(char ORDER, char UPLO, HAXX_INT M, HAXX_INT N, 
+    quaternion<_F> *A, HAXX_INT LDA, std::complex<_F> *B, HAXX_INT LDB);
 
 
   /* @} */ // HBLAS_UTIL
