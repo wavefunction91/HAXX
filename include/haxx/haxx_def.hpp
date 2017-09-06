@@ -211,6 +211,32 @@ std::string to_string(quaternion<_F> &x) {
   return ss.str();
 };
 
+
+/**
+ *  @defgoup QOp Quaterion Unary Operations
+ *  Unary operations on quaternion numbers
+ *  @{
+ */
+
+/// Extract real part of a quaternion number
+template <typename _F>
+  inline _F real(const quaternion<_F> &x){ return x.real(); } 
+
+/// Extract i-imaginary part of a quaternion number
+template <typename _F>
+  inline _F imag_i(const quaternion<_F> &x){ return x.imag_i(); } 
+
+/// Extract j-imaginary part of a quaternion number
+template <typename _F>
+  inline _F imag_j(const quaternion<_F> &x){ return x.imag_j(); } 
+
+/// Extract k-imaginary part of a quaternion number
+template <typename _F>
+  inline _F imag_k(const quaternion<_F> &x){ return x.imag_k(); } 
+
+
+/* @} */ // QOp
+
 /**
  *  @defgroup QQOp Quaternion - Quaternion Binary Operations
  *  Binary arithmetic operations between quaternion numbers
