@@ -13,67 +13,69 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
-extern "C" {
-
-  void hgemmdd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const double*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*, const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const double*, const HAXX::quaternion<double>*, const HAXX_INT*);
-
-  void hgemmdz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const double*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*, const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const std::complex<double>*, const HAXX::quaternion<double> *, 
-    const HAXX_INT*);
-
-  void hgemmdh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const double*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*, const HAXX::quaternion<double> *, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*);
-
-  void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const std::complex<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const double*, const HAXX::quaternion<double>*, const HAXX_INT*);
-
-  void hgemmzz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const std::complex<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const std::complex<double>*, const HAXX::quaternion<double> *, 
-    const HAXX_INT*);
-
-  void hgemmzh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const std::complex<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double> *, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*);
-
-  void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const HAXX::quaternion<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const double*, const HAXX::quaternion<double>*, const HAXX_INT*);
-
-  void hgemmhz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const HAXX::quaternion<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const std::complex<double>*, const HAXX::quaternion<double> *, 
-    const HAXX_INT*);
-
-  void hgemmhh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-    const HAXX_INT*, const HAXX::quaternion<double>*, 
-    const HAXX::quaternion<double>*, const HAXX_INT*, 
-    const HAXX::quaternion<double> *, const HAXX_INT*, 
-    const HAXX::quaternion<double>*, const HAXX::quaternion<double>*, 
-    const HAXX_INT*);
-};
 
 namespace HAXX {
+
+  // FORTRAN HBLAS3 Functions
+  extern "C" {
+  
+    void hgemmdd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const double*, const quaternion<double>*, 
+      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*, 
+      const double*, const quaternion<double>*, const HAXX_INT*);
+  
+    void hgemmdz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const double*, const quaternion<double>*, 
+      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*, 
+      const std::complex<double>*, const quaternion<double> *, 
+      const HAXX_INT*);
+  
+    void hgemmdh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const double*, const quaternion<double>*, 
+      const HAXX_INT*, const quaternion<double> *, const HAXX_INT*, 
+      const quaternion<double>*, const quaternion<double>*, 
+      const HAXX_INT*);
+  
+    void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const std::complex<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const double*, const quaternion<double>*, const HAXX_INT*);
+  
+    void hgemmzz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const std::complex<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const std::complex<double>*, const quaternion<double> *, 
+      const HAXX_INT*);
+  
+    void hgemmzh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const std::complex<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double> *, const HAXX_INT*, 
+      const quaternion<double>*, const quaternion<double>*, 
+      const HAXX_INT*);
+  
+    void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const quaternion<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const double*, const quaternion<double>*, const HAXX_INT*);
+  
+    void hgemmhz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const quaternion<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const std::complex<double>*, const quaternion<double> *, 
+      const HAXX_INT*);
+  
+    void hgemmhh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
+      const HAXX_INT*, const quaternion<double>*, 
+      const quaternion<double>*, const HAXX_INT*, 
+      const quaternion<double> *, const HAXX_INT*, 
+      const quaternion<double>*, const quaternion<double>*, 
+      const HAXX_INT*);
+  };
 
   /**
    *  \addtogroup HBLAS
