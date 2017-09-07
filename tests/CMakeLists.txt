@@ -24,8 +24,7 @@ add_test(HAXX_ALGEBRA   haxx_ut --report_level=detailed --run_test=HAXX_ALGEBRA 
 add_test(HAXX_BINARY_OP haxx_ut --report_level=detailed --run_test=HAXX_BINARY_OP)
 add_test(HAXX_UNARY_OP  haxx_ut --report_level=detailed --run_test=HAXX_UNARY_OP )
 
-add_executable(hblas_ut ut.cxx haxx_hblas1.cxx haxx_hblas2.cxx haxx_hblas3.cxx
-  haxx_util.cxx)
+add_executable(hblas_ut ut.cxx hblas1.cxx hblas2.cxx hblas3.cxx hblas_util.cxx)
 target_compile_definitions(hblas_ut PUBLIC BOOST_TEST_MODULE=HBLAS_FUNCTIONALITY)
 target_link_libraries(hblas_ut ${Boost_LIBRARIES} hblas)
 

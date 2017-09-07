@@ -9,10 +9,6 @@
 
 add_subdirectory(hblas)
 
-if( HAXX_ENABLE_TESTING )
-  add_subdirectory(unit_test)
-endif()
-
 if( HAXX_ENABLE_BENCHMARK )
   add_subdirectory(benchmark)
 endif()

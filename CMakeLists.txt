@@ -28,8 +28,12 @@ option( HAXX_ENABLE_BENCHMARK "Enable build of HAXX / HBLAS Benchmark" OFF )
 option( HAXX_ENABLE_TESTING   "Enable build of HAXX / HBLAS Unit Tests" ON )
 
 
-enable_testing()
 add_subdirectory(src)
+
+if( HAXX_ENABLE_TESTING )
+  enable_testing()
+  add_subdirectory(tests)
+endif()
 
 
 # Install Headers
