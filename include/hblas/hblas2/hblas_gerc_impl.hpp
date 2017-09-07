@@ -82,35 +82,6 @@ void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, const _AlphaF ALPHA,
 }; // end GERC
 
 
-template <>
-void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, const double ALPHA, 
-  quaternion<double> * const X, const HAXX_INT INCX, 
-  quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgercd_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
-
-}
-
-template <>
-void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, 
-  const std::complex<double> ALPHA, quaternion<double> * const X,
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgercz_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
-
-}
-
-template <>
-void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, 
-  const quaternion<double> ALPHA, quaternion<double> * const X,
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgerch_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
-
-}
 
 }; // namspace HAXX
 

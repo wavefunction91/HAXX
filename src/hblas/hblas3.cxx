@@ -10,15 +10,58 @@
 #include "haxx.hpp"
 #include "hblas/hblas3_impl.hpp"
 
+// Preprocessor macros for quick CXX implementations
+  
+#define GEMM_CXX_IMPL(F,AMATF,BMATF,ALPHAF,BETAF) \
+template \
+void HBLAS_GEMM(const char, const char, const HAXX_INT, const HAXX_INT, \
+  const HAXX_INT, const ALPHAF ALPHA, AMATF * const, const HAXX_INT, \
+  BMATF * const, const HAXX_INT, const BETAF BETA, \
+  quaternion<F> * const, const HAXX_INT);
+
+
+// Preprocessor macros for quick FORTRAN implementations
+  
+#define GEMM_FORTRAN_IMPL(NAME,F,AMATF,BMATF,ALPHAF,BETAF) \
+template<>\
+void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,\
+  const HAXX_INT N, const HAXX_INT K, const ALPHAF ALPHA, \
+  AMATF * const A, const HAXX_INT LDA, BMATF * const B, const HAXX_INT LDB, \
+  const BETAF BETA, quaternion<F> * const C, const HAXX_INT LDC){\
+  \
+  NAME##_(&TRANSA,&TRANSB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,\
+    C,&LDC);\
+  \
+};
+
 namespace HAXX {
+
+  // GEMM functions
+    
+  GEMM_FORTRAN_IMPL(hgemmdd,double,quaternion<double>,quaternion<double>,
+    double,double);
+  GEMM_FORTRAN_IMPL(hgemmdz,double,quaternion<double>,quaternion<double>,
+    double,std::complex<double>);
+  GEMM_FORTRAN_IMPL(hgemmdh,double,quaternion<double>,quaternion<double>,
+    double,quaternion<double>);
+
+  GEMM_FORTRAN_IMPL(hgemmzd,double,quaternion<double>,quaternion<double>,
+    std::complex<double>,double);
+  GEMM_FORTRAN_IMPL(hgemmzz,double,quaternion<double>,quaternion<double>,
+    std::complex<double>,std::complex<double>);
+  GEMM_FORTRAN_IMPL(hgemmzh,double,quaternion<double>,quaternion<double>,
+    std::complex<double>,quaternion<double>);
+
+  GEMM_FORTRAN_IMPL(hgemmhd,double,quaternion<double>,quaternion<double>,
+    quaternion<double>,double);
+  GEMM_FORTRAN_IMPL(hgemmhz,double,quaternion<double>,quaternion<double>,
+    quaternion<double>,std::complex<double>);
+  GEMM_FORTRAN_IMPL(hgemmhh,double,quaternion<double>,quaternion<double>,
+    quaternion<double>,quaternion<double>);
 
 
 // Instantiate REAL-QUATERION matrix multiplication from template
-template
-void HBLAS_GEMM(const char, const char, const HAXX_INT, const HAXX_INT, 
-  const HAXX_INT, const double, double * const, const HAXX_INT, 
-  quaternion<double> * const, const HAXX_INT, const double, 
-  quaternion<double> * const, const HAXX_INT);
+  GEMM_CXX_IMPL(double,double,quaternion<double>,double,double);
 
 };
 

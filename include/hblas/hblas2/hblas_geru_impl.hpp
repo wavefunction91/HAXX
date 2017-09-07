@@ -82,35 +82,6 @@ void HBLAS_GERU(const HAXX_INT M, const HAXX_INT N, const _AlphaF ALPHA,
 }; // end GERU
 
 
-template <>
-void HBLAS_GERU(const HAXX_INT M, const HAXX_INT N, const double ALPHA, 
-  quaternion<double> * const X, const HAXX_INT INCX, 
-  quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgerud_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
- 
-}
-
-template <>
-void HBLAS_GERU(const HAXX_INT M, const HAXX_INT N, 
-  const std::complex<double> ALPHA, quaternion<double> * const X,
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgeruz_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
- 
-}
-
-template <>
-void HBLAS_GERU(const HAXX_INT M, const HAXX_INT N, 
-  const quaternion<double> ALPHA, quaternion<double> * const X,
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
-  quaternion<double> * const A, const HAXX_INT LDA) {
-
-  hgeruh_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
- 
-}
 
 }; // namespace HAXX
 
