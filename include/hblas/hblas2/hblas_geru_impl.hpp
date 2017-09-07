@@ -80,53 +80,6 @@ void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
 
 }; // end GERU
 
-template <typename _F, typename _LeftVecF, typename _RightVecF>
-void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _F ALPHA, _LeftVecF *X,
-  HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
-  HAXX_INT LDA){
-
-  if( M == 0 or N == 0 or ALPHA == 0.) return;
-
-  // FIXME: The original BLAS implementaion has logic to handle
-  //   negative strides. See further comments.
-  assert( INCX > 0 );
-  assert( INCY > 0 );
-
-
-  HAXX_INT i, j, ix;
-  
-  // FIXME: This parameter is effected in the orignal BLAS
-  //   implementaion by negative stride
-  HAXX_INT JY = 0;
-
-  quaternion<_F> htemp1;
- 
-  if( INCX == 1 ) {
-
-    for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != _RightVecF(0.) ) {
-        htemp1 = ALPHA * Y[JY];
-        for( i = 0; i < M; ++i ) {
-          A[RANK2_INDX(i,j,LDA)] += X[i] * htemp1;
-        }
-      }
-
-  } else { // end INCX == 1
-
-    // FIXME: This parameter is effected in the orignal BLAS
-    //   implementaion by negative stride
-    HAXX_INT KX = 0;
-
-    for( j = 0; j < N; ++j, JY += INCY )
-      if( Y[JY] != _RightVecF(0.) ) {
-        htemp1 = ALPHA * Y[JY];
-        for( i = 0, ix = KX; i < M; ++i, ix += INCX ) {
-          A[RANK2_INDX(i,j,LDA)] += X[ix] * htemp1;
-        }
-      }
-  } // end INCX != 1
-
-}; // end GERU (REAL Alpha specialization)
 
 template <>
 void HBLAS_GERU(HAXX_INT M, HAXX_INT N, double ALPHA, quaternion<double> *X,

@@ -12,7 +12,7 @@
 
 #include "haxx_ut.hpp"
 #include "hblas/hblas1_impl.hpp"
-#include "hblas/hblas2_impl.hpp"
+#include "hblas/hblas2_def.hpp"
 #include "hblas/hblas3_def.hpp"
 
 template <typename _AF, typename _BF, typename _AlphaF, typename _BetaF, char _TA, char _TB>

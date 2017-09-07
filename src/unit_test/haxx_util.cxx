@@ -12,7 +12,7 @@
 
 #include "haxx_ut.hpp"
 #include "hblas/hblas_util_impl.hpp"
-#include "hblas/hblas3_impl.hpp"
+#include "hblas/hblas3_def.hpp"
 
 
 void ComplexExpandTest(char ORDER) {
