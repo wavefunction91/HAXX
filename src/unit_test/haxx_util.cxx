@@ -11,7 +11,7 @@
 #define BOOST_TEST_MODULE HAXX_BLAS3
 
 #include "haxx_ut.hpp"
-#include "hblas/hblas_util_impl.hpp"
+#include "hblas/hblas_util.hpp"
 #include "hblas/hblas3_def.hpp"
 
 

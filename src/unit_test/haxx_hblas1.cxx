@@ -11,7 +11,7 @@
 #define BOOST_TEST_MODULE HAXX_BLAS1
 
 #include "haxx_ut.hpp"
-#include "hblas/hblas1_impl.hpp"
+#include "hblas/hblas1_def.hpp"
 
 
 BOOST_AUTO_TEST_CASE(hblas1_swap)
