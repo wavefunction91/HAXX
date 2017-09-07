@@ -7,13 +7,11 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_BLAS3
-
 #include "haxx_ut.hpp"
 #include "hblas/hblas_util.hpp"
 #include "hblas/hblas3_def.hpp"
 
+BOOST_AUTO_TEST_SUITE(UTIL)
 
 void ComplexExpandTest(char ORDER) {
 
@@ -89,3 +87,5 @@ BOOST_AUTO_TEST_CASE(Complex_Contract1) { ComplexContractTest('F','U'); };
 BOOST_AUTO_TEST_CASE(Complex_Contract2) { ComplexContractTest('S','U'); };
 BOOST_AUTO_TEST_CASE(Complex_Contract3) { ComplexContractTest('F','L'); };
 BOOST_AUTO_TEST_CASE(Complex_Contract4) { ComplexContractTest('S','L'); };
+
+BOOST_AUTO_TEST_SUITE_END()

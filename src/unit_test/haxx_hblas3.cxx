@@ -7,13 +7,13 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_BLAS3
-
 #include "haxx_ut.hpp"
 #include "hblas/hblas1_def.hpp"
 #include "hblas/hblas2_def.hpp"
 #include "hblas/hblas3_def.hpp"
+
+BOOST_AUTO_TEST_SUITE(HBLAS3)
+
 
 template <typename _AF, typename _BF, typename _AlphaF, typename _BetaF, char _TA, char _TB>
 void hblas3_gemm_square_LDSame() {
@@ -394,3 +394,5 @@ BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHCTRR_LDSame) {
 BOOST_AUTO_TEST_CASE(hblas3_gemm_square_RHCCRR_LDSame) {
   hblas3_gemm_square_LDSame<double,HAXX::quaternion<double>,double,double,'C','C'>();
 }
+
+BOOST_AUTO_TEST_SUITE_END()

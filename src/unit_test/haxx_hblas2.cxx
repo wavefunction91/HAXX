@@ -7,13 +7,11 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_BLAS2
-
 #include "haxx_ut.hpp"
 #include "hblas/hblas1_def.hpp"
 #include "hblas/hblas2_def.hpp"
 
+BOOST_AUTO_TEST_SUITE(HBLAS2)
 
 template <typename _AlphaF, typename _BetaF, char _TA>
 void hblas2_gemv_square_LDSame() {
@@ -278,3 +276,5 @@ BOOST_AUTO_TEST_CASE(hblas2_gerc_square_C) {
 BOOST_AUTO_TEST_CASE(hblas2_gerc_square_Q) {
   hblas2_ger_square<HAXX::quaternion<double>,true>(); 
 }
+
+BOOST_AUTO_TEST_SUITE_END()

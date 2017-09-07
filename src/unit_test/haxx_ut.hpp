@@ -7,11 +7,13 @@
  *  See LICENSE.txt 
  */
 
-#ifndef _HAXX_UT_BUTF_NINCLUDED
-  #include <boost/test/included/unit_test.hpp>
-#else
-  #include <boost/test/unit_test.hpp>
+
+#ifdef BOOST_TEST_MODULE
+  #undef BOOST_TEST_MODULE
 #endif
+
+#define BOOST_NO_MAIN
+#include <boost/test/unit_test.hpp>
 
 #include <boost/iterator/counting_iterator.hpp>
 
@@ -30,27 +32,27 @@
 #define HBLAS1_RAND_MAX 54
 
 // Setup Random Number generator
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
 template <typename _F> _F genRandom();
-template<> double genRandom<double>(){ return double(dis(gen)); }
-template<> std::complex<double> genRandom<std::complex<double>>(){ 
+template<> inline double genRandom<double>(){ return double(dis(gen)); }
+template<> inline std::complex<double> genRandom<std::complex<double>>(){ 
   return std::complex<double>(dis(gen),dis(gen)); 
 }
-template<> HAXX::quaternion<double> genRandom<HAXX::quaternion<double>>(){ 
+template<> inline HAXX::quaternion<double> genRandom<HAXX::quaternion<double>>(){ 
   return HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen)); 
 }
 
 
 
 // Index list for HBLAS1 UT conformation
-std::vector<int> indx(boost::counting_iterator<int>(0),
+static std::vector<int> indx(boost::counting_iterator<int>(0),
   boost::counting_iterator<int>(HBLAS1_VECLEN));
 
 // Strides to be tested
-std::vector<size_t> strides = {1,2,3,5,9};
+static std::vector<size_t> strides = {1,2,3,5,9};
 
 #define COMPARE_TOL 1e-12
 //#define CMP_Q(a,b) (HAXX::norm(a)/HAXX::norm(b) - 1. < COMPARE_TOL)
