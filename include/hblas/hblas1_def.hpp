@@ -13,35 +13,42 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
+
+// Preprocessor macros for quick FORTRAN declarations
+
+#define SCAL_FORTRAN_DECL(NAME,F,ALPHAF) \
+void NAME##_(const char*, const HAXX_INT*, const ALPHAF*, \
+  const quaternion<F> *, const HAXX_INT*);
+
+#define DOT_FORTRAN_DECL(NAME,F) \
+void NAME##_(const quaternion<F> *, const HAXX_INT*, const quaternion<F> *,\
+  const HAXX_INT*, const quaternion<F> *, const HAXX_INT*);
+
+#define AXPY_FORTRAN_DECL(NAME,F,XF,ALPHAF)\
+void NAME##_(const char*, const HAXX_INT*, const ALPHAF*, const XF *, \
+  const HAXX_INT*, const quaternion<F> *, const HAXX_INT*);
+
+
 namespace HAXX {
 
 
   // FORTRAN HBLAS1 functions
   extern "C" {
-  
-    void hscald_(const char*, const HAXX_INT*, const double*,
-      const quaternion<double> *, const HAXX_INT*);
-    void hscalc_(const char*, const HAXX_INT*, const std::complex<double> *,
-      const quaternion<double> *, const HAXX_INT*);
-    void hscalh_(const char*, const HAXX_INT*, const quaternion<double> *,
-      const quaternion<double> *, const HAXX_INT*);
-  
-    void hdotu_(const quaternion<double> *, const HAXX_INT*, 
-      const quaternion<double> *, const HAXX_INT*, const quaternion<double> *, 
-      const HAXX_INT*);
-    void hdotc_(const quaternion<double> *, const HAXX_INT*, 
-      const quaternion<double> *, const HAXX_INT*, const quaternion<double> *, 
-      const HAXX_INT*);
-  
-    void haxpydh_(const char*, const HAXX_INT*, const double*,
-      const quaternion<double> *, const HAXX_INT*, const quaternion<double> *, 
-      const HAXX_INT*);
-    void haxpych_(const char*, const HAXX_INT*, const std::complex<double> *,
-      const quaternion<double> *, const HAXX_INT*, const quaternion<double> *, 
-      const HAXX_INT*);
-    void haxpyhh_(const char*, const HAXX_INT*, const quaternion<double> *,
-      const quaternion<double> *, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*);
+
+    // SCAL functions  
+    SCAL_FORTRAN_DECL(hscald,double,double);
+    SCAL_FORTRAN_DECL(hscalc,double,std::complex<double>);
+    SCAL_FORTRAN_DECL(hscalh,double,quaternion<double>);
+
+    // DOT functions
+    DOT_FORTRAN_DECL(hdotu,double);
+    DOT_FORTRAN_DECL(hdotc,double);
+
+    // AXPY functions
+    AXPY_FORTRAN_DECL(haxpydh,double,quaternion<double>,double);
+    AXPY_FORTRAN_DECL(haxpych,double,quaternion<double>,std::complex<double>);
+    AXPY_FORTRAN_DECL(haxpyhh,double,quaternion<double>,quaternion<double>);
+
   };
 
 

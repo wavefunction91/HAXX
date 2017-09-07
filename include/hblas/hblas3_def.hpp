@@ -14,67 +14,42 @@
 #include "hblas/hblas_config.hpp"
 
 
+#define GEMM_FORTRAN_DECL(NAME,F,AMATF,BMATF,ALPHAF,BETAF) \
+void NAME##_(const char*, const char*, const HAXX_INT*, const HAXX_INT*,\
+  const HAXX_INT*, const ALPHAF*, const AMATF*, const HAXX_INT*,\
+  const BMATF*, const HAXX_INT*, const BETAF*, const quaternion<F>*,\
+  const HAXX_INT*);
+
+
 namespace HAXX {
 
   // FORTRAN HBLAS3 Functions
   extern "C" {
   
-    void hgemmdd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const double*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*, 
-      const double*, const quaternion<double>*, const HAXX_INT*);
-  
-    void hgemmdz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const double*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double> *, 
-      const HAXX_INT*);
-  
-    void hgemmdh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const double*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double> *, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, 
-      const HAXX_INT*);
-  
-    void hgemmzd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const double*, const quaternion<double>*, const HAXX_INT*);
-  
-    void hgemmzz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double> *, 
-      const HAXX_INT*);
-  
-    void hgemmzh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double> *, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, 
-      const HAXX_INT*);
-  
-    void hgemmhd_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const double*, const quaternion<double>*, const HAXX_INT*);
-  
-    void hgemmhz_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double> *, 
-      const HAXX_INT*);
-  
-    void hgemmhh_(const char*, const char*, const HAXX_INT*, const HAXX_INT*, 
-      const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double> *, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, 
-      const HAXX_INT*);
+
+    // GEMM functions
+      
+    GEMM_FORTRAN_DECL(hgemmdd,double,quaternion<double>,quaternion<double>,
+      double,double);
+    GEMM_FORTRAN_DECL(hgemmdz,double,quaternion<double>,quaternion<double>,
+      double,std::complex<double>);
+    GEMM_FORTRAN_DECL(hgemmdh,double,quaternion<double>,quaternion<double>,
+      double,quaternion<double>);
+
+    GEMM_FORTRAN_DECL(hgemmzd,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,double);
+    GEMM_FORTRAN_DECL(hgemmzz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,std::complex<double>);
+    GEMM_FORTRAN_DECL(hgemmzh,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,quaternion<double>);
+
+    GEMM_FORTRAN_DECL(hgemmhd,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,double);
+    GEMM_FORTRAN_DECL(hgemmhz,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,std::complex<double>);
+    GEMM_FORTRAN_DECL(hgemmhh,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,quaternion<double>);
+
   };
 
   /**

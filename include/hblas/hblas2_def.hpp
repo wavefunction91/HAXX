@@ -13,6 +13,15 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
+#define GEMV_FORTRAN_DECL(NAME,F,MATF,VECF,ALPHAF,BETAF) \
+void NAME##_(const char*, const HAXX_INT*, const HAXX_INT*, const ALPHAF*,\
+  const MATF*, const HAXX_INT*, const VECF*, const HAXX_INT*, const BETAF*, \
+  const quaternion<F>*, const HAXX_INT*);
+
+#define GER_FORTRAN_DECL(NAME,F,LEFTF,RIGHTF,ALPHAF) \
+void NAME##_(const HAXX_INT*, const HAXX_INT*, const ALPHAF*,\
+  const LEFTF*, const HAXX_INT*, const RIGHTF*, const HAXX_INT*, \
+  const quaternion<F>*, const HAXX_INT*);\
 
 namespace HAXX {
 
@@ -20,84 +29,47 @@ namespace HAXX {
   extern "C" {
   
     // GEMV functions
-    void hgemvdd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const double*, const quaternion<double>*, 
-      const HAXX_INT*);
 
-    void hgemvdz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const std::complex<double>*, const quaternion<double>*, 
-      const HAXX_INT*);
+    GEMV_FORTRAN_DECL(hgemvdd,double,quaternion<double>,quaternion<double>,
+      double, double);
+    GEMV_FORTRAN_DECL(hgemvdz,double,quaternion<double>,quaternion<double>,
+      double, std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvdh,double,quaternion<double>,quaternion<double>,
+      double, quaternion<double>);
 
-    void hgemvdh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const quaternion<double>*, 
-      const HAXX_INT*);
+    GEMV_FORTRAN_DECL(hgemvzd,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,double);
+    GEMV_FORTRAN_DECL(hgemvzz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvzh,double,quaternion<double>,quaternion<double>,
+      std::complex<double>, quaternion<double>);
 
-    void hgemvzd_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const double*, 
-      const quaternion<double>*, const HAXX_INT*);
-
-    void hgemvzz_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*);
-
-    void hgemvzh_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const std::complex<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*);
-
-    void hgemvhd_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const double*, 
-      const quaternion<double>*, const HAXX_INT*);
-
-    void hgemvhz_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*);
-
-    void hgemvhh_(const char*, const HAXX_INT*, const HAXX_INT*, 
-      const quaternion<double>*, const quaternion<double>*, const HAXX_INT*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*);
+    GEMV_FORTRAN_DECL(hgemvhd,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,double);
+    GEMV_FORTRAN_DECL(hgemvhz,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvhh,double,quaternion<double>,quaternion<double>,
+      quaternion<double>, quaternion<double>);
 
 
-  
-  
-  
-  
-    // GERU functions
-  
-    void hgerud_(const HAXX_INT*, const HAXX_INT*, const double*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
-
-    void hgeruz_(const HAXX_INT*, const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
-
-    void hgeruh_(const HAXX_INT*, const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
-  
+ 
+    // GERU functions 
+      
+    GER_FORTRAN_DECL(hgerud,double,quaternion<double>,quaternion<double>,
+      double)
+    GER_FORTRAN_DECL(hgeruz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>)
+    GER_FORTRAN_DECL(hgeruh,double,quaternion<double>,quaternion<double>,
+      quaternion<double>)
 
     // GERC functions
-    
-    void hgercd_(const HAXX_INT*, const HAXX_INT*, const double*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
 
-    void hgercz_(const HAXX_INT*, const HAXX_INT*, const std::complex<double>*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
-
-    void hgerch_(const HAXX_INT*, const HAXX_INT*, const quaternion<double>*, 
-      const quaternion<double>*, const HAXX_INT*, const quaternion<double>*, 
-      const HAXX_INT*, const quaternion<double>*, const HAXX_INT*);
+    GER_FORTRAN_DECL(hgercd,double,quaternion<double>,quaternion<double>,
+      double)
+    GER_FORTRAN_DECL(hgercz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>)
+    GER_FORTRAN_DECL(hgerch,double,quaternion<double>,quaternion<double>,
+      quaternion<double>)
 
   };
 
