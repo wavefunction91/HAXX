@@ -3,7 +3,7 @@ os:
 language: cpp
 compiler:
   - gcc
-  - clang
+#  - clang
 env:
   - GCC_VERSION=4.8
   - GCC_VERSION=4.9
