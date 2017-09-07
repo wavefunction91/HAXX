@@ -29,6 +29,9 @@ void NAME##_(const char*, const HAXX_INT*, const ALPHAF*, const XF *, \
   const HAXX_INT*, const quaternion<F> *, const HAXX_INT*);
 
 
+
+
+
 namespace HAXX {
 
 

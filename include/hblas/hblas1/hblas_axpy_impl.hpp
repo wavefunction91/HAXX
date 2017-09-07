@@ -91,32 +91,8 @@ void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA,
   }
 };
 
-template<>
-void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const double ALPHA, 
-  quaternion<double> * const X, const HAXX_INT INCX, 
-  quaternion<double> * const Y, const HAXX_INT INCY) {
 
-  haxpydh_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
 
-};
-
-template<>
-void HBLAS_AXPY(const char SIDE, const HAXX_INT N, 
-  const std::complex<double> ALPHA, quaternion<double> * const X, 
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
-
-  haxpych_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
-
-};
-
-template<>
-void HBLAS_AXPY(const char SIDE, const HAXX_INT N, 
-  const quaternion<double> ALPHA, quaternion<double> * const X, 
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
-
-  haxpyhh_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
-
-};
 
 }; // namespace HAXX
 

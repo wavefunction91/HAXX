@@ -53,15 +53,6 @@ quaternion<_F> HBLAS_DOTU(const HAXX_INT N, quaternion<_F> * const X,
   return htemp;
 };
 
-template<>
-quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X, 
-  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
- 
-  quaternion<double> htemp;
-  hdotu_(&htemp, &N, X, &INCX, Y, &INCY);
-  return htemp;
-
-}
 
 }; // namespace HAXX
 

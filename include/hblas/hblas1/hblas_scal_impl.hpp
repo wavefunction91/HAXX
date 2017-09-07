@@ -81,31 +81,7 @@ void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA,
 
 };
 
-template<>
-void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const double ALPHA, 
-  quaternion<double> * const X, const HAXX_INT INCX) {
 
-  hscald_(&SIDE,&N,&ALPHA,X,&INCX);
-
-};
-
-template<>
-void HBLAS_SCAL(const char SIDE, const HAXX_INT N, 
-  const std::complex<double> ALPHA, quaternion<double> * const X, 
-  const HAXX_INT INCX) {
-
-  hscalc_(&SIDE,&N,&ALPHA,X,&INCX);
-
-};
-
-template<>
-void HBLAS_SCAL(const char SIDE, const HAXX_INT N, 
-  const quaternion<double> ALPHA, quaternion<double> * const X, 
-  const HAXX_INT INCX) {
-
-  hscalh_(&SIDE,&N,&ALPHA,X,&INCX);
-
-};
 
 }; // namespace HAXX
 
