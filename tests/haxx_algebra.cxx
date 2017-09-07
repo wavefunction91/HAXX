@@ -7,11 +7,9 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_ALGEBRA
-
 #include "haxx_ut.hpp"
 
+BOOST_AUTO_TEST_SUITE(HAXX_ALGEBRA)
 
 BOOST_AUTO_TEST_CASE(conj)
 {
@@ -29,6 +27,9 @@ BOOST_AUTO_TEST_CASE(conj)
   BOOST_CHECK_EQUAL(q.imag_j(),3.);
   BOOST_CHECK_EQUAL(q.imag_k(),4.);
 };
+
+
+
 
 BOOST_AUTO_TEST_CASE(norm)
 {
@@ -69,3 +70,6 @@ BOOST_AUTO_TEST_CASE(norm)
 };
 
 
+
+
+BOOST_AUTO_TEST_SUITE_END()

@@ -13,78 +13,65 @@
 #include "haxx/haxx_def.hpp"
 #include "hblas/hblas_config.hpp"
 
-extern "C" {
+#define GEMV_FORTRAN_DECL(NAME,F,MATF,VECF,ALPHAF,BETAF) \
+void NAME##_(const char*, const HAXX_INT*, const HAXX_INT*, const ALPHAF*,\
+  const MATF*, const HAXX_INT*, const VECF*, const HAXX_INT*, const BETAF*, \
+  const quaternion<F>*, const HAXX_INT*);
 
-  void hgemvdd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvdz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvdh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvzd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvzz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvzh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvhd_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvhz_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-  void hgemvhh_(const char*, const HAXX_INT*, const HAXX_INT*, const double*,
-    const double*, const HAXX_INT*, const double*, const HAXX_INT*,
-    const double*, const double*, const HAXX_INT*);
-
-
-
-
-
-
-  void hgerud_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-
-  void hgeruz_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-
-  void hgeruh_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-
-
-
-
-  void hgercd_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-
-  void hgercz_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-
-  void hgerch_(const HAXX_INT*, const HAXX_INT*, const double*, const double*,
-    const HAXX_INT*, const double*, const HAXX_INT*, const double*, 
-    const HAXX_INT*);
-};
+#define GER_FORTRAN_DECL(NAME,F,LEFTF,RIGHTF,ALPHAF) \
+void NAME##_(const HAXX_INT*, const HAXX_INT*, const ALPHAF*,\
+  const LEFTF*, const HAXX_INT*, const RIGHTF*, const HAXX_INT*, \
+  const quaternion<F>*, const HAXX_INT*);\
 
 namespace HAXX {
+
+  // FORTRAN HBLAS2 functions
+  extern "C" {
+  
+    // GEMV functions
+
+    GEMV_FORTRAN_DECL(hgemvdd,double,quaternion<double>,quaternion<double>,
+      double, double);
+    GEMV_FORTRAN_DECL(hgemvdz,double,quaternion<double>,quaternion<double>,
+      double, std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvdh,double,quaternion<double>,quaternion<double>,
+      double, quaternion<double>);
+
+    GEMV_FORTRAN_DECL(hgemvzd,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,double);
+    GEMV_FORTRAN_DECL(hgemvzz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>,std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvzh,double,quaternion<double>,quaternion<double>,
+      std::complex<double>, quaternion<double>);
+
+    GEMV_FORTRAN_DECL(hgemvhd,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,double);
+    GEMV_FORTRAN_DECL(hgemvhz,double,quaternion<double>,quaternion<double>,
+      quaternion<double>,std::complex<double>);
+    GEMV_FORTRAN_DECL(hgemvhh,double,quaternion<double>,quaternion<double>,
+      quaternion<double>, quaternion<double>);
+
+
+ 
+    // GERU functions 
+      
+    GER_FORTRAN_DECL(hgerud,double,quaternion<double>,quaternion<double>,
+      double)
+    GER_FORTRAN_DECL(hgeruz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>)
+    GER_FORTRAN_DECL(hgeruh,double,quaternion<double>,quaternion<double>,
+      quaternion<double>)
+
+    // GERC functions
+
+    GER_FORTRAN_DECL(hgercd,double,quaternion<double>,quaternion<double>,
+      double)
+    GER_FORTRAN_DECL(hgercz,double,quaternion<double>,quaternion<double>,
+      std::complex<double>)
+    GER_FORTRAN_DECL(hgerch,double,quaternion<double>,quaternion<double>,
+      quaternion<double>)
+
+  };
 
   /**
    *  \addtogroup HBLAS
@@ -100,23 +87,24 @@ namespace HAXX {
   /// Multiply a general vector by a quaternion matrix
   template <typename _F,typename _MatF, typename _VecF, typename _AlphaF, 
     typename _BetaF>
-  void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-    _MatF *A, HAXX_INT LDA, _VecF *X, HAXX_INT INCX, 
-    _BetaF BETA, quaternion<_F> *Y, HAXX_INT INCY);
+  void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+    const _AlphaF ALPHA, _MatF * const A, const HAXX_INT LDA, _VecF * const X, 
+    const HAXX_INT INCX, const _BetaF BETA, quaternion<_F> * const Y, 
+    const HAXX_INT INCY);
 
   /// Perform the quaternion rank 1 operation with two general vectors
   template <typename _F, typename _LeftVecF, typename _RightVecF, 
     typename _AlphaF>
-  void HBLAS_GERU(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
-    HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
+  void HBLAS_GERU(const HAXX_INT M, const HAXX_INT N, const _AlphaF ALPHA, 
+    _LeftVecF * const X, const HAXX_INT INCX, _RightVecF * const Y, 
+    const HAXX_INT INCY, quaternion<_F> * const A, const HAXX_INT LDA);
 
   /// Perform the quaternion rank 1 operation with two general vectors
   template <typename _F, typename _LeftVecF, typename _RightVecF, 
     typename _AlphaF>
-  void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
-    HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
-    HAXX_INT LDA);
+  void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, const _AlphaF ALPHA, 
+    _LeftVecF * const X, const HAXX_INT INCX, _RightVecF * const Y, 
+    const HAXX_INT INCY, quaternion<_F> * const A, const HAXX_INT LDA);
 
 
   /* @} */ // HBLAS2

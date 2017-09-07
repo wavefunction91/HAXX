@@ -46,7 +46,7 @@ struct quaternion {
   ///   \f$q = a + bi + cj + dk = (a,b,c,d) \qquad a,b,c,d\in\mathbb{R}\f$
   constexpr quaternion(const _F& a = _F(), const _F& b = _F(), 
     const _F& c = _F(), const _F& d = _F()) :
-    _M_real(a), _M_imag_i(b), _M_imag_j(c), _M_imag_k(d){ } 
+    _M_real(a), _M_imag_i(b), _M_imag_j(c), _M_imag_k(d) { } 
 
   /// \brief Complex Constructor.
   /// Constructs a quaternion using Cayley-Dickson construction of
@@ -55,18 +55,18 @@ struct quaternion {
   ///   \f$ q = a + bj = a^R + a^Ii + b^Rj + b^Ik \qquad a,b \in \mathbb{C}\f$
   constexpr quaternion(const _CF& a, const _CF& b = _CF()) :
     _M_real(a.real()), _M_imag_i(a.imag()),
-    _M_imag_j(b.real()), _M_imag_k(b.imag()){ }
+    _M_imag_j(b.real()), _M_imag_k(b.imag()) { }
 
 
   /// \brief Real Array Constructor
   /// Constructs a quaternion from a std::array<_F,4>
   constexpr quaternion(const std::array<_F,4>& q) :
-    quaternion(q[0],q[1],q[2],q[3]){ };
+    quaternion(q[0],q[1],q[2],q[3]) { };
 
   /// \brief Complex Array Constructor
   /// Constructs a quaternion from a std::array<_CF,4>
   constexpr quaternion(const std::array<_CF,2>& q) :
-    quaternion(q[0],q[1]){ };
+    quaternion(q[0],q[1]) { };
 
   /// Copy Constructor.
   constexpr quaternion(const quaternion&) = default;
@@ -77,7 +77,7 @@ struct quaternion {
   template <typename _G>
     constexpr quaternion(const quaternion<_G>& __q) :
       _M_real(__q.real()), _M_imag_i(__q.imag_i()),
-      _M_imag_j(__q.imag_j()), _M_imag_k(__q.imag_k()){ }  
+      _M_imag_j(__q.imag_j()), _M_imag_k(__q.imag_k()) { }  
 
 
 
@@ -220,19 +220,19 @@ std::string to_string(quaternion<_F> &x) {
 
 /// Extract real part of a quaternion number
 template <typename _F>
-  inline _F real(const quaternion<_F> &x){ return x.real(); } 
+  inline _F real(const quaternion<_F> &x) { return x.real(); } 
 
 /// Extract i-imaginary part of a quaternion number
 template <typename _F>
-  inline _F imag_i(const quaternion<_F> &x){ return x.imag_i(); } 
+  inline _F imag_i(const quaternion<_F> &x) { return x.imag_i(); } 
 
 /// Extract j-imaginary part of a quaternion number
 template <typename _F>
-  inline _F imag_j(const quaternion<_F> &x){ return x.imag_j(); } 
+  inline _F imag_j(const quaternion<_F> &x) { return x.imag_j(); } 
 
 /// Extract k-imaginary part of a quaternion number
 template <typename _F>
-  inline _F imag_k(const quaternion<_F> &x){ return x.imag_k(); } 
+  inline _F imag_k(const quaternion<_F> &x) { return x.imag_k(); } 
 
 
 /* @} */ // QOp

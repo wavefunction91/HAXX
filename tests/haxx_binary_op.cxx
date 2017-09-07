@@ -7,11 +7,10 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_BINARY_OP
 
 #include "haxx_ut.hpp"
 
+BOOST_AUTO_TEST_SUITE(HAXX_BINARY_OP)
 
 BOOST_AUTO_TEST_CASE(real_binary_add)
 {
@@ -288,4 +287,4 @@ BOOST_AUTO_TEST_CASE(quaternion_binary_mul)
 }
 
 
-
+BOOST_AUTO_TEST_SUITE_END()

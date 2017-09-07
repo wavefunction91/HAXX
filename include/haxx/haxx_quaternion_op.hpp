@@ -125,6 +125,7 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
              __x.imag_j() * __y.imag_i() + __x.imag_k() * __y.real());
   
   return __r;
+
 };
 
 /**
@@ -133,8 +134,10 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
  */
 template <typename _F>
 inline bool operator==(const quaternion<_F>& p, const quaternion<_F>& q) {
+
   return p.real() == q.real() and p.imag_i() == q.imag_i() 
     and p.imag_j() == q.imag_j() and q.imag_k() == q.imag_k();
+
 }
 
 /**
@@ -143,7 +146,9 @@ inline bool operator==(const quaternion<_F>& p, const quaternion<_F>& q) {
  */
 template <typename _F>
 inline bool operator!=(const quaternion<_F>& p, const quaternion<_F>& q) {
+
   return not (p == q); 
+
 }
 
 }; // HAXX namespace

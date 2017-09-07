@@ -6,13 +6,8 @@
 #
 #  See LICENSE.txt 
 #
-#add_subdirectory(scalar_ops)
 
-add_subdirectory(fortran_bindings)
-
-if( HAXX_ENABLE_TESTING )
-  add_subdirectory(unit_test)
-endif()
+add_subdirectory(hblas)
 
 if( HAXX_ENABLE_BENCHMARK )
   add_subdirectory(benchmark)

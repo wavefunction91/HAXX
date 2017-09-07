@@ -7,11 +7,11 @@
  *  See LICENSE.txt 
  */
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE HAXX_UNARY_OP
 
 #include "haxx_ut.hpp"
  
+BOOST_AUTO_TEST_SUITE(HAXX_UNARY_OP)
+
 // Real Unary Operators
 BOOST_AUTO_TEST_CASE(real_unary_assign)
 {
@@ -191,3 +191,5 @@ BOOST_AUTO_TEST_CASE(quaternion_unary_sub)
   BOOST_CHECK_EQUAL(q.imag_k(),4.);
 
 }
+
+BOOST_AUTO_TEST_SUITE_END()

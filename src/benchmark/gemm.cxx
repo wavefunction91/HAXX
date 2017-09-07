@@ -14,8 +14,8 @@
 #include <iostream>
 #include <limits>
 #include <chrono>
-#include "hblas/hblas3_impl.hpp"
-#include "hblas/hblas_util_impl.hpp"
+#include "hblas/hblas3_def.hpp"
+#include "hblas/hblas_util.hpp"
 
 extern "C" {
   void zgemm_(const char*, const char*, const int*, const int*, 

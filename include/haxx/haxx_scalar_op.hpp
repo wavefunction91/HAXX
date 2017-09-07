@@ -128,7 +128,7 @@ quaternion<_F>& quaternion<_F>::operator/=(const _F& __t) {
  *
  */
 template <typename _F>
-inline quaternion<_F> operator+(const quaternion<_F>& __x, const _F& __y){
+inline quaternion<_F> operator+(const quaternion<_F>& __x, const _F& __y) {
 
   quaternion<_F> __r = __x;
   __r += __y;
@@ -147,7 +147,7 @@ inline quaternion<_F> operator+(const quaternion<_F>& __x, const _F& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator+(const _F& __x, const quaternion<_F>& __y){
+inline quaternion<_F> operator+(const _F& __x, const quaternion<_F>& __y) {
 
   quaternion<_F> __r = __y;
   __r += __x;
@@ -166,7 +166,7 @@ inline quaternion<_F> operator+(const _F& __x, const quaternion<_F>& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator-(const quaternion<_F>& __x, const _F& __y){
+inline quaternion<_F> operator-(const quaternion<_F>& __x, const _F& __y) {
 
   quaternion<_F> __r = __x;
   __r -= __y;
@@ -185,7 +185,7 @@ inline quaternion<_F> operator-(const quaternion<_F>& __x, const _F& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator-(const _F& __x, const quaternion<_F>& __y){
+inline quaternion<_F> operator-(const _F& __x, const quaternion<_F>& __y) {
 
   quaternion<_F> __r = -__y;
   __r += __x;
@@ -204,7 +204,7 @@ inline quaternion<_F> operator-(const _F& __x, const quaternion<_F>& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator*(const quaternion<_F>& __x, const _F& __y){
+inline quaternion<_F> operator*(const quaternion<_F>& __x, const _F& __y) {
 
   quaternion<_F> __r = __x;
   __r *= __y;
@@ -222,7 +222,7 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x, const _F& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator*(const _F& __x, const quaternion<_F>& __y){
+inline quaternion<_F> operator*(const _F& __x, const quaternion<_F>& __y) {
 
   quaternion<_F> __r = __y;
   __r *= __x;
@@ -240,7 +240,7 @@ inline quaternion<_F> operator*(const _F& __x, const quaternion<_F>& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator/(const quaternion<_F>& __x, const _F& __y){
+inline quaternion<_F> operator/(const quaternion<_F>& __x, const _F& __y) {
 
   quaternion<_F> __r = __x;
   __r /= __y;
@@ -258,7 +258,7 @@ inline quaternion<_F> operator/(const quaternion<_F>& __x, const _F& __y){
  *
  */
 template <typename _F>
-inline quaternion<_F> operator/(const _F& __x, const quaternion<_F>& __y){
+inline quaternion<_F> operator/(const _F& __x, const quaternion<_F>& __y) {
 
   quaternion<_F> __r = inv(__y);
   __r *= __x;

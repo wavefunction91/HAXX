@@ -1,0 +1,97 @@
+/*
+ *  This file is a part of HAXX
+ *  
+ *  Copyright (c) 2017 David Williams-Young
+ *  All rights reserved.
+ *  
+ *  See LICENSE.txt 
+ */
+
+#include "haxx.hpp"
+#include "hblas/hblas2_impl.hpp"
+
+// Preprocessor macros for quick CXX implementations
+  
+#define GEMV_CXX_IMPL(F,MATF,VECF,ALPHAF,BETAF) \
+template \
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, \
+  const ALPHAF ALPHA, MATF * const A, const HAXX_INT LDA, \
+  VECF * const X, const HAXX_INT INCX, const BETAF BETA, \
+  quaternion<F> * const Y, const HAXX_INT INCY);
+
+
+
+
+// Preprocessor macros for quick FORTRAN implementations
+
+#define GEMV_FORTRAN_IMPL(NAME,F,MATF,VECF,ALPHAF,BETAF) \
+template <>\
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, \
+  const ALPHAF ALPHA, MATF * const A, const HAXX_INT LDA, \
+  VECF * const X, const HAXX_INT INCX, const BETAF BETA, \
+  quaternion<F> * const Y, const HAXX_INT INCY) {\
+  \
+  NAME##_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);\
+  \
+};
+
+#define GER_FORTRAN_IMPL(FUNCNAME,NAME,F,LEFTF,RIGHTF,ALPHAF) \
+template <>\
+void HBLAS_##FUNCNAME(const HAXX_INT M, const HAXX_INT N, const ALPHAF ALPHA,\
+  LEFTF  * const X, const HAXX_INT INCX, RIGHTF * const Y, const HAXX_INT INCY,\
+  quaternion<F> * const A, const HAXX_INT LDA) {\
+  \
+  NAME##_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);\
+  \
+}
+
+
+namespace HAXX {
+
+  // GEMV functions
+
+  GEMV_FORTRAN_IMPL(hgemvdd,double,quaternion<double>,quaternion<double>,
+    double, double);
+  GEMV_FORTRAN_IMPL(hgemvdz,double,quaternion<double>,quaternion<double>,
+    double, std::complex<double>);
+  GEMV_FORTRAN_IMPL(hgemvdh,double,quaternion<double>,quaternion<double>,
+    double, quaternion<double>);
+
+  GEMV_FORTRAN_IMPL(hgemvzd,double,quaternion<double>,quaternion<double>,
+    std::complex<double>,double);
+  GEMV_FORTRAN_IMPL(hgemvzz,double,quaternion<double>,quaternion<double>,
+    std::complex<double>,std::complex<double>);
+  GEMV_FORTRAN_IMPL(hgemvzh,double,quaternion<double>,quaternion<double>,
+    std::complex<double>, quaternion<double>);
+
+  GEMV_FORTRAN_IMPL(hgemvhd,double,quaternion<double>,quaternion<double>,
+    quaternion<double>,double);
+  GEMV_FORTRAN_IMPL(hgemvhz,double,quaternion<double>,quaternion<double>,
+    quaternion<double>,std::complex<double>);
+  GEMV_FORTRAN_IMPL(hgemvhh,double,quaternion<double>,quaternion<double>,
+    quaternion<double>, quaternion<double>);
+
+  // Use CXX for REAL-QUATERNION multiplication
+  GEMV_CXX_IMPL(double,double,quaternion<double>,double,double);
+
+
+
+  // GERU functions 
+    
+  GER_FORTRAN_IMPL(GERU,hgerud,double,quaternion<double>,quaternion<double>,
+    double)
+  GER_FORTRAN_IMPL(GERU,hgeruz,double,quaternion<double>,quaternion<double>,
+    std::complex<double>)
+  GER_FORTRAN_IMPL(GERU,hgeruh,double,quaternion<double>,quaternion<double>,
+    quaternion<double>)
+
+  // GERC functions
+
+  GER_FORTRAN_IMPL(GERC,hgercd,double,quaternion<double>,quaternion<double>,
+    double)
+  GER_FORTRAN_IMPL(GERC,hgercz,double,quaternion<double>,quaternion<double>,
+    std::complex<double>)
+  GER_FORTRAN_IMPL(GERC,hgerch,double,quaternion<double>,quaternion<double>,
+    quaternion<double>)
+};
+

@@ -66,14 +66,14 @@ inline quaternion<_F> versor(const quaternion<_F>& __q) {
  *  \f$ [p,q] = pq - qp \f$
  */
 template <typename _F>
-inline quaternion<_F> comm(const quaternion<_F>& p, const quaternion<_F>& q){
+inline quaternion<_F> comm(const quaternion<_F>& p, const quaternion<_F>& q) {
 
   return p * q - q * p;
 
 };
 
 template <typename _F> 
-inline quaternion<_F> comm(const quaternion<_F>& p, const std::complex<_F>& q){
+inline quaternion<_F> comm(const quaternion<_F>& p, const std::complex<_F>& q) {
 /*
   std::complex<double> jPt(p.imag_j(),p.imag_k());
   return quaternion<_F>(std::complex<double>(0.),2.*jPt*std::imag(q));
