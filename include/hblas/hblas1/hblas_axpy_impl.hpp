@@ -32,8 +32,9 @@ namespace HAXX {
  *  \f$ y_i = x_i \alpha + y_i \f$
  */
 template <typename _F, typename _XF, typename _AlphaF>
-void HBLAS_AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X, 
-  HAXX_INT INCX, quaternion<_F> *Y, HAXX_INT INCY) {
+void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
+  _XF * const X, const HAXX_INT INCX, quaternion<_F> * const Y, 
+  const HAXX_INT INCY) {
 
   
   if( N <= 0 ) return;
@@ -91,33 +92,29 @@ void HBLAS_AXPY(char SIDE, HAXX_INT N, _AlphaF ALPHA, _XF *X,
 };
 
 template<>
-void HBLAS_AXPY(char SIDE, HAXX_INT N, double ALPHA, quaternion<double> *X, 
-  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY){
+void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const double ALPHA, 
+  quaternion<double> * const X, const HAXX_INT INCX, 
+  quaternion<double> * const Y, const HAXX_INT INCY) {
 
-  haxpydh_(&SIDE,&N,&ALPHA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY);
-
-};
-
-template<>
-void HBLAS_AXPY(char SIDE, HAXX_INT N, std::complex<double> ALPHA, 
-  quaternion<double> *X, HAXX_INT INCX, quaternion<double> *Y, 
-  HAXX_INT INCY){
-
-  haxpych_(&SIDE,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY);
+  haxpydh_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
 
 };
 
 template<>
-void HBLAS_AXPY(char SIDE, HAXX_INT N, quaternion<double> ALPHA, 
-  quaternion<double> *X, HAXX_INT INCX, quaternion<double> *Y, 
-  HAXX_INT INCY){
+void HBLAS_AXPY(const char SIDE, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const X, 
+  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
 
-  haxpyhh_(&SIDE,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY);
+  haxpych_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
+
+};
+
+template<>
+void HBLAS_AXPY(const char SIDE, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const X, 
+  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
+
+  haxpyhh_(&SIDE,&N,&ALPHA,X,&INCX,Y,&INCY);
 
 };
 

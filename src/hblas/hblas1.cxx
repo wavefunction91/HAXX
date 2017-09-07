@@ -13,12 +13,12 @@
 namespace HAXX {
 
 template
-void HBLAS_SWAP(HAXX_INT, quaternion<double> *, HAXX_INT, 
-  quaternion<double> *, HAXX_INT);
+void HBLAS_SWAP(const HAXX_INT, quaternion<double> * const , const HAXX_INT, 
+  quaternion<double> * const , const HAXX_INT);
 
 template
-void HBLAS_COPY(HAXX_INT, quaternion<double> *, HAXX_INT, 
-  quaternion<double> *, HAXX_INT);
+void HBLAS_COPY(const HAXX_INT, quaternion<double> *  const , const HAXX_INT, 
+  quaternion<double> * const , const HAXX_INT);
 
 };
 

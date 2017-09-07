@@ -31,8 +31,8 @@ namespace HAXX {
  *  \f$ x_i = x_i \alpha  \f$
  */
 template <typename _F, typename _AlphaF>
-void HBLAS_SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X, 
-  HAXX_INT INCX){
+void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
+  quaternion<_F> * const X, const HAXX_INT INCX) {
 
   if( N <= 0 or INCX <= 0 ) return;
 
@@ -82,28 +82,28 @@ void HBLAS_SCAL(char SIDE, HAXX_INT N, _AlphaF ALPHA, quaternion<_F> *X,
 };
 
 template<>
-void HBLAS_SCAL(char SIDE, HAXX_INT N, double ALPHA, quaternion<double> *X, 
-  HAXX_INT INCX){
+void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const double ALPHA, 
+  quaternion<double> * const X, const HAXX_INT INCX) {
 
-  hscald_(&SIDE,&N,&ALPHA,reinterpret_cast<double*>(X),&INCX);
-
-};
-
-template<>
-void HBLAS_SCAL(char SIDE, HAXX_INT N, std::complex<double> ALPHA, 
-  quaternion<double> *X, HAXX_INT INCX) {
-
-  hscalc_(&SIDE,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(X),&INCX);
+  hscald_(&SIDE,&N,&ALPHA,X,&INCX);
 
 };
 
 template<>
-void HBLAS_SCAL(char SIDE, HAXX_INT N, quaternion<double> ALPHA, 
-  quaternion<double> *X, HAXX_INT INCX) {
+void HBLAS_SCAL(const char SIDE, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const X, 
+  const HAXX_INT INCX) {
 
-  hscalh_(&SIDE,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(X),&INCX);
+  hscalc_(&SIDE,&N,&ALPHA,X,&INCX);
+
+};
+
+template<>
+void HBLAS_SCAL(const char SIDE, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const X, 
+  const HAXX_INT INCX) {
+
+  hscalh_(&SIDE,&N,&ALPHA,X,&INCX);
 
 };
 

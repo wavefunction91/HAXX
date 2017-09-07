@@ -23,8 +23,8 @@ namespace HAXX {
  *    http://www.netlib.org/lapack/explore-html/da/d6c/dcopy_8f.html
  */
 template <typename _F>
-void HBLAS_COPY(HAXX_INT N, quaternion<_F> *X, HAXX_INT INCX, 
-  quaternion<_F> *Y, HAXX_INT INCY) {
+void HBLAS_COPY(const HAXX_INT N, quaternion<_F> * const X, 
+  const HAXX_INT INCX, quaternion<_F> * const Y, const HAXX_INT INCY) {
 
   if( N <= 0 ) return;
   // FIXME: See further comments on negative stride
