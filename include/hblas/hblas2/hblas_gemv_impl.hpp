@@ -46,9 +46,10 @@ namespace HAXX {
 // was to allow flexibility in both ALPHA and BETA
 template <typename _F,typename _MatF, typename _VecF, typename _AlphaF, 
   typename _BetaF>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, 
-  _MatF *A, HAXX_INT LDA, _VecF *X, HAXX_INT INCX, _BetaF BETA, 
-  quaternion<_F> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const _AlphaF ALPHA, _MatF * const A, const HAXX_INT LDA, _VecF * const X, 
+  const HAXX_INT INCX, const _BetaF BETA, quaternion<_F> * const Y, 
+  const HAXX_INT INCY) {
 
   // FIXME: Should write functions to check quaternion equality
   //   to real / complex
@@ -213,101 +214,98 @@ void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, _AlphaF ALPHA,
 
 
 template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, double ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  double BETA, quaternion<double> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const double ALPHA, quaternion<double> * const A, const HAXX_INT LDA, 
+  quaternion<double> * const X, const HAXX_INT INCX, const double BETA, 
+  quaternion<double> * const Y, const HAXX_INT INCY) {
 
-  hgemvdd_(&TRANS,&M,&N,&ALPHA,reinterpret_cast<double*>(A),&LDA,
-    reinterpret_cast<double*>(X),&INCX,&BETA,reinterpret_cast<double*>(Y),
-    &INCY);
-
-};
-
-template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, double ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  std::complex<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
-
-  hgemvdz_(&TRANS,&M,&N,&ALPHA,reinterpret_cast<double*>(A),&LDA,
-    reinterpret_cast<double*>(X),&INCX,reinterpret_cast<double*>(&BETA),
-    reinterpret_cast<double*>(Y), &INCY);
+  hgemvdd_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
 
 };
 
 template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, double ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  quaternion<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const double ALPHA, quaternion<double> * const A, const HAXX_INT LDA, 
+  quaternion<double> * const X, const HAXX_INT INCX, 
+  const std::complex<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
 
-  hgemvdh_(&TRANS,&M,&N,&ALPHA,reinterpret_cast<double*>(A),&LDA,
-    reinterpret_cast<double*>(X),&INCX,reinterpret_cast<double*>(&BETA),
-    reinterpret_cast<double*>(Y), &INCY);
-
-};
-
-template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, std::complex<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  double BETA, quaternion<double> *Y, HAXX_INT INCY) {
-
-  hgemvzd_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    &BETA,reinterpret_cast<double*>(Y), &INCY);
+  hgemvdz_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
 
 };
 
 template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, std::complex<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  std::complex<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const double ALPHA, quaternion<double> * const A, const HAXX_INT LDA, 
+  quaternion<double> * const X, const HAXX_INT INCX, 
+  const quaternion<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
 
-  hgemvzz_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(&BETA),reinterpret_cast<double*>(Y), &INCY);
-
-};
-
-template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, std::complex<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  quaternion<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
-
-  hgemvzh_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(&BETA),reinterpret_cast<double*>(Y), &INCY);
+  hgemvdh_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
 
 };
 
 template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, quaternion<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  double BETA, quaternion<double> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const double BETA, quaternion<double> * const Y, const HAXX_INT INCY) {
 
-  hgemvhd_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    &BETA,reinterpret_cast<double*>(Y), &INCY);
-
-};
-
-template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, quaternion<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  std::complex<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
-
-  hgemvhz_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(&BETA),reinterpret_cast<double*>(Y), &INCY);
+  hgemvzd_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
 
 };
 
 template <>
-void HBLAS_GEMV(char TRANS, HAXX_INT M, HAXX_INT N, quaternion<double> ALPHA, 
-  quaternion<double> *A, HAXX_INT LDA, quaternion<double> *X, HAXX_INT INCX, 
-  quaternion<double> BETA, quaternion<double> *Y, HAXX_INT INCY) {
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const std::complex<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
 
-  hgemvhh_(&TRANS,&M,&N,reinterpret_cast<double*>(&ALPHA),
-    reinterpret_cast<double*>(A),&LDA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(&BETA),reinterpret_cast<double*>(Y), &INCY);
+  hgemvzz_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
+
+};
+
+template <>
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const quaternion<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
+
+  hgemvzh_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
+
+};
+
+template <>
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const double BETA, quaternion<double> * const Y, const HAXX_INT INCY) {
+
+  hgemvhd_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
+
+};
+
+template <>
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const std::complex<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
+
+  hgemvhz_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
+
+};
+
+template <>
+void HBLAS_GEMV(const char TRANS, const HAXX_INT M, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const A, 
+  const HAXX_INT LDA, quaternion<double> * const X, const HAXX_INT INCX, 
+  const quaternion<double> BETA, quaternion<double> * const Y, 
+  const HAXX_INT INCY) {
+
+  hgemvhh_(&TRANS,&M,&N,&ALPHA,A,&LDA,X,&INCX,&BETA,Y,&INCY);
 
 };
 

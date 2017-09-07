@@ -13,9 +13,9 @@
 namespace HAXX {
 
 template
-void HBLAS_GEMV(char, HAXX_INT, HAXX_INT, double, double *, 
-  HAXX_INT, quaternion<double> *, HAXX_INT, double, 
-  quaternion<double> *, HAXX_INT);
+void HBLAS_GEMV(char, const HAXX_INT, const HAXX_INT, const double, 
+  double * const, const HAXX_INT, quaternion<double> * const, const HAXX_INT, 
+  const double, quaternion<double> * const, const HAXX_INT);
 
 };
 

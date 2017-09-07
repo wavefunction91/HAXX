@@ -32,10 +32,11 @@ namespace HAXX {
 // FIXME: In this implementaion, it has been implied that scalars
 // will always multiply from the left. Should generalize in such a
 // was to allow flexibility in ALPHA 
-template <typename _F, typename _LeftVecF, typename _RightVecF, typename _AlphaF>
-void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
-  HAXX_INT INCX, _RightVecF *Y, HAXX_INT INCY, quaternion<_F> *A, 
-  HAXX_INT LDA){
+template <typename _F, typename _LeftVecF, typename _RightVecF, 
+  typename _AlphaF>
+void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, const _AlphaF ALPHA, 
+  _LeftVecF * const X, const HAXX_INT INCX, _RightVecF * const Y, 
+  const HAXX_INT INCY, quaternion<_F> * const A, const HAXX_INT LDA){
 
   if( M == 0 or N == 0 or ALPHA == _AlphaF(0.)) return;
 
@@ -82,33 +83,33 @@ void HBLAS_GERC(HAXX_INT M, HAXX_INT N, _AlphaF ALPHA, _LeftVecF *X,
 
 
 template <>
-void HBLAS_GERC(HAXX_INT M, HAXX_INT N, double ALPHA, quaternion<double> *X,
-  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
-  HAXX_INT LDA){
+void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, const double ALPHA, 
+  quaternion<double> * const X, const HAXX_INT INCX, 
+  quaternion<double> * const Y, const HAXX_INT INCY, 
+  quaternion<double> * const A, const HAXX_INT LDA) {
 
-  hgercd_(&M,&N,&ALPHA,reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
-    &LDA);
+  hgercd_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
+
 }
 
 template <>
-void HBLAS_GERC(HAXX_INT M, HAXX_INT N, std::complex<double> ALPHA, quaternion<double> *X,
-  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
-  HAXX_INT LDA){
+void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, 
+  const std::complex<double> ALPHA, quaternion<double> * const X,
+  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
+  quaternion<double> * const A, const HAXX_INT LDA) {
 
-  hgercz_(&M,&N,reinterpret_cast<double*>(&ALPHA),reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
-    &LDA);
+  hgercz_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
+
 }
 
 template <>
-void HBLAS_GERC(HAXX_INT M, HAXX_INT N, quaternion<double> ALPHA, quaternion<double> *X,
-  HAXX_INT INCX, quaternion<double> *Y, HAXX_INT INCY, quaternion<double> *A, 
-  HAXX_INT LDA){
+void HBLAS_GERC(const HAXX_INT M, const HAXX_INT N, 
+  const quaternion<double> ALPHA, quaternion<double> * const X,
+  const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY, 
+  quaternion<double> * const A, const HAXX_INT LDA) {
 
-  hgerch_(&M,&N,reinterpret_cast<double*>(&ALPHA),reinterpret_cast<double*>(X),&INCX,
-    reinterpret_cast<double*>(Y),&INCY,reinterpret_cast<double*>(A),
-    &LDA);
+  hgerch_(&M,&N,&ALPHA,X,&INCX,Y,&INCY,A,&LDA);
+
 }
 
 }; // namspace HAXX
