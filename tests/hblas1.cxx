@@ -275,8 +275,12 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
       dotcs = dotcs + HAXX::conj(X[j]) * Y[j];
     }
 
-    BOOST_CHECK(CMP_Q(dotu,dotus));
-    BOOST_CHECK(CMP_Q(dotc,dotcs));
+    BOOST_CHECK_MESSAGE(CMP_Q(dotu,dotus), 
+      "\n stride = " << stride << ", HBLAS_DOTU = " << dotu 
+                  << ", REFERENCE = " << dotus);
+    BOOST_CHECK_MESSAGE(CMP_Q(dotc,dotcs),
+      "\n stride = " << stride << ", HBLAS_DOTC = " << dotc 
+                  << ", REFERENCE = " << dotcs);
   }
 
   // FIXME: Need a test for when strides are not equal

@@ -30,10 +30,10 @@ void HBLAS_COPY(const HAXX_INT, quaternion<F> * const , const HAXX_INT,\
 
 #define DOT_FORTRAN_IMPL(FUNCNAME,NAME,F)\
 template<>\
-quaternion<double> HBLAS_##FUNCNAME( HAXX_INT N, quaternion<F> *X, \
+quaternion<F> HBLAS_##FUNCNAME( HAXX_INT N, quaternion<F> *X, \
   HAXX_INT INCX, quaternion<F> *Y, HAXX_INT INCY){\
   \
-  quaternion<double> htemp;\
+  quaternion<F> htemp;\
   NAME##_(&htemp, &N, X, &INCX, Y, &INCY);\
   return htemp;\
   \
@@ -73,7 +73,7 @@ namespace HAXX {
   AXPY_FORTRAN_IMPL(haxpych,double,quaternion<double>,std::complex<double>);
   AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
 
-  DOT_FORTRAN_IMPL(DOTU,hdotu,double);
+//DOT_FORTRAN_IMPL(DOTU,hdotu,double);
   DOT_FORTRAN_IMPL(DOTC,hdotc,double);
 
 };
