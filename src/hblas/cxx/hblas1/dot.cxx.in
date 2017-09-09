@@ -64,7 +64,6 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   const bool isAligned = XIsAligned and YIsAligned;
 
-
   for( i = 0; i < NBatch; i++ ) {
   
 #ifdef __AVX__
@@ -198,6 +197,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
 
     // J parts of product
+    // R(J) = X(S)*Y(J) - X(I)*Y(K) + X(J)*Y(S) + X(K)*Y(I) 
 
     // t1 = SCALAR * J
     t1 = _mm256_mul_pd(x1,y3);
@@ -232,6 +232,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
 
     // K parts of product
+    // R(K) = X(S)*Y(K) + X(I)*Y(J) - X(J)*Y(I) + X(K)*Y(S) 
 
     // t1 = SCALAR * K
     t1 = _mm256_mul_pd(x1,y4);
@@ -294,6 +295,8 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   r1 = _mm256_add_pd(r1,r4);
 
 
+  // Store the result in a possibly unaligned
+  // storage
   _mm256_storeu_pd(resPtr,r1);   
 
 #endif

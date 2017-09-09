@@ -30,14 +30,36 @@ std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 #define NTEST 10
 #define NREP 10
 
+#define USE_ALIGNED_MEM
+
 using namespace HAXX;
 
 int main() {
 
-  std::vector<quaternion<double>> X(DOT_LEN_MAX), Y(DOT_LEN_MAX);
 
+#ifdef USE_ALIGNED_MEM
+
+  size_t alignment = 32;
+  size_t nAlloc = (size_t(DOT_LEN_MAX) * sizeof(quaternion<double>));
+  nAlloc = nAlloc + (nAlloc % 32);
+
+  quaternion<double> *X = 
+    (quaternion<double>*)aligned_alloc(alignment, nAlloc);
+  quaternion<double> *Y = 
+    (quaternion<double>*)aligned_alloc(alignment, nAlloc);
+
+  for(auto i = 0ul; i < DOT_LEN_MAX; i++) {
+    X[i] = quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+    Y[i] = quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+  }
+
+#else
+
+  std::vector<quaternion<double>> X(DOT_LEN_MAX), Y(DOT_LEN_MAX);
   for(auto &x : X) x = quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
   for(auto &x : Y) x = quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
+
+#endif
 
 
   for(auto N = DOT_LEN_START; N <= DOT_LEN_MAX; 
@@ -76,5 +98,8 @@ int main() {
 
   }
 
+#ifdef USE_ALIGNED_MEM
+  free(X); free(Y);
+#endif
 
 };
