@@ -12,6 +12,7 @@
 message( STATUS "HAXX WILL BUILD BENCHMARK EXECUTABLES" )
 
 add_executable(gemm gemm.cxx)
+add_executable(dot dot.cxx)
 
 include(ExternalProject)
 find_program(SED_EXEC sed)
@@ -31,6 +32,7 @@ set_property(TARGET blas PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/l
 
 add_dependencies(blas lapack)
 target_link_libraries(gemm ${Boost_LIBRARIES} hblas blas)
+target_link_libraries(dot ${Boost_LIBRARIES} hblas)
 
 #find_package(BLAS REQUIRED)
 #target_link_libraries(gemm ${Boost_LIBRARIES} haxx_fortran ${BLAS_LIBRARIES})

@@ -18,13 +18,14 @@
 #include "hblas/hblas_util.hpp"
 
 extern "C" {
+
   void zgemm_(const char*, const char*, const int*, const int*, 
-    const int*, const std::complex<double>*, const std::complex<double>*, const int*, 
-    const std::complex<double>*, const int*, const std::complex<double>*, const std::complex<double>*,
-    const int*);
+    const int*, const std::complex<double>*, const std::complex<double>*, 
+    const int*, const std::complex<double>*, const int*, 
+    const std::complex<double>*, const std::complex<double>*, const int*);
+
 };
 
-//#define GEMM_LEN 2000
 #define HBLAS1_RAND_MIN -20
 #define HBLAS1_RAND_MAX 54
 
@@ -51,11 +52,6 @@ int main() {
 
   int x2x = 2*GEMM_LEN;
   int gl  = GEMM_LEN;
-/*
-  hzexp_(&gl,&gl,&A[0],&gl,&AC[0],&x2x);
-  hzexp_(&gl,&gl,&B[0],&gl,&BC[0],&x2x);
-  hzexp_(&gl,&gl,&C[0],&gl,&CC[0],&x2x);
-*/
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&A[0],GEMM_LEN,&AC[0],2*GEMM_LEN);
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&B[0],GEMM_LEN,&BC[0],2*GEMM_LEN);
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&C[0],GEMM_LEN,&CC[0],2*GEMM_LEN);
