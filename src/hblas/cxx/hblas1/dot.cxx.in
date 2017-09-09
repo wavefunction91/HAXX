@@ -19,8 +19,9 @@ namespace HAXX {
 // Optimized Dot Product
   
 template <>
-quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X, 
+quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X, 
   const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
+
 
   quaternion<double> res(0.);
 
@@ -117,9 +118,12 @@ quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X,
     y3 = _mm256_permute2f128_pd(t1, t2, 0x31);
     y4 = _mm256_permute2f128_pd(t3, t4, 0x31);
 
+    // XXX: _CONJ flag simply flips the sign of all of the vector
+    // parts
 
     // SCALAR parts of product
     // R(S) = X(S)*Y(S) - X(I)*Y(I) - X(J)*Y(J) - X(K)*Y(K)
+
 
     // t1 = SCALAR * SCALAR
     t1 = _mm256_mul_pd(x1,y1);
@@ -127,39 +131,70 @@ quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X,
 
     // t1 = t1 - I * I
     t2 = _mm256_mul_pd(x2,y2);
+
+#ifdef _CONJ
+    t1 = _mm256_add_pd(t1,t2);
+#else
     t1 = _mm256_sub_pd(t1,t2);
+#endif
 
     
     // t1 = t1 - J * J
     t2 = _mm256_mul_pd(x3,y3);
+
+#ifdef _CONJ
+    t1 = _mm256_add_pd(t1,t2);
+#else
     t1 = _mm256_sub_pd(t1,t2);
+#endif
 
     
     // r1 += t1 - K * K
     t2 = _mm256_mul_pd(x4,y4);
     r1 = _mm256_add_pd(r1,t1);
+
+#ifdef _CONJ
+    r1 = _mm256_add_pd(r1,t2);
+#else
     r1 = _mm256_sub_pd(r1,t2);
+#endif
 
 
 
 
     // I parts of product
+    // R(I) = X(S)*Y(I) + X(I)*Y(S) + X(J)*Y(K) - X(K)*Y(J) 
 
     // t1 = SCALAR * I
     t1 = _mm256_mul_pd(x1,y2);
    
     // t1 = t1 + I * SCALAR      
     t2 = _mm256_mul_pd(x2,y1);
+
+#ifdef _CONJ
+    t1 = _mm256_sub_pd(t1,t2);
+#else
     t1 = _mm256_add_pd(t1,t2);
+#endif
 
     // t1 = t1 + J * K
     t2 = _mm256_mul_pd(x3,y4);
+
+#ifdef _CONJ
+    t1 = _mm256_sub_pd(t1,t2);
+#else
     t1 = _mm256_add_pd(t1,t2);
+#endif
 
     // r2 = t1 - K * J
     t2 = _mm256_mul_pd(x4,y3);
     r2 = _mm256_add_pd(r2,t1);
+
+#ifdef _CONJ
+    r2 = _mm256_add_pd(r2,t2);
+#else
     r2 = _mm256_sub_pd(r2,t2);
+#endif
 
 
     // J parts of product
@@ -169,16 +204,31 @@ quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X,
    
     // t1 = t1 - I * K      
     t2 = _mm256_mul_pd(x2,y4);
+
+#ifdef _CONJ
+    t1 = _mm256_add_pd(t1,t2);
+#else
     t1 = _mm256_sub_pd(t1,t2);
+#endif
 
     // t1 = t1 + J * SCALAR
     t2 = _mm256_mul_pd(x3,y1);
+
+#ifdef _CONJ
+    t1 = _mm256_sub_pd(t1,t2);
+#else
     t1 = _mm256_add_pd(t1,t2);
+#endif
 
     // t1 = t1 + K * I
     t2 = _mm256_mul_pd(x4,y2);
     r3 = _mm256_add_pd(r3,t1);
+
+#ifdef _CONJ
+    r3 = _mm256_sub_pd(r3,t2);
+#else
     r3 = _mm256_add_pd(r3,t2);
+#endif
 
 
     // K parts of product
@@ -188,16 +238,31 @@ quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X,
    
     // t1 = t1 + I * J      
     t2 = _mm256_mul_pd(x2,y3);
+
+#ifdef _CONJ
+    t1 = _mm256_sub_pd(t1,t2);
+#else
     t1 = _mm256_add_pd(t1,t2);
+#endif
 
     // t1 = t1 - J * I
     t2 = _mm256_mul_pd(x3,y2);
+
+#ifdef _CONJ
+    t1 = _mm256_add_pd(t1,t2);
+#else
     t1 = _mm256_sub_pd(t1,t2);
+#endif
 
     // t1 = t1 + K * SCALAR
     t2 = _mm256_mul_pd(x4,y1);
     r4 = _mm256_add_pd(r4,t1);
+
+#ifdef _CONJ
+    r4 = _mm256_sub_pd(r4,t2);
+#else
     r4 = _mm256_add_pd(r4,t2);
+#endif
 
 
 #endif
@@ -234,7 +299,11 @@ quaternion<double> HBLAS_DOTU(const HAXX_INT N, quaternion<double> * const X,
 #endif
 
   for(i = 0; i < nLeft; i++)
+#ifdef _CONJ
+    res = res + HAXX::conj(locX[i*INCX]) * locY[i*INCY];
+#else
     res = res + locX[i*INCX] * locY[i*INCY];
+#endif
     
   return res;
 

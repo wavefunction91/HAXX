@@ -74,7 +74,7 @@ namespace HAXX {
   AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
 
 //DOT_FORTRAN_IMPL(DOTU,hdotu,double);
-  DOT_FORTRAN_IMPL(DOTC,hdotc,double);
+//DOT_FORTRAN_IMPL(DOTC,hdotc,double);
 
 };
 
