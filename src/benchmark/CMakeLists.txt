@@ -30,7 +30,7 @@ add_library(blas STATIC IMPORTED)
 set_property(TARGET blas PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libblas.a)
 
 add_dependencies(blas lapack)
-target_link_libraries(gemm ${Boost_LIBRARIES} haxx_fortran blas)
+target_link_libraries(gemm ${Boost_LIBRARIES} hblas blas)
 
 #find_package(BLAS REQUIRED)
 #target_link_libraries(gemm ${Boost_LIBRARIES} haxx_fortran ${BLAS_LIBRARIES})
