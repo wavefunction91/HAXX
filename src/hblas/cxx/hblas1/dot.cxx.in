@@ -10,9 +10,7 @@
 #include "haxx.hpp"
 #include "hblas/hblas1_def.hpp"
 
-#ifdef __AVX__
-#  include <immintrin.h>
-#endif
+#include "util/simd.hpp"
 
 namespace HAXX {
 
@@ -30,25 +28,25 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 #ifdef __AVX__
 
   // Load quaternions
-  __m256d x1;
-  __m256d x2;
-  __m256d x3;
-  __m256d x4;
+  VECD x1;
+  VECD x2;
+  VECD x3;
+  VECD x4;
 
-  __m256d y1;
-  __m256d y2;
-  __m256d y3;
-  __m256d y4;
+  VECD y1;
+  VECD y2;
+  VECD y3;
+  VECD y4;
   
 
   // Scratch space
-  __m256d t1, t2, t3, t4;
+  VECD t1, t2, t3, t4;
 
   // Result buffer
-  __m256d r1 = _mm256_setzero_pd();
-  __m256d r2 = _mm256_setzero_pd();
-  __m256d r3 = _mm256_setzero_pd();
-  __m256d r4 = _mm256_setzero_pd();
+  VECD r1 = ZEROD;
+  VECD r2 = ZEROD;
+  VECD r3 = ZEROD;
+  VECD r4 = ZEROD;
   
 #endif
 
@@ -70,200 +68,43 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
             
     if( isAligned ) {
 
-      x1 = _mm256_load_pd( reinterpret_cast<double*>(locX) );
-      x2 = _mm256_load_pd( reinterpret_cast<double*>(locX + INCX  ) );
-      x3 = _mm256_load_pd( reinterpret_cast<double*>(locX + 2*INCX) );
-      x4 = _mm256_load_pd( reinterpret_cast<double*>(locX + 3*INCX) );
+      x1 = LOADD_ALIGNED_AS(double,locX         );
+      x2 = LOADD_ALIGNED_AS(double,locX +   INCX);
+      x3 = LOADD_ALIGNED_AS(double,locX + 2*INCX);
+      x4 = LOADD_ALIGNED_AS(double,locX + 3*INCX);
 
-      y1 = _mm256_load_pd( reinterpret_cast<double*>(locY) );
-      y2 = _mm256_load_pd( reinterpret_cast<double*>(locY + INCY) );
-      y3 = _mm256_load_pd( reinterpret_cast<double*>(locY + 2*INCY) );
-      y4 = _mm256_load_pd( reinterpret_cast<double*>(locY + 3*INCY) );
+      y1 = LOADD_ALIGNED_AS(double,locY         );
+      y2 = LOADD_ALIGNED_AS(double,locY +   INCY);
+      y3 = LOADD_ALIGNED_AS(double,locY + 2*INCY);
+      y4 = LOADD_ALIGNED_AS(double,locY + 3*INCY);
 
     } else {
 
-      x1 = _mm256_loadu_pd( reinterpret_cast<double*>(locX) );
-      x2 = _mm256_loadu_pd( reinterpret_cast<double*>(locX + INCX  ) );
-      x3 = _mm256_loadu_pd( reinterpret_cast<double*>(locX + 2*INCX) );
-      x4 = _mm256_loadu_pd( reinterpret_cast<double*>(locX + 3*INCX) );
+      x1 = LOADD_UNALIGNED_AS(double,locX         );
+      x2 = LOADD_UNALIGNED_AS(double,locX +   INCX);
+      x3 = LOADD_UNALIGNED_AS(double,locX + 2*INCX);
+      x4 = LOADD_UNALIGNED_AS(double,locX + 3*INCX);
 
-      y1 = _mm256_loadu_pd( reinterpret_cast<double*>(locY) );
-      y2 = _mm256_loadu_pd( reinterpret_cast<double*>(locY + INCY) );
-      y3 = _mm256_loadu_pd( reinterpret_cast<double*>(locY + 2*INCY) );
-      y4 = _mm256_loadu_pd( reinterpret_cast<double*>(locY + 3*INCY) );
+      y1 = LOADD_UNALIGNED_AS(double,locY         );
+      y2 = LOADD_UNALIGNED_AS(double,locY +   INCY);
+      y3 = LOADD_UNALIGNED_AS(double,locY + 2*INCY);
+      y4 = LOADD_UNALIGNED_AS(double,locY + 3*INCY);
 
     }
 
 
     // Transpose X batch
-    t1 = _mm256_shuffle_pd(x1, x2, 0x0);
-    t3 = _mm256_shuffle_pd(x1, x2, 0xF);
-    t2 = _mm256_shuffle_pd(x3, x4, 0x0);
-    t4 = _mm256_shuffle_pd(x3, x4, 0xF);
-
-    x1 = _mm256_permute2f128_pd(t1, t2, 0x20);
-    x2 = _mm256_permute2f128_pd(t3, t4, 0x20);
-    x3 = _mm256_permute2f128_pd(t1, t2, 0x31);
-    x4 = _mm256_permute2f128_pd(t3, t4, 0x31);
+    _MM_TRANSPOSE_4x4_PD(x1,x2,x3,x4,t1,t2,t3,t4);
 
     // Transpose Y batch
-    t1 = _mm256_shuffle_pd(y1, y2, 0x0);
-    t3 = _mm256_shuffle_pd(y1, y2, 0xF);
-    t2 = _mm256_shuffle_pd(y3, y4, 0x0);
-    t4 = _mm256_shuffle_pd(y3, y4, 0xF);
+    _MM_TRANSPOSE_4x4_PD(y1,y2,y3,y4,t1,t2,t3,t4);
 
-    y1 = _mm256_permute2f128_pd(t1, t2, 0x20);
-    y2 = _mm256_permute2f128_pd(t3, t4, 0x20);
-    y3 = _mm256_permute2f128_pd(t1, t2, 0x31);
-    y4 = _mm256_permute2f128_pd(t3, t4, 0x31);
+    #ifdef _CONJ
+      INC_MULD4Q_CN(x1,x2,x3,x4,y1,y2,y3,y4,r1,r2,r3,r4);
+    #else
+      INC_MULD4Q_NN(x1,x2,x3,x4,y1,y2,y3,y4,r1,r2,r3,r4);
+    #endif
 
-    // XXX: _CONJ flag simply flips the sign of all of the vector
-    // parts
-
-    // SCALAR parts of product
-    // R(S) = X(S)*Y(S) - X(I)*Y(I) - X(J)*Y(J) - X(K)*Y(K)
-
-
-    // t1 = SCALAR * SCALAR
-    t1 = _mm256_mul_pd(x1,y1);
-
-
-    // t1 = t1 - I * I
-    t2 = _mm256_mul_pd(x2,y2);
-
-#ifdef _CONJ
-    t1 = _mm256_add_pd(t1,t2);
-#else
-    t1 = _mm256_sub_pd(t1,t2);
-#endif
-
-    
-    // t1 = t1 - J * J
-    t2 = _mm256_mul_pd(x3,y3);
-
-#ifdef _CONJ
-    t1 = _mm256_add_pd(t1,t2);
-#else
-    t1 = _mm256_sub_pd(t1,t2);
-#endif
-
-    
-    // r1 += t1 - K * K
-    t2 = _mm256_mul_pd(x4,y4);
-    r1 = _mm256_add_pd(r1,t1);
-
-#ifdef _CONJ
-    r1 = _mm256_add_pd(r1,t2);
-#else
-    r1 = _mm256_sub_pd(r1,t2);
-#endif
-
-
-
-
-    // I parts of product
-    // R(I) = X(S)*Y(I) + X(I)*Y(S) + X(J)*Y(K) - X(K)*Y(J) 
-
-    // t1 = SCALAR * I
-    t1 = _mm256_mul_pd(x1,y2);
-   
-    // t1 = t1 + I * SCALAR      
-    t2 = _mm256_mul_pd(x2,y1);
-
-#ifdef _CONJ
-    t1 = _mm256_sub_pd(t1,t2);
-#else
-    t1 = _mm256_add_pd(t1,t2);
-#endif
-
-    // t1 = t1 + J * K
-    t2 = _mm256_mul_pd(x3,y4);
-
-#ifdef _CONJ
-    t1 = _mm256_sub_pd(t1,t2);
-#else
-    t1 = _mm256_add_pd(t1,t2);
-#endif
-
-    // r2 = t1 - K * J
-    t2 = _mm256_mul_pd(x4,y3);
-    r2 = _mm256_add_pd(r2,t1);
-
-#ifdef _CONJ
-    r2 = _mm256_add_pd(r2,t2);
-#else
-    r2 = _mm256_sub_pd(r2,t2);
-#endif
-
-
-    // J parts of product
-    // R(J) = X(S)*Y(J) - X(I)*Y(K) + X(J)*Y(S) + X(K)*Y(I) 
-
-    // t1 = SCALAR * J
-    t1 = _mm256_mul_pd(x1,y3);
-   
-    // t1 = t1 - I * K      
-    t2 = _mm256_mul_pd(x2,y4);
-
-#ifdef _CONJ
-    t1 = _mm256_add_pd(t1,t2);
-#else
-    t1 = _mm256_sub_pd(t1,t2);
-#endif
-
-    // t1 = t1 + J * SCALAR
-    t2 = _mm256_mul_pd(x3,y1);
-
-#ifdef _CONJ
-    t1 = _mm256_sub_pd(t1,t2);
-#else
-    t1 = _mm256_add_pd(t1,t2);
-#endif
-
-    // t1 = t1 + K * I
-    t2 = _mm256_mul_pd(x4,y2);
-    r3 = _mm256_add_pd(r3,t1);
-
-#ifdef _CONJ
-    r3 = _mm256_sub_pd(r3,t2);
-#else
-    r3 = _mm256_add_pd(r3,t2);
-#endif
-
-
-    // K parts of product
-    // R(K) = X(S)*Y(K) + X(I)*Y(J) - X(J)*Y(I) + X(K)*Y(S) 
-
-    // t1 = SCALAR * K
-    t1 = _mm256_mul_pd(x1,y4);
-   
-    // t1 = t1 + I * J      
-    t2 = _mm256_mul_pd(x2,y3);
-
-#ifdef _CONJ
-    t1 = _mm256_sub_pd(t1,t2);
-#else
-    t1 = _mm256_add_pd(t1,t2);
-#endif
-
-    // t1 = t1 - J * I
-    t2 = _mm256_mul_pd(x3,y2);
-
-#ifdef _CONJ
-    t1 = _mm256_add_pd(t1,t2);
-#else
-    t1 = _mm256_sub_pd(t1,t2);
-#endif
-
-    // t1 = t1 + K * SCALAR
-    t2 = _mm256_mul_pd(x4,y1);
-    r4 = _mm256_add_pd(r4,t1);
-
-#ifdef _CONJ
-    r4 = _mm256_sub_pd(r4,t2);
-#else
-    r4 = _mm256_add_pd(r4,t2);
-#endif
 
 
 #endif
@@ -275,29 +116,19 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   }
 
 
-  double * resPtr = (double*)(&res);
-
 #ifdef __AVX__
 
   // Transpose R batch
-  t1 = _mm256_shuffle_pd(r1, r2, 0x0);
-  t3 = _mm256_shuffle_pd(r1, r2, 0xF);
-  t2 = _mm256_shuffle_pd(r3, r4, 0x0);
-  t4 = _mm256_shuffle_pd(r3, r4, 0xF);
+  _MM_TRANSPOSE_4x4_PD(r1,r2,r3,r4,t1,t2,t3,t4);
 
-  r1 = _mm256_permute2f128_pd(t1, t2, 0x20);
-  r2 = _mm256_permute2f128_pd(t3, t4, 0x20);
-  r3 = _mm256_permute2f128_pd(t1, t2, 0x31);
-  r4 = _mm256_permute2f128_pd(t3, t4, 0x31);
-
-  r1 = _mm256_add_pd(r1,r2);
-  r1 = _mm256_add_pd(r1,r3);
-  r1 = _mm256_add_pd(r1,r4);
+  r1 = ADDD(r1,r2);
+  r1 = ADDD(r1,r3);
+  r1 = ADDD(r1,r4);
 
 
   // Store the result in a possibly unaligned
   // storage
-  _mm256_storeu_pd(resPtr,r1);   
+  STORED_UNALIGNED_AS(double,(&res),r1);   
 
 #endif
 

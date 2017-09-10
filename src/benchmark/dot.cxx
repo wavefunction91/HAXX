@@ -94,7 +94,9 @@ int main() {
     dur_for /= NREP;
 
     std::cout << "N = " << N << ", SIMD = " << dur_opt.count() 
-              << ", FORTRAN = " << dur_for.count() << std::endl;
+              << ", FORTRAN = " << dur_for.count() 
+              << ", % = " <<  (dur_for.count() - dur_opt.count()) / dur_for.count() 
+              << std::endl;
 
   }
 
