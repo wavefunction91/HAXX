@@ -63,15 +63,15 @@ namespace HAXX {
 
   SWAP_CXX_IMPL(double);
   
-  SCAL_FORTRAN_IMPL(hscald,double,double);
-  SCAL_FORTRAN_IMPL(hscalc,double,std::complex<double>);
-  SCAL_FORTRAN_IMPL(hscalh,double,quaternion<double>);
+//SCAL_FORTRAN_IMPL(hscald,double,double);
+//SCAL_FORTRAN_IMPL(hscalc,double,std::complex<double>);
+//SCAL_FORTRAN_IMPL(hscalh,double,quaternion<double>);
 
   COPY_CXX_IMPL(double);
 
-  AXPY_FORTRAN_IMPL(haxpydh,double,quaternion<double>,double);
-  AXPY_FORTRAN_IMPL(haxpych,double,quaternion<double>,std::complex<double>);
-  AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
+//AXPY_FORTRAN_IMPL(haxpydh,double,quaternion<double>,double);
+//AXPY_FORTRAN_IMPL(haxpych,double,quaternion<double>,std::complex<double>);
+//AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
 
 //DOT_FORTRAN_IMPL(DOTU,hdotu,double);
 //DOT_FORTRAN_IMPL(DOTC,hdotc,double);

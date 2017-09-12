@@ -1,0 +1,185 @@
+/*
+ *  This file is a part of HAXX
+ *  
+ *  Copyright (c) 2017 David Williams-Young
+ *  All rights reserved.
+ *  
+ *  See LICENSE.txt 
+ */
+
+#include "haxx.hpp"
+#include "hblas/hblas1_def.hpp"
+
+#include <iostream>
+
+#include <util/simd.hpp>
+
+
+#if ALPHAF == DOUBLE
+  #define _ALPHAF double
+#elif ALPHAF == DCOMPLEX
+  #define _ALPHAF std::complex<double>
+#elif ALPHAF == DQUATERNION
+  #define _ALPHAF quaternion<double>
+#else
+  #error AXPY/SCAL Only Supports 64-bit floats
+#endif
+
+
+namespace HAXX {
+
+// Optimized AXPY and SCAL operations
+
+template <>
+#ifdef _AXPY
+
+void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA, 
+  quaternion<double> * const X, const HAXX_INT INCX, 
+  quaternion<double> * const Y, const HAXX_INT INCY)
+
+#elif defined(_SCAL)
+
+void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA, 
+  quaternion<double> * const X, const HAXX_INT INCX)
+
+#endif
+{
+
+  quaternion<double> * locX = X;
+
+#ifdef _AXPY
+  quaternion<double> * locY = Y;
+#endif
+
+#if defined(__AVX__) || defined(__AVX2__)
+
+  // Load quaternions
+  VECD x1;
+
+#ifdef _AXPY
+  VECD y1;
+#endif
+  
+#endif
+
+  const HAXX_INT BatchSize = 1;
+  const HAXX_INT NBatch    = N / BatchSize;
+  const HAXX_INT nLeft = N % BatchSize;
+
+  HAXX_INT i;
+
+  // Determine side
+  const bool MulLeft = (SIDE == 'L');
+
+  // Determine alignment
+  const bool XIsAligned = IS_ALIGNED(X,REQ_ALIGN);
+
+#ifdef _AXPY
+  const bool YIsAligned = IS_ALIGNED(Y,REQ_ALIGN);
+  const bool isAligned  = XIsAligned and YIsAligned;
+#else
+  const bool isAligned  = XIsAligned;
+#endif
+
+  // Load scaling factor
+#if defined(__AVX__) || defined(__AVX2__)
+
+
+#if ALPHAF == DOUBLE
+  const VECD alpha = _mm256_broadcast_sd(&ALPHA);
+#elif ALPHAF == DCOMPLEX
+
+  auto ALPHA_C = std::conj(ALPHA);
+
+  double *ALPHA_PTR = const_cast<double*>(
+                        reinterpret_cast<const double *>(&ALPHA));
+
+  __m128d alphaC      = _mm_loadu_pd(ALPHA_PTR);
+  __m128d alphaC_conj = 
+    MulLeft ? _mm_loadu_pd(ALPHA_PTR) : 
+              _mm_loadu_pd(reinterpret_cast<double*>(&ALPHA_C));
+
+  const VECD alpha = D256_FROM_D128(_mm_castpd_ps(alphaC),
+                                    _mm_castpd_ps(alphaC_conj));
+
+  const __m256i maskConj = _mm256_set_epi64x(
+                             0x8000000000000000, 0,
+                             0x8000000000000000, 0 );
+
+  const VECD alpha_conj = _mm256_xor_pd(
+                            _mm256_permute_pd(alpha, 0x5),
+                            _mm256_castsi256_pd(maskConj)
+                          );
+
+#elif ALPHAF == DQUATERNION
+  const VECD alpha = LOADD_UNALIGNED_AS(double,&ALPHA);
+#endif
+
+#endif
+
+  for( i = 0; i < NBatch; i++ ) {
+
+#if defined(__AVX__) || defined (__AVX2__)
+
+    if( isAligned ) {
+
+      x1 = LOADD_ALIGNED_AS(double,locX);
+#ifdef _AXPY
+      y1 = LOADD_ALIGNED_AS(double,locY);
+#endif
+
+    } else {
+
+      x1 = LOADD_UNALIGNED_AS(double,locX);
+#ifdef _AXPY
+      y1 = LOADD_UNALIGNED_AS(double,locY);
+#endif
+
+    }
+
+#ifdef _SCAL
+
+  #if   ALPHAF == DOUBLE
+    x1 = MULD(alpha,x1);
+  #elif ALPHAF == DCOMPLEX
+    VECD p1 = MULD(x1,alpha);
+    VECD p2 = MULD(x1,alpha_conj);
+    x1      = _mm256_hsub_pd(p1,p2);
+  #elif ALPHAF == DQUATERNION
+    if( MulLeft ) x1 = MULDQ_NN(alpha,x1);
+    else          x1 = MULDQ_NN(x1,alpha);
+  #endif
+
+  if( isAligned ) STORED_ALIGNED_AS(  double,locX,x1);
+  else            STORED_UNALIGNED_AS(double,locX,x1);        
+
+#elif defined(_AXPY)
+
+  #if   ALPHAF == DOUBLE
+    y1 = FMAD(alpha,x1,y1);
+  #elif ALPHAF == DCOMPLEX
+    VECD p1 = MULD(x1,alpha);
+    VECD p2 = MULD(x1,alpha_conj);
+    y1      = ADDD(y1,_mm256_hsub_pd(p1,p2));
+  #elif ALPHAF == DQUATERNION
+    if( MulLeft ) y1 = ADDD(y1,MULDQ_NN(alpha,x1));
+    else          y1 = ADDD(y1,MULDQ_NN(x1,alpha));
+  #endif
+
+  if( isAligned ) STORED_ALIGNED_AS(  double,locY,y1);
+  else            STORED_UNALIGNED_AS(double,locY,y1);        
+
+#endif
+
+#endif
+
+    locX += BatchSize * INCX;
+#ifdef _AXPY
+    locY += BatchSize * INCY;
+#endif
+
+  }
+
+};
+
+}; // namespace HAXX

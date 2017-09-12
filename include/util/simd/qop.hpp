@@ -15,7 +15,7 @@ namespace HAXX {
 
   // Single Quaternion Multiplication
 
-  inline __m256d MULDQ_NN(__m256d &x, __m256d &y) {
+  inline __m256d MULDQ_NN(const __m256d &x, const __m256d &y) {
 
     const __m256i maskScalar = _mm256_set_epi64x(0,0,0,0x8000000000000000);
     // Get the low and high-bits of x and y

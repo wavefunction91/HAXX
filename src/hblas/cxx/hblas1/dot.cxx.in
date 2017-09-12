@@ -25,7 +25,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   quaternion<double> * locX = X, *locY = Y;
 
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
 
   // Load quaternions
   VECD x1;
@@ -57,10 +57,6 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   HAXX_INT i;
 
 
-/*
-  const bool XIsAligned = ((unsigned long)X & 31) == 0;
-  const bool YIsAligned = ((unsigned long)Y & 31) == 0;
-*/
   const bool XIsAligned = IS_ALIGNED(X,REQ_ALIGN);
   const bool YIsAligned = IS_ALIGNED(Y,REQ_ALIGN);
 
