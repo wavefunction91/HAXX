@@ -12,9 +12,7 @@
 
 // SIMD intrinsics header
   
-#ifdef __AVX__
-  #include <immintrin.h>
-#endif
+#include <immintrin.h>
 
 // Compile time type constants
 #define DOUBLE      0
@@ -22,7 +20,7 @@
 #define DQUATERNION 2
 
 // Required boundary alignment for aligned data
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
   #define REQ_ALIGN 32
 #endif
 

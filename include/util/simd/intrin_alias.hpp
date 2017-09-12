@@ -14,7 +14,7 @@
 // Alias SIMD intrinsics
 
 // 256-bit vector length
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
 
   // 64-bit float SIMD vector
   #define VECD __m256d
@@ -74,12 +74,18 @@
 
 // FMA / FMS operations (D = +-(A*B) +- C)
 
-// AVX has no FMA, macro emulates with 2 instructions
-#ifdef __AVX__
+// Emulate FMA with two instructions
+#ifndef __FMA__
 
 #define FMAD(A,B,C)  ADDD(MULD(A,B),C)
 #define FMSD(A,B,C)  SUBD(MULD(A,B),C)
 #define FNMAD(A,B,C) SUBD(C,MULD(A,B))
+
+#else
+
+#define FMAD(A,B,C)  _mm256_fmadd_pd(A,B,C)
+#define FMSD(A,B,C)  _mm256_fmsub_pd(A,B,C)
+#define FNMAD(A,B,C) _mm256_fnmadd_pd(A,B,C)
 
 #endif
 

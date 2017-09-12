@@ -39,7 +39,7 @@
 
 
 
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
 
   // Transpose 4x4 registers (with scratch space)
   #define _MM_TRANSPOSE_4x4_PD(w,x,y,z,t1,t2,t3,t4) \
