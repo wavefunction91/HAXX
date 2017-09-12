@@ -14,16 +14,19 @@
 // Misc macros
 
 
+// Alignment checking
+#define IS_ALIGNED(X,B) ( ((unsigned long)(X) & (B-1)) == 0 )
+
 
 // Load operations
 
 // Load aligned with cast
 #define LOADD_ALIGNED_AS(T,X) \
-  LOADD_ALIGNED(reinterpret_cast<T*>(X))
+  LOADD_ALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
 
 // Load unaligned with cast
 #define LOADD_UNALIGNED_AS(T,X) \
-  LOADD_UNALIGNED(reinterpret_cast<T*>(X))
+  LOADD_UNALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
 
 // Store aligned with cast
 #define STORED_ALIGNED_AS(T,X,V) \

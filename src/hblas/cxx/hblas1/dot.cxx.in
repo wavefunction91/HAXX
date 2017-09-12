@@ -57,8 +57,12 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   HAXX_INT i;
 
 
+/*
   const bool XIsAligned = ((unsigned long)X & 31) == 0;
   const bool YIsAligned = ((unsigned long)Y & 31) == 0;
+*/
+  const bool XIsAligned = IS_ALIGNED(X,REQ_ALIGN);
+  const bool YIsAligned = IS_ALIGNED(Y,REQ_ALIGN);
 
   const bool isAligned = XIsAligned and YIsAligned;
 
@@ -121,23 +125,34 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   // Transpose R batch
   _MM_TRANSPOSE_4x4_PD(r1,r2,r3,r4,t1,t2,t3,t4);
 
+  // Add up the four quaternions
   r1 = ADDD(r1,r2);
   r1 = ADDD(r1,r3);
   r1 = ADDD(r1,r4);
 
+#endif
+
+  for(i = 0; i < nLeft; i++) {
+    if( isAligned ) {
+      x1 = LOADD_ALIGNED_AS(double,locX + i*INCX);
+      y1 = LOADD_ALIGNED_AS(double,locY + i*INCY);
+    } else {
+      x1 = LOADD_UNALIGNED_AS(double,locX + i*INCX);
+      y1 = LOADD_UNALIGNED_AS(double,locY + i*INCY);
+    }
+
+#ifdef _CONJ
+    r1 = ADDD(r1,MULDQ_CN(x1,y1));
+#else
+    r1 = ADDD(r1,MULDQ_NN(x1,y1));
+#endif
+
+  } 
 
   // Store the result in a possibly unaligned
   // storage
   STORED_UNALIGNED_AS(double,(&res),r1);   
 
-#endif
-
-  for(i = 0; i < nLeft; i++)
-#ifdef _CONJ
-    res = res + HAXX::conj(locX[i*INCX]) * locY[i*INCY];
-#else
-    res = res + locX[i*INCX] * locY[i*INCY];
-#endif
     
   return res;
 

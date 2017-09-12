@@ -128,6 +128,21 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
 
 };
 
+template<>
+inline quaternion<double> operator*(const quaternion<double>& __x,
+  const quaternion<double>& __y) {
+
+  quaternion<double> __r;
+
+  __m256d x = LOADD_UNALIGNED_AS(double,&__x);
+  __m256d y = LOADD_UNALIGNED_AS(double,&__y);
+  __m256d r = MULDQ_NN(x,y);
+
+  STORED_UNALIGNED_AS(double,&__r,r);
+  
+  return __r;
+};
+
 /**
  *  Returns true iff all of the elements of quaternion \f$q\f$ are the
  *  same as quaternoin \f$p\f$.

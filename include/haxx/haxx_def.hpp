@@ -16,6 +16,8 @@
 #include <sstream>
 #include <array>
 
+#include <util/simd.hpp>
+
 // HAXX Namespace
 namespace HAXX {
 

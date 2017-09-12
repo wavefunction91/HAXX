@@ -55,29 +55,32 @@
   // Multiply 64-bit floats
   #define MULD(X,Y) _mm256_mul_pd(X,Y)
 
+
+
+  // Get the low and high 128-bits of 256-bit register
+  #define GET_LOD_256(X) _mm256_castpd256_pd128(X)
+  #define GET_HID_256(X) _mm256_extractf128_pd((X),1)
+
+
+  // Construct a 256-bit pack from 2 128-bit packs
+  #define D256_FROM_D128(X,Y) \
+    _mm256_castps_pd(_mm256_insertf128_ps(_mm256_castps128_ps256(X),(Y),1));
+
+
 #endif
 
 
 
 
-// FMA / FMS operations (D = A*B +- C)
+// FMA / FMS operations (D = +-(A*B) +- C)
 
 // AVX has no FMA, macro emulates with 2 instructions
 #ifdef __AVX__
 
-#define FMAD(A,B,C) ADDD(MULD(A,B),C)
-#define FMSD(A,B,C) SUBD(MULD(A,B),C)
+#define FMAD(A,B,C)  ADDD(MULD(A,B),C)
+#define FMSD(A,B,C)  SUBD(MULD(A,B),C)
+#define FNMAD(A,B,C) SUBD(C,MULD(A,B))
 
-#endif
-
-
-
-
-// Macros for FSM (D = A +- B*C)
-// XXX: This is not a single FMA type instruction
-
-#ifdef __AVX__
-#  define FSMD(A,B,C) SUBD(A,MULD(B,C))
 #endif
 
 
