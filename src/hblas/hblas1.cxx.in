@@ -10,6 +10,7 @@
 #include "haxx.hpp"
 #include "hblas/hblas1_impl.hpp"
 
+#cmakedefine ENABLE_GENERIC_FORTRAN
 
 
 // Preprocessor macros for quick CXX implementations
@@ -63,18 +64,24 @@ namespace HAXX {
 
   SWAP_CXX_IMPL(double);
   
-//SCAL_FORTRAN_IMPL(hscald,double,double);
-//SCAL_FORTRAN_IMPL(hscalc,double,std::complex<double>);
-//SCAL_FORTRAN_IMPL(hscalh,double,quaternion<double>);
+#ifdef ENABLE_GENERIC_FORTRAN
+  SCAL_FORTRAN_IMPL(hscald,double,double);
+  SCAL_FORTRAN_IMPL(hscalc,double,std::complex<double>);
+  SCAL_FORTRAN_IMPL(hscalh,double,quaternion<double>);
+#endif
 
   COPY_CXX_IMPL(double);
 
-//AXPY_FORTRAN_IMPL(haxpydh,double,quaternion<double>,double);
-//AXPY_FORTRAN_IMPL(haxpych,double,quaternion<double>,std::complex<double>);
-//AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
+#ifdef ENABLE_GENERIC_FORTRAN
+  AXPY_FORTRAN_IMPL(haxpydh,double,quaternion<double>,double);
+  AXPY_FORTRAN_IMPL(haxpych,double,quaternion<double>,std::complex<double>);
+  AXPY_FORTRAN_IMPL(haxpyhh,double,quaternion<double>,quaternion<double>);
+#endif
 
-//DOT_FORTRAN_IMPL(DOTU,hdotu,double);
-//DOT_FORTRAN_IMPL(DOTC,hdotc,double);
+#ifdef ENABLE_GENERIC_FORTRAN
+  DOT_FORTRAN_IMPL(DOTU,hdotu,double);
+  DOT_FORTRAN_IMPL(DOTC,hdotc,double);
+#endif
 
 };
 

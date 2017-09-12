@@ -12,8 +12,22 @@
 message( STATUS "HAXX WILL BUILD BENCHMARK EXECUTABLES" )
 
 add_executable(gemm gemm.cxx)
-add_executable(dot dot.cxx)
 
+set( DOT_SRC dot.cxx )
+
+# Make sure that the fortran functions get compiled for
+# the benchmark
+if( NOT ENABLE_GENERIC_FORTRAN )
+  set( DOT_SRC ${DOT_SRC} 
+    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas/hblas1/hdotc.f
+    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas/hblas1/hdotu.f
+  )
+endif()
+
+add_executable(dot ${DOT_SRC})
+
+
+# Reference BLAS / LAPACK
 include(ExternalProject)
 find_program(SED_EXEC sed)
 ExternalProject_Add(lapack

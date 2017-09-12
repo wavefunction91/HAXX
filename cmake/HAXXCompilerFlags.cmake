@@ -20,3 +20,34 @@ elseif(FC_USES_CPP)
 else()
   message(FATAL "Unable to Determine a Suitable FORTRAN Preprocessor")
 endif()
+
+
+if( HAXX_USE_HOST_SIMD )
+
+  # Determine CXX opt flags
+  check_cxx_compiler_flag("-march=native" CXX_USES_MARCH_NATIVE)
+  check_cxx_compiler_flag("-xHost"        CXX_USES_XHOST       )
+
+  check_fortran_compiler_flag("-march=native" FC_USES_MARCH_NATIVE)
+  check_fortran_compiler_flag("-xHost"        FC_USES_XHOST       )
+
+  # Add Host flags
+  if( CXX_USES_XHOST )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xHost" )
+  elseif( CXX_USES_MARCH_NATIVE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native" )
+  else()
+    message( WARNING "Unable to determine proper HOST flags for CXX compiler" )
+  endif()
+
+  if( FC_USES_XHOST )
+    set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -xHost" )
+  elseif( FC_USES_MARCH_NATIVE )
+    set( CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -march=native" )
+  else()
+    message( WARNING "Unable to determine proper HOST flags for FC" )
+  endif()
+
+endif()
+
+

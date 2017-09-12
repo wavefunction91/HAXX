@@ -22,11 +22,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_definitions("-D_HAXX_UT_BUTF_NINCLUDED")
 endif()
 
+
+# Options
+option( HAXX_ENABLE_BENCHMARK "Enable Build of HAXX / HBLAS Benchmark" OFF )
+option( HAXX_ENABLE_TESTING   "Enable Build of HAXX / HBLAS Unit Tests" ON )
+option( HAXX_USE_HOST_SIMD    "Use Host Native Flags for SIMD"          ON )
+
+
 include(HAXXCompilerFlags)
-
-option( HAXX_ENABLE_BENCHMARK "Enable build of HAXX / HBLAS Benchmark" OFF )
-option( HAXX_ENABLE_TESTING   "Enable build of HAXX / HBLAS Unit Tests" ON )
-
+include(HAXXHandleSIMD)
 
 add_subdirectory(src)
 

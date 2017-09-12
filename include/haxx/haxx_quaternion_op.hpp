@@ -147,7 +147,7 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
     return __r;
   };
 
-#else
+#endif
 
 /**
  *  Returns true iff all of the elements of quaternion \f$q\f$ are the
