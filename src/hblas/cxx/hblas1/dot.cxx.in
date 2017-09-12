@@ -21,8 +21,10 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
 
 
+  // Result quaternion
   quaternion<double> res(0.);
 
+  // Local pointers for increment
   quaternion<double> * locX = X, *locY = Y;
 
 #if defined(__AVX__) || defined(__AVX2__)
@@ -42,7 +44,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   // Scratch space
   VECD t1, t2, t3, t4;
 
-  // Result buffer
+  // Result buffer (zeroed out)
   VECD r1 = ZEROD;
   VECD r2 = ZEROD;
   VECD r3 = ZEROD;
@@ -50,6 +52,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   
 #endif
 
+  // Batch size information
   const HAXX_INT BatchSize = 4;
   const HAXX_INT NBatch    = N / BatchSize;
   const HAXX_INT nLeft = N % BatchSize;
@@ -57,6 +60,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   HAXX_INT i;
 
 
+  // Determine alignment
   const bool XIsAligned = IS_ALIGNED(X,REQ_ALIGN);
   const bool YIsAligned = IS_ALIGNED(Y,REQ_ALIGN);
 
@@ -64,8 +68,9 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   for( i = 0; i < NBatch; i++ ) {
   
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
             
+    // Load 4 X and Y elements
     if( isAligned ) {
 
       x1 = LOADD_ALIGNED_AS(double,locX         );
@@ -99,10 +104,14 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
     // Transpose Y batch
     _MM_TRANSPOSE_4x4_PD(y1,y2,y3,y4,t1,t2,t3,t4);
 
+    // R += CONJ(X) * Y
     #ifdef _CONJ
       INC_MULD4Q_CN(x1,x2,x3,x4,y1,y2,y3,y4,r1,r2,r3,r4);
+
+    // R += X * Y
     #else
       INC_MULD4Q_NN(x1,x2,x3,x4,y1,y2,y3,y4,r1,r2,r3,r4);
+
     #endif
 
 
@@ -110,25 +119,30 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 #endif
 
 
+    // Increment pointers
     locX += BatchSize * INCX;
     locY += BatchSize * INCY;
   
   }
 
 
-#ifdef __AVX__
+#if defined(__AVX__) || defined(__AVX2__)
 
-  // Transpose R batch
+  // Transpose R batch to proper quaternion storage
   _MM_TRANSPOSE_4x4_PD(r1,r2,r3,r4,t1,t2,t3,t4);
 
   // Add up the four quaternions
+  // r1 = r1 + r2 + r3 + r4
   r1 = ADDD(r1,r2);
   r1 = ADDD(r1,r3);
   r1 = ADDD(r1,r4);
 
 #endif
 
+  // Cleanup loop, multiply one quaternion at a time
   for(i = 0; i < nLeft; i++) {
+
+    // Load a single element of X and Y
     if( isAligned ) {
       x1 = LOADD_ALIGNED_AS(double,locX + i*INCX);
       y1 = LOADD_ALIGNED_AS(double,locY + i*INCY);
@@ -137,11 +151,15 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
       y1 = LOADD_UNALIGNED_AS(double,locY + i*INCY);
     }
 
-#ifdef _CONJ
+    // r1 += CONJ(X) * Y
+  #ifdef _CONJ
     r1 = ADDD(r1,MULDQ_CN(x1,y1));
-#else
+
+    // r1 += X * Y
+  #else
     r1 = ADDD(r1,MULDQ_NN(x1,y1));
-#endif
+
+  #endif
 
   } 
 
@@ -150,8 +168,9 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   STORED_UNALIGNED_AS(double,(&res),r1);   
 
     
+  // return
   return res;
 
-}; // HBLAS_DOTU
+}; // HBLAS_DOT?
 
 }; // namespace HAXX

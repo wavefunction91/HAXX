@@ -15,6 +15,16 @@ namespace HAXX {
 
   // Single Quaternion Multiplication
 
+
+  /**
+   *  \brief Multiply two quaternions as 4 packed  64-bit floats
+   *  int a 256-bit vector lane.
+   *
+   *  \param[in]  x  Packed LHS quaternion
+   *  \param[in]  y  Packed RHS quaternion
+   *
+   *  \returns r = x * y
+   */ 
   inline __m256d MULDQ_NN(const __m256d &x, const __m256d &y) {
 
     const __m256i maskScalar = _mm256_set_epi64x(0,0,0,0x8000000000000000);
@@ -41,8 +51,10 @@ namespace HAXX {
     rHi = _mm_shuffle_pd(yLo,yHi, 0x1); // 0001: 01;23 -> 12
     __m256d y2312 = D256_FROM_D128(_mm_castpd_ps(yHi), _mm_castpd_ps(rHi));
 
-
+    // t1 = x1123 * y1000
     __m256d t1  = MULD(x1123,y1000);
+
+    // t12 = t1 + x2231 * y2312 
     __m256d t12 = FMAD(x2231,y2312,t1);
 
     // Flip scalar sign bit on t12
@@ -65,18 +77,37 @@ namespace HAXX {
     __m256d y3231 = D256_FROM_D128(_mm_castpd_ps(rLo), _mm_castpd_ps(rHi));
 
     
+    // t3 = x3312 * y3231
+    __m256d t3  = MULD(x3312,y3231);
 
-   __m256d t3  = MULD(x3312,y3231);
-   __m256d t03 = FMSD(x0000,y,t3);
+    // t03 = t3 + x000y * y
+    __m256d t03 = FMSD(x0000,y,t3);
 
+    // r = t03 + t12
     return ADDD(t03,t12);
 
   };
 
+
+  /**
+   *  \brief Multiply two quaternions as 4 packed  64-bit floats
+   *  int a 256-bit vector lane.
+   *
+   *  \param[in]  x  Packed LHS quaternion
+   *  \param[in]  y  Packed RHS quaternion
+   *
+   *  \returns r = CONJ(x) * y
+   */ 
   inline __m256d MULDQ_CN(__m256d &x, __m256d &y) {
 
-    const __m256i maskVec    = _mm256_set_epi64x(0x8000000000000000,0x8000000000000000,0x8000000000000000,0);
+    const __m256i maskVec = 
+      _mm256_set_epi64x(0x8000000000000000,0x8000000000000000,
+                        0x8000000000000000,0);
+
+    // Flip the sign bits on the vector part of x -> CONJ(x)
     x = _mm256_xor_pd(x,_mm256_castsi256_pd(maskVec));
+
+    // r = CONJ(x) * y
     return MULDQ_NN(x,y);
 
   }

@@ -77,15 +77,15 @@
 // Emulate FMA with two instructions
 #ifndef __FMA__
 
-#define FMAD(A,B,C)  ADDD(MULD(A,B),C)
-#define FMSD(A,B,C)  SUBD(MULD(A,B),C)
-#define FNMAD(A,B,C) SUBD(C,MULD(A,B))
+  #define FMAD(A,B,C)  ADDD(MULD(A,B),C)
+  #define FMSD(A,B,C)  SUBD(MULD(A,B),C)
+  #define FNMAD(A,B,C) SUBD(C,MULD(A,B))
 
 #else
 
-#define FMAD(A,B,C)  _mm256_fmadd_pd(A,B,C)
-#define FMSD(A,B,C)  _mm256_fmsub_pd(A,B,C)
-#define FNMAD(A,B,C) _mm256_fnmadd_pd(A,B,C)
+  #define FMAD(A,B,C)  _mm256_fmadd_pd(A,B,C)
+  #define FMSD(A,B,C)  _mm256_fmsub_pd(A,B,C)
+  #define FNMAD(A,B,C) _mm256_fnmadd_pd(A,B,C)
 
 #endif
 
