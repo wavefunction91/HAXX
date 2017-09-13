@@ -19,8 +19,8 @@ set( DOT_SRC dot.cxx )
 # the benchmark
 if( NOT ENABLE_GENERIC_FORTRAN )
   set( DOT_SRC ${DOT_SRC} 
-    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas/hblas1/hdotc.f
-    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas/hblas1/hdotu.f
+    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas1/hdotc.f
+    ${PROJECT_SOURCE_DIR}/src/hblas/fortran/hblas1/hdotu.f
   )
 endif()
 

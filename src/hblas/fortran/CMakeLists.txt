@@ -1,20 +1,21 @@
 
 if( ENABLE_GENERIC_FORTRAN )
-  set(HBLAS1_SRC hblas/hblas1/hdotu.f hblas/hblas1/hdotc.f 
-    hblas/hblas1/haxpydh.f hblas/hblas1/haxpyhh.f hblas/hblas1/haxpych.f 
-    hblas/hblas1/hscalh.f hblas/hblas1/hscalc.f hblas/hblas1/hscald.f)
+  set(HBLAS1_SRC 
+    hblas1/hdotu.f hblas1/hdotc.f 
+    hblas1/haxpydh.f hblas1/haxpyhh.f hblas1/haxpych.f 
+    hblas1/hscalh.f hblas1/hscalc.f hblas1/hscald.f)
 endif()
 
 set(HBLAS2_SRC 
-  hblas/hblas2/hgemvdd.f hblas/hblas2/hgemvzd.f hblas/hblas2/hgemvhd.f
-  hblas/hblas2/hgemvdz.f hblas/hblas2/hgemvzz.f hblas/hblas2/hgemvhz.f
-  hblas/hblas2/hgemvdh.f hblas/hblas2/hgemvzh.f hblas/hblas2/hgemvhh.f
-  hblas/hblas2/hgerud.f hblas/hblas2/hgeruh.f hblas/hblas2/hgeruz.f
-  hblas/hblas2/hgercd.f hblas/hblas2/hgerch.f hblas/hblas2/hgercz.f)
+  hblas2/hgemvdd.f hblas2/hgemvzd.f hblas2/hgemvhd.f
+  hblas2/hgemvdz.f hblas2/hgemvzz.f hblas2/hgemvhz.f
+  hblas2/hgemvdh.f hblas2/hgemvzh.f hblas2/hgemvhh.f
+  hblas2/hgerud.f hblas2/hgeruh.f hblas2/hgeruz.f
+  hblas2/hgercd.f hblas2/hgerch.f hblas2/hgercz.f)
 set(HBLAS3_SRC 
-  hblas/hblas3/hgemmdd.f hblas/hblas3/hgemmzd.f hblas/hblas3/hgemmhd.f
-  hblas/hblas3/hgemmdz.f hblas/hblas3/hgemmzz.f hblas/hblas3/hgemmhz.f
-  hblas/hblas3/hgemmdh.f hblas/hblas3/hgemmzh.f hblas/hblas3/hgemmhh.f)
+  hblas3/hgemmdd.f hblas3/hgemmzd.f hblas3/hgemmhd.f
+  hblas3/hgemmdz.f hblas3/hgemmzz.f hblas3/hgemmhz.f
+  hblas3/hgemmdh.f hblas3/hgemmzh.f hblas3/hgemmhh.f)
 
 set(UTIL_SRC util/lsame.f util/hzexp.f util/hdexp.f util/hzcon.f)
 
