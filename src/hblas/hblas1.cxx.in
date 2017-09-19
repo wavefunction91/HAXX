@@ -11,6 +11,7 @@
 #include "hblas/hblas1_impl.hpp"
 
 #cmakedefine ENABLE_GENERIC_FORTRAN
+#cmakedefine ENABLE_GENERIC_CXX
 
 
 // Preprocessor macros for quick CXX implementations
@@ -70,7 +71,9 @@ namespace HAXX {
   SCAL_FORTRAN_IMPL(hscalh,double,quaternion<double>);
 #endif
 
+#ifdef ENABLE_GENERIC_CXX
   COPY_CXX_IMPL(double);
+#endif
 
 #ifdef ENABLE_GENERIC_FORTRAN
   AXPY_FORTRAN_IMPL(haxpydh,double,quaternion<double>,double);

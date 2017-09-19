@@ -1,4 +1,8 @@
 
+# COPY functions
+
+set( COPY_SRC hblas1/copy.cxx )
+
 # DOT functions
 configure_file(hblas1/dot.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx)
@@ -56,6 +60,6 @@ set(AXPY_SCAL_SRC
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx 
 )
 
-set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC})
+set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC} ${COPY_SRC})
 
 add_library(hblas_cxx STATIC ${HBLAS1_SRC})
