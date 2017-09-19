@@ -38,8 +38,8 @@ namespace HAXX {
 
   // GEMM functions
     
-  GEMM_FORTRAN_IMPL(hgemmdd,double,quaternion<double>,quaternion<double>,
-    double,double);
+//GEMM_FORTRAN_IMPL(hgemmdd,double,quaternion<double>,quaternion<double>,
+//  double,double);
   GEMM_FORTRAN_IMPL(hgemmdz,double,quaternion<double>,quaternion<double>,
     double,std::complex<double>);
   GEMM_FORTRAN_IMPL(hgemmdh,double,quaternion<double>,quaternion<double>,

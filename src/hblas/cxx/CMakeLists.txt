@@ -1,4 +1,7 @@
 
+
+##### HBLAS1 COMPILATION #####
+
 # DOT functions
 configure_file(hblas1/dot.cxx.in 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx)
@@ -58,4 +61,30 @@ set(AXPY_SCAL_SRC
 
 set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC})
 
-add_library(hblas_cxx STATIC ${HBLAS1_SRC})
+
+##### HBLAS3 COMPILATION #####
+
+# GEMM functions
+configure_file(hblas3/gemm.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx)
+
+
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx
+  PROPERTY COMPILE_DEFINITIONS "ALPHAF=DOUBLE" "BETAF=DOUBLE")
+
+
+set(GEMM_SRC
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx
+)
+
+
+set(HBLAS3_SRC ${GEMM_SRC})
+
+
+##### HBLAS LIB TARGET #####
+
+add_library(hblas_cxx STATIC ${HBLAS1_SRC} ${HBLAS3_SRC})
+
+
+
+
