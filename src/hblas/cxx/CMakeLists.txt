@@ -1,8 +1,8 @@
 
 # DOT functions
-configure_file(hblas1/dot.cxx.in 
+configure_file(hblas1/dot.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx)
-configure_file(hblas1/dot.cxx.in 
+configure_file(hblas1/dot.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotc.cxx)
 
 set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx 
@@ -18,18 +18,18 @@ set( DOT_SRC
 
 
 # AXPY/SCAL functions
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscald.cxx)
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalz.cxx)
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalh.cxx)
 
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpydh.cxx)
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyzh.cxx)
-configure_file(hblas1/axpy_scal.cxx.in 
+configure_file(hblas1/axpy_scal.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx)
 
 set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscald.cxx 
