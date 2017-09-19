@@ -17,7 +17,7 @@ namespace HAXX {
 // Optimized Copy
 
 template <>
-void HBLAS_COPY(const HAXX_INT N, quaternion<double> * const X, 
+void FNAME(const HAXX_INT N, quaternion<double> * const X, 
   const HAXX_INT INCX, quaternion<double> * const Y, const HAXX_INT INCY) {
 
   // Local pointers for increment
@@ -26,6 +26,12 @@ void HBLAS_COPY(const HAXX_INT N, quaternion<double> * const X,
 #if defined(__AVX__) || defined(__AVX2__)
 
   VECD x1;
+
+#ifdef _SWAP
+
+  VECD y1;
+
+#endif
 
 #endif
 
@@ -51,7 +57,14 @@ void HBLAS_COPY(const HAXX_INT N, quaternion<double> * const X,
   #if defined(__AVX__) || defined(__AVX2__)
 
       x1 = LOADD_ALIGNED_AS(double,locX);
+    #ifdef _SWAP
+      y1 = LOADD_ALIGNED_AS(double,locY);
+    #endif
+
       STORED_ALIGNED_AS(double,locY,x1);
+    #ifdef _SWAP
+      STORED_ALIGNED_AS(double,locX,y1);
+    #endif
 
   #endif
 
@@ -65,7 +78,15 @@ void HBLAS_COPY(const HAXX_INT N, quaternion<double> * const X,
   #if defined(__AVX__) || defined(__AVX2__)
   
       x1 = LOADD_UNALIGNED_AS(double,locX);
+    #ifdef _SWAP
+      y1 = LOADD_UNALIGNED_AS(double,locY);
+    #endif
+
+
       STORED_UNALIGNED_AS(double,locY,x1);
+    #ifdef _SWAP
+      STORED_UNALIGNED_AS(double,locX,y1);
+    #endif
   
   #endif
   
@@ -74,6 +95,6 @@ void HBLAS_COPY(const HAXX_INT N, quaternion<double> * const X,
   
     }
 
-}; // HBLAS_COPY
+}; // HBLAS_COPY / HBLAS_SWAP
 
 }; // namspace HAXX

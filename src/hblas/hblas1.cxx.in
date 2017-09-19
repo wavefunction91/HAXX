@@ -63,7 +63,9 @@ void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const ALPHAF ALPHA,\
 
 namespace HAXX {
 
+#ifdef ENABLE_GENERIC_CXX
   SWAP_CXX_IMPL(double);
+#endif
   
 #ifdef ENABLE_GENERIC_FORTRAN
   SCAL_FORTRAN_IMPL(hscald,double,double);

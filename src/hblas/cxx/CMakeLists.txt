@@ -1,7 +1,21 @@
 
-# COPY functions
+# COPY / SWAP functions
 
-set( COPY_SRC hblas1/copy.cxx )
+configure_file(hblas1/copy_swap.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopy.cxx)
+configure_file(hblas1/copy_swap.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswap.cxx)
+
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopy.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_COPY" "_COPY")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswap.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SWAP" "_SWAP")
+
+
+set( COPY_SWAP_SRC 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopy.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswap.cxx 
+)
 
 # DOT functions
 configure_file(hblas1/dot.cxx 
@@ -60,6 +74,6 @@ set(AXPY_SCAL_SRC
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx 
 )
 
-set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC} ${COPY_SRC})
+set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC} ${COPY_SWAP_SRC})
 
 add_library(hblas_cxx STATIC ${HBLAS1_SRC})
