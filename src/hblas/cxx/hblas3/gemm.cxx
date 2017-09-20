@@ -12,8 +12,9 @@
 
 #include "util/simd.hpp"
 
-#include <vector>
 #include <algorithm>
+
+#define FixMod(X,N) (( (X) % (N) ) ? (X) + (N) - ((X) % (N)) : (X))
 
 // Determine type of scaling parameter ALPHA
 #if ALPHAF == DOUBLE
@@ -91,7 +92,6 @@ void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* A, U* B, V* C,
 
 
 
-#define FixMod(X,N) (( (X) % (N) ) ? (X) + (N) - ((X) % (N)) : (X))
 
 template<>
 void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M, 
@@ -226,14 +226,11 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
             // Perform kernel operation
             Kern(BETA,nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
      
-
             smallC += MR;
             smallA += MR*nK;
-
           }
 
           BL1  += NR*nK;
-
           CBlk += NR*LDC;
         }
 
