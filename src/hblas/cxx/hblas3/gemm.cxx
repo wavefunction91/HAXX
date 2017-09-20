@@ -68,13 +68,18 @@ namespace HAXX {
   
 
 
-template <typename T, typename U, typename V>
-void Kern(HAXX_INT K, T* A, U* B, V* C, HAXX_INT LDC) {
+template <typename T, typename U, typename V, typename _BetaF>
+void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* A, U* B, V* C, 
+  HAXX_INT LDC) {
+
+  for(auto j = 0; j < N; j++)
+  for(auto i = 0; i < M; i++)
+    C[i + j*LDC] *= BETA;
 
   for(auto k = 0; k < K; k++) {
 
-    for(auto j = 0; j < NR; j++)
-    for(auto i = 0; i < MR; i++)
+    for(auto j = 0; j < N; j++)
+    for(auto i = 0; i < M; i++)
       C[i + j*LDC] += A[i] * B[j];
 
     A += MR;
@@ -84,6 +89,9 @@ void Kern(HAXX_INT K, T* A, U* B, V* C, HAXX_INT LDC) {
 
 }
 
+
+
+#define FixMod(X,N) (( (X) % (N) ) ? (X) + (N) - ((X) % (N)) : (X))
 
 template<>
 void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M, 
@@ -102,10 +110,12 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 
   std::cout << "HEREX\n";
 
-  // Packed matricies
-  std::vector<_BMATF> bPack(KC*NC);
-  std::vector<_AMATF> aPack(MC*KC);
-  std::vector<quaternion<double>> cPack(NR*MR);
+  // Packed matricies (aligned)
+  _BMATF *bPack = 
+    (_BMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF));
+  _AMATF *aPack = 
+    (_AMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF));
+
 
   // Counter vars
   HAXX_INT j, nJ, jDo;
@@ -126,8 +136,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   for( j = 0; j < N; j += NC ) {
 
     nJ  = std::min(N-j,NC);
-    jDo = ( nJ % NR ) ? nJ + NR - (nJ % NR) : nJ;
-
+    jDo = FixMod(nJ,NR);
 
     Bp = Bj;
     Ap = A;
@@ -141,65 +150,65 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 
 #ifdef _FACTOR_ALPHA_IN_B_PACK
   #if NR == 4
-      if( BTRAN )      NPACK4 (ALPHA,nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCT )   NPACKC4(ALPHA,nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCONJ ) TPACKC4(ALPHA,nK,nJ,Bp,LDB,&bPack[0]);
-      else             TPACK4 (ALPHA,nK,nJ,Bp,LDB,&bPack[0]);
+      if( BTRAN )      NPACK4 (ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   NPACKC4(ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) TPACKC4(ALPHA,nK,nJ,Bp,LDB,bPack);
+      else             TPACK4 (ALPHA,nK,nJ,Bp,LDB,bPack);
   #elif NR == 2
-      if( BTRAN )      NPACK2 (ALPHA,nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCT )   NPACKC2(ALPHA,nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCONJ ) TPACKC2(ALPHA,nK,nJ,Bp,LDB,&bPack[0]);
-      else             TPACK2 (ALPHA,nK,nJ,Bp,LDB,&bPack[0]);
+      if( BTRAN )      NPACK2 (ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   NPACKC2(ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) TPACKC2(ALPHA,nK,nJ,Bp,LDB,bPack);
+      else             TPACK2 (ALPHA,nK,nJ,Bp,LDB,bPack);
   #endif
 #else
   #if NR == 4
-      if( BTRAN )      NPACK4 (nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCT )   NPACKC4(nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCONJ ) TPACKC4(nK,nJ,Bp,LDB,&bPack[0]);
-      else             TPACK4 (nK,nJ,Bp,LDB,&bPack[0]);
+      if( BTRAN )      NPACK4 (nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   NPACKC4(nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) TPACKC4(nK,nJ,Bp,LDB,bPack);
+      else             TPACK4 (nK,nJ,Bp,LDB,bPack);
   #elif NR == 2
-      if( BTRAN )      NPACK2 (nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCT )   NPACKC2(nJ,nK,Bp,LDB,&bPack[0]);
-      else if( BCONJ ) TPACKC2(nK,nJ,Bp,LDB,&bPack[0]);
-      else             TPACK2 (nK,nJ,Bp,LDB,&bPack[0]);
+      if( BTRAN )      NPACK2 (nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   NPACKC2(nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) TPACKC2(nK,nJ,Bp,LDB,bPack);
+      else             TPACK2 (nK,nJ,Bp,LDB,bPack);
   #endif
 #endif
 
       for( i = 0; i < M; i += MC ) {
 
-        nI = std::min(M-i,MC);
-        iDo = ( nI % MR ) ? nI + MR - (nI % MR): nI;
+        nI  = std::min(M-i,MC);
+        iDo = FixMod(nI,MC);
 
-        BL1  = &bPack[0];
+        BL1  = bPack;
         CBlk = Ci;
 
 #ifdef _FACTOR_ALPHA_IN_A_PACK
   #if MR == 4
-        if( ATRAN )      TPACK4 (ALPHA,nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACT )   TPACKC4(ALPHA,nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACONJ ) NPACKC4(ALPHA,nI,nK,Ai,LDA,&aPack[0]);
-        else             NPACK4 (ALPHA,nI,nK,Ai,LDA,&aPack[0]);
+        if( ATRAN )      TPACK4 (ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACT )   TPACKC4(ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) NPACKC4(ALPHA,nI,nK,Ai,LDA,aPack);
+        else             NPACK4 (ALPHA,nI,nK,Ai,LDA,aPack);
   #elif MR == 2
-        if( ATRAN )      TPACK2 (ALPHA,nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACT )   TPACKC2(ALPHA,nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACONJ ) NPACKC2(ALPHA,nI,nK,Ai,LDA,&aPack[0]);
-        else             NPACK2 (ALPHA,nI,nK,Ai,LDA,&aPack[0]);
+        if( ATRAN )      TPACK2 (ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACT )   TPACKC2(ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) NPACKC2(ALPHA,nI,nK,Ai,LDA,aPack);
+        else             NPACK2 (ALPHA,nI,nK,Ai,LDA,aPack);
   #endif
 #else
   #if MR == 4
-        if( ATRAN )      TPACK4 (nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACT )   TPACKC4(nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACONJ ) NPACKC4(nI,nK,Ai,LDA,&aPack[0]);
-        else             NPACK4 (nI,nK,Ai,LDA,&aPack[0]);
+        if( ATRAN )      TPACK4 (nK,nI,Ai,LDA,aPack);
+        else if( ACT )   TPACKC4(nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) NPACKC4(nI,nK,Ai,LDA,aPack);
+        else             NPACK4 (nI,nK,Ai,LDA,aPack);
   #elif MR == 2
-        if( ATRAN )      TPACK2 (nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACT )   TPACKC2(nK,nI,Ai,LDA,&aPack[0]);
-        else if( ACONJ ) NPACKC2(nI,nK,Ai,LDA,&aPack[0]);
-        else             NPACK2 (nI,nK,Ai,LDA,&aPack[0]);
+        if( ATRAN )      TPACK2 (nK,nI,Ai,LDA,aPack);
+        else if( ACT )   TPACKC2(nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) NPACKC2(nI,nK,Ai,LDA,aPack);
+        else             NPACK2 (nI,nK,Ai,LDA,aPack);
   #endif
   
   #ifndef _FACTOR_ALPHA_IN_B_PACK
-        std::transform(&aPack[0],&aPack[nK*iDo],&aPack[0],[&](_AMATF x){ return ALPHA*x;});
+        std::transform(aPack,&aPack[nK*iDo],aPack,[&](_AMATF x){ return ALPHA*x;});
   #endif
 #endif
 
@@ -209,21 +218,14 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
           nJJJ = std::min(NR,nJ-jj);
 
           smallC = CBlk;
-          smallA = &aPack[0];
+          smallA = aPack;
 
           for( ii = 0; ii < iDo; ii += MR ) {
             nIII = std::min(MR,nI-ii);
 
-            for( jjj = 0; jjj < nJJJ; jjj++ )
-            for( iii = 0; iii < nIII; iii++ ) 
-              cPack[iii + jjj*MR] = BETA*smallC[iii +jjj*LDC];
-
             // Perform kernel operation
-            Kern(nK,smallA,BL1,&cPack[0],MR);
-
-            for( jjj = 0; jjj < nJJJ; jjj++ )
-            for( iii = 0; iii < nIII; iii++ ) 
-              smallC[iii +jjj*LDC] = cPack[iii + jjj*MR];
+            Kern(BETA,nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
+     
 
             smallC += MR;
             smallA += MR*nK;
@@ -254,6 +256,8 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
     else               Bj += nJ*LDB;
   }
 
+  // Free packed matricies
+  free(bPack); free(aPack);
 
 }; // HBLAS_GEMM
 
