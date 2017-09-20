@@ -11,9 +11,9 @@
 #include "haxx_ut.hpp"
 #include "hblas/hblas1_def.hpp"
 
-BOOST_AUTO_TEST_SUITE(HBLAS1)
+BOOST_AUTO_TEST_SUITE(HBLAS1V)
 
-BOOST_AUTO_TEST_CASE(hblas1_swap)
+BOOST_AUTO_TEST_CASE(hblas1_swapv)
 {
   // Random Quaternion vector
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(hblas1_swap)
   // FIXME: Need a test for when strides are not equal
 }
 
-BOOST_AUTO_TEST_CASE(hblas1_scal)
+BOOST_AUTO_TEST_CASE(hblas1_scalv)
 {
 
   // Random Quaternion vector
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
 };
 
-BOOST_AUTO_TEST_CASE(hblas1_copy)
+BOOST_AUTO_TEST_CASE(hblas1_copyv)
 {
   // Random Quaternion vector
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(hblas1_copy)
   // FIXME: Need a test for when strides are not equal
 }
 
-BOOST_AUTO_TEST_CASE(hblas1_axpy)
+BOOST_AUTO_TEST_CASE(hblas1_axpyv)
 {
   // Random Quaternion vectors
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);
@@ -253,7 +253,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
 
 };
 
-BOOST_AUTO_TEST_CASE(hblas1_dot)
+BOOST_AUTO_TEST_CASE(hblas1_dotv)
 {
   // Random Quaternion vectors
   std::vector<HAXX::quaternion<double>> X(HBLAS1_VECLEN), Y(HBLAS1_VECLEN);

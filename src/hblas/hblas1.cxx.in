@@ -27,6 +27,19 @@ void HBLAS_COPYV(const HAXX_INT, quaternion<F> * const , const HAXX_INT,\
   quaternion<F> * const , const HAXX_INT);
 
 
+#define SCALM_CXX_IMPL(F,ALPHAF) \
+template \
+void HBLAS_SCALM(const char SIDE, const char TRANSA, const HAXX_INT M, \
+  const HAXX_INT N, const ALPHAF ALPHA, quaternion<F> * const A, \
+  const HAXX_INT LDA, const HAXX_INT INCA);
+
+#define AXPYM_CXX_IMPL(F,XF,ALPHAF) \
+template \
+void HBLAS_AXPYM(const char SIDE, const char TRANSA, const HAXX_INT M, \
+  const HAXX_INT N, const ALPHAF ALPHA, XF * const A, const HAXX_INT LDA, \
+  const HAXX_INT INCA, quaternion<F> * const B, const HAXX_INT LDB, \
+  const HAXX_INT INCB);
+
 
 // Preprocessor macros for quick FORTRAN implementations
 
@@ -63,6 +76,8 @@ void HBLAS_AXPYV(const char SIDE, const HAXX_INT N, const ALPHAF ALPHA,\
 
 namespace HAXX {
 
+  // HBLAS1V functions
+
 #ifdef ENABLE_GENERIC_CXX
   SWAPV_CXX_IMPL(double);
 #endif
@@ -87,6 +102,16 @@ namespace HAXX {
   DOTV_FORTRAN_IMPL(DOTUV,hdotu,double);
   DOTV_FORTRAN_IMPL(DOTCV,hdotc,double);
 #endif
+
+  // HBLAS1M functions
+    
+  SCALM_CXX_IMPL(double,double);
+  SCALM_CXX_IMPL(double,std::complex<double>);
+  SCALM_CXX_IMPL(double,quaternion<double>);
+
+  AXPYM_CXX_IMPL(double,quaternion<double>,double);
+  AXPYM_CXX_IMPL(double,quaternion<double>,std::complex<double>);
+  AXPYM_CXX_IMPL(double,quaternion<double>,quaternion<double>);
 
 };
 

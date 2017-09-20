@@ -66,6 +66,14 @@ namespace HAXX {
    *  @{
    */
 
+
+  /**
+   *  @defgroup HBLAS1V Level 1 HBLASV
+   *  Level 1 BLAS operations on quaternion vectors
+   *
+   *  @{
+   */ 
+
   /// Swap the states of two quaternion arrays
   template <typename _F>
   void HBLAS_SWAPV(const HAXX_INT N, quaternion<_F> * const X, 
@@ -96,6 +104,31 @@ namespace HAXX {
   template <typename _F>
   quaternion<_F> HBLAS_DOTCV(const HAXX_INT N, quaternion<_F> * const X, 
     const HAXX_INT INCX, quaternion<_F> * const Y, const HAXX_INT INCY);
+
+  /* @} */ // HBLAS1V
+
+
+  /**
+   *  @defgroup HBLAS1M Level 1 HBLASM
+   *  Level 1 BLAS operations on quaternion matricies (ala BLIS)
+   *
+   *  @{
+   */ 
+
+  /// Scale / Transpose / Conjugate a quaternion matrix in place
+  template <typename _F, typename _AlphaF>
+  void HBLAS_SCALM(const char SIDE, const char TRANSA, const HAXX_INT M, 
+    const HAXX_INT N, const _AlphaF ALPHA, quaternion<_F> * const A, 
+    const HAXX_INT LDA, const HAXX_INT INCA);
+
+  /// Accumulate a quaternion matrix
+  template <typename _F, typename _XF, typename _AlphaF>
+  void HBLAS_AXPYM(const char SIDE, const char TRANSA, const HAXX_INT M, 
+    const HAXX_INT N, const _AlphaF ALPHA, _XF * const A, const HAXX_INT LDA, 
+    const HAXX_INT INCA, quaternion<_F> * const B, const HAXX_INT LDB, 
+    const HAXX_INT INCB);
+
+  /* @} */ // HBLAS1M
 
   /* @} */ // HBLAS1
 
