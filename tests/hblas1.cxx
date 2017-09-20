@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(hblas1_swap)
     std::copy(YC.begin(),YC.end(),Y.begin());
 
     int len = HBLAS1_VECLEN/stride;
-    HBLAS_SWAP(len,&X[0],stride,&Y[0],stride);
+    HBLAS_SWAPV(len,&X[0],stride,&Y[0],stride);
   
     BOOST_CHECK( 
       std::all_of(indx.begin(),indx.end(),
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
   std::vector<HAXX::quaternion<double>> tmpX(HBLAS1_VECLEN);
 
-  auto chk_SCAL = [&](int stride, int len, char SIDE, char FIELD) {
+  auto chk_SCALV = [&](int stride, int len, char SIDE, char FIELD) {
     BOOST_CHECK( 
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
@@ -101,33 +101,33 @@ BOOST_AUTO_TEST_CASE(hblas1_scal)
 
     // Right scaling by real alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('R',len,rAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'R','R');
+    HBLAS_SCALV('R',len,rAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'R','R');
 
     // Left scaling by real alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('L',len,rAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'L','R');
+    HBLAS_SCALV('L',len,rAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'L','R');
 
     // Right scaling by complex alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('R',len,cAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'R','C');
+    HBLAS_SCALV('R',len,cAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'R','C');
 
     // Left scaling by complex alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('L',len,cAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'L','C');
+    HBLAS_SCALV('L',len,cAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'L','C');
 
     // Right scaling by quaternion alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('R',len,hAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'R','H');
+    HBLAS_SCALV('R',len,hAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'R','H');
 
     // Left scaling by quaternion alpha
     std::copy(X.begin(),X.end(),tmpX.begin());
-    HBLAS_SCAL('L',len,hAlpha,&tmpX[0],stride);
-    chk_SCAL(stride,len,'L','H');
+    HBLAS_SCALV('L',len,hAlpha,&tmpX[0],stride);
+    chk_SCALV(stride,len,'L','H');
 
   }
 
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(hblas1_copy)
     std::fill(Y.begin(),Y.end(),HAXX::quaternion<double>(0));
 
     int len = HBLAS1_VECLEN/stride;
-    HBLAS_COPY(len,&X[0],stride,&Y[0],stride);
+    HBLAS_COPYV(len,&X[0],stride,&Y[0],stride);
   
     BOOST_CHECK( 
       std::all_of(indx.begin(),indx.end(),
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
   std::vector<HAXX::quaternion<double>> YC(Y);
   
 
-  auto chk_AXPY = [&](int stride, int len, char SIDE, char FIELD) {
+  auto chk_AXPYV = [&](int stride, int len, char SIDE, char FIELD) {
     BOOST_CHECK( 
       std::all_of(indx.begin(),indx.end(),
         [&](int indx) {
@@ -217,35 +217,35 @@ BOOST_AUTO_TEST_CASE(hblas1_axpy)
 
     // Right scaling by real alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('R',len,rAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'R','R');
+    HBLAS_AXPYV('R',len,rAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'R','R');
 
     // Left scaling by real alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('L',len,rAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'L','R');
+    HBLAS_AXPYV('L',len,rAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'L','R');
 
 
     // Right scaling by complex alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('R',len,cAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'R','C');
+    HBLAS_AXPYV('R',len,cAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'R','C');
 
     // Left scaling by complex alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('L',len,cAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'L','C');
+    HBLAS_AXPYV('L',len,cAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'L','C');
 
 
     // Right scaling by quaternion alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('R',len,hAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'R','H');
+    HBLAS_AXPYV('R',len,hAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'R','H');
 
     // Left scaling by quaternion alpha
     std::copy(YC.begin(),YC.end(),Y.begin());
-    HBLAS_AXPY('L',len,hAlpha,&X[0],stride,&Y[0],stride);
-    chk_AXPY(stride,len,'L','H');
+    HBLAS_AXPYV('L',len,hAlpha,&X[0],stride,&Y[0],stride);
+    chk_AXPYV(stride,len,'L','H');
   }
 
 
@@ -266,8 +266,8 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
   // Both strides equal
   for(int stride : strides) {
     auto len = HBLAS1_VECLEN/stride; 
-    HAXX::quaternion<double> dotu = HBLAS_DOTU(len,&X[0],stride,&Y[0],stride);
-    HAXX::quaternion<double> dotc = HBLAS_DOTC(len,&X[0],stride,&Y[0],stride);
+    HAXX::quaternion<double> dotu = HBLAS_DOTUV(len,&X[0],stride,&Y[0],stride);
+    HAXX::quaternion<double> dotc = HBLAS_DOTCV(len,&X[0],stride,&Y[0],stride);
 
     HAXX::quaternion<double> dotus(0.,0.,0.,0.), dotcs(0.,0.,0.,0.);
     for(auto j = 0; j < len*stride; j+= stride) {
@@ -276,10 +276,10 @@ BOOST_AUTO_TEST_CASE(hblas1_dot)
     }
 
     BOOST_CHECK_MESSAGE(CMP_Q(dotu,dotus), 
-      "\n stride = " << stride << ", HBLAS_DOTU = " << dotu 
+      "\n stride = " << stride << ", HBLAS_DOTUV = " << dotu 
                   << ", REFERENCE = " << dotus);
     BOOST_CHECK_MESSAGE(CMP_Q(dotc,dotcs),
-      "\n stride = " << stride << ", HBLAS_DOTC = " << dotc 
+      "\n stride = " << stride << ", HBLAS_DOTCV = " << dotc 
                   << ", REFERENCE = " << dotcs);
   }
 

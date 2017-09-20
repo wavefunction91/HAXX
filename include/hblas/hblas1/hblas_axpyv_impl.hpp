@@ -7,8 +7,7 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_AXPY_IMPL_HPP
-#define __INCLUDED_HBLAS_AXPY_IMPL_HPP
+#pragma once
 
 #include "hblas/hblas1_def.hpp"
 
@@ -32,7 +31,7 @@ namespace HAXX {
  *  \f$ y_i = x_i \alpha + y_i \f$
  */
 template <typename _F, typename _XF, typename _AlphaF>
-void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
+void HBLAS_AXPYV(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
   _XF * const X, const HAXX_INT INCX, quaternion<_F> * const Y, 
   const HAXX_INT INCY) {
 
@@ -95,5 +94,3 @@ void HBLAS_AXPY(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA,
 
 
 }; // namespace HAXX
-
-#endif

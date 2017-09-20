@@ -7,12 +7,14 @@ if( HAXX_USE_HOST_SIMD )
     message( WARNING "HAXX only provided optimal implementations for AVX, AVX2 and AVX-512 -- Defaulting to Generic FORTRAN build" )
   
     set( ENABLE_GENERIC_FORTRAN true CACHE BOOL "Enable generic FORTRAN code" )
+    set( ENABLE_GENERIC_CXX true CACHE BOOL "Enable generic CXX code" )
   
   else()
   
     message( STATUS "HAXX Found a suitable SIMD instruction set -- Enabling Optimized code" )
 
     set( ENABLE_GENERIC_FORTRAN false CACHE BOOL "Enable generic FORTRAN code" )
+    set( ENABLE_GENERIC_CXX false CACHE BOOL "Enable generic CXX code" )
   
   endif()
 

@@ -1,65 +1,84 @@
 
 
 ##### HBLAS1 COMPILATION #####
+       
+# COPY / SWAP functions
+
+configure_file(hblas1/copy_swap.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopyv.cxx)
+configure_file(hblas1/copy_swap.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswapv.cxx)
+
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopyv.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_COPYV" "_COPY")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswapv.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SWAPV" "_SWAP")
+
+
+set( COPY_SWAP_SRC 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hcopyv.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hswapv.cxx 
+)
+              
 
 # DOT functions
 configure_file(hblas1/dot.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotuv.cxx)
 configure_file(hblas1/dot.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotc.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotcv.cxx)
 
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_DOTU")
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotc.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_DOTC" "_CONJ")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotuv.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_DOTUV")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotcv.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_DOTCV" "_CONJ")
 
 
 set( DOT_SRC 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotu.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotc.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotuv.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hdotcv.cxx 
 )
 
 
 # AXPY/SCAL functions
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscald.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvd.cxx)
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalz.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvz.cxx)
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalh.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvh.cxx)
 
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpydh.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvdh.cxx)
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyzh.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvzh.cxx)
 configure_file(hblas1/axpy_scal.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx)
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvhh.cxx)
 
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscald.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCAL" "_SCAL" "ALPHAF=DOUBLE")
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalz.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCAL" "_SCAL" "ALPHAF=DCOMPLEX")
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalh.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCAL" "_SCAL" "ALPHAF=DQUATERNION")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvd.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCALV" "_SCAL" "ALPHAF=DOUBLE")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvz.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCALV" "_SCAL" "ALPHAF=DCOMPLEX")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvh.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_SCALV" "_SCAL" "ALPHAF=DQUATERNION")
 
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpydh.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPY" "_AXPY" "ALPHAF=DOUBLE")
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyzh.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPY" "_AXPY" "ALPHAF=DCOMPLEX")
-set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx 
-  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPY" "_AXPY" "ALPHAF=DQUATERNION")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvdh.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPYV" "_AXPY" "ALPHAF=DOUBLE")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvzh.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPYV" "_AXPY" "ALPHAF=DCOMPLEX")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvhh.cxx 
+  PROPERTY COMPILE_DEFINITIONS "FNAME=HBLAS_AXPYV" "_AXPY" "ALPHAF=DQUATERNION")
 
 
 set(AXPY_SCAL_SRC
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscald.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalz.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalh.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpydh.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyzh.cxx 
-  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyhh.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvd.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvz.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/hscalvh.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvdh.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvzh.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas1/haxpyvhh.cxx 
 )
 
-set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC})
+set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC} ${COPY_SWAP_SRC})
 
 
 ##### HBLAS3 COMPILATION #####

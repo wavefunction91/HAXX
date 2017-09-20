@@ -7,8 +7,7 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_SWAP_IMPL_HPP
-#define __INCLUDED_HBLAS_SWAP_IMPL_HPP
+#pragma once
 
 #include "hblas/hblas1_def.hpp"
 
@@ -23,7 +22,7 @@ namespace HAXX {
  *    http://www.netlib.org/lapack/explore-html/db/dd4/dswap_8f.html
  */
 template <typename _F>
-void HBLAS_SWAP(const HAXX_INT N, quaternion<_F> * const X, 
+void HBLAS_SWAPV(const HAXX_INT N, quaternion<_F> * const X, 
   const HAXX_INT INCX, quaternion<_F> * const Y, const HAXX_INT INCY) {
 
   if( N <= 0 ) return;
@@ -82,6 +81,4 @@ void HBLAS_SWAP(const HAXX_INT N, quaternion<_F> * const X,
 
 }; // namespace HAXX
 
-
-#endif
 
