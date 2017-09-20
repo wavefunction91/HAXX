@@ -11,6 +11,8 @@
 #include "haxx_ut.hpp"
 #include "hblas/hblas1_def.hpp"
 
+BOOST_AUTO_TEST_SUITE(HBLAS1)
+
 BOOST_AUTO_TEST_SUITE(HBLAS1V)
 
 BOOST_AUTO_TEST_CASE(hblas1_swapv)
@@ -286,4 +288,8 @@ BOOST_AUTO_TEST_CASE(hblas1_dotv)
   // FIXME: Need a test for when strides are not equal
 }
 
+// HBLAS1V
+BOOST_AUTO_TEST_SUITE_END()
+
+// HBLAS1
 BOOST_AUTO_TEST_SUITE_END()
