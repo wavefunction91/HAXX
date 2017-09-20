@@ -7,8 +7,7 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_DOTU_IMPL_HPP
-#define __INCLUDED_HBLAS_DOTU_IMPL_HPP
+#pragma once
 
 #include "hblas/hblas1_def.hpp"
 
@@ -23,7 +22,7 @@ namespace HAXX {
  * \f$ r,x,y \in \mathbb{H}, \qquad r = \sum_i x_i y_i \f$
  */
 template <typename _F>
-quaternion<_F> HBLAS_DOTU(const HAXX_INT N, quaternion<_F> * const X, 
+quaternion<_F> HBLAS_DOTUV(const HAXX_INT N, quaternion<_F> * const X, 
   const HAXX_INT INCX, quaternion<_F> * const Y, const HAXX_INT INCY) {
 
   quaternion<_F> htemp(0.,0.,0.,0.);
@@ -55,5 +54,3 @@ quaternion<_F> HBLAS_DOTU(const HAXX_INT N, quaternion<_F> * const X,
 
 
 }; // namespace HAXX
-
-#endif

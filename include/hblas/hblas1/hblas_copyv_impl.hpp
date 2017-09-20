@@ -7,8 +7,7 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_COPY_IMPL_HPP
-#define __INCLUDED_HBLAS_COPY_IMPL_HPP
+#pragma once 
 
 #include "hblas/hblas1_def.hpp"
 
@@ -23,7 +22,7 @@ namespace HAXX {
  *    http://www.netlib.org/lapack/explore-html/da/d6c/dcopy_8f.html
  */
 template <typename _F>
-void HBLAS_COPY(const HAXX_INT N, quaternion<_F> * const X, 
+void HBLAS_COPYV(const HAXX_INT N, quaternion<_F> * const X, 
   const HAXX_INT INCX, quaternion<_F> * const Y, const HAXX_INT INCY) {
 
   if( N <= 0 ) return;
@@ -67,4 +66,3 @@ void HBLAS_COPY(const HAXX_INT N, quaternion<_F> * const X,
 }; // namespace HAXX
 
 
-#endif

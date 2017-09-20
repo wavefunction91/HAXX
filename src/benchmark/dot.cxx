@@ -66,7 +66,7 @@ int main() {
     N += (DOT_LEN_MAX - DOT_LEN_START)/NTEST ) {
 
     // Fix cache
-    if( N == DOT_LEN_START ) HBLAS_DOTU(N,&X[0],1,&Y[0],1);
+    if( N == DOT_LEN_START ) HBLAS_DOTUV(N,&X[0],1,&Y[0],1);
 
     std::chrono::duration<double> dur_opt(0.);  
     std::chrono::duration<double> dur_for(0.);  
@@ -84,7 +84,7 @@ int main() {
 
     for(auto rep = 0; rep < NREP; rep++) {
       auto start = std::chrono::high_resolution_clock::now();
-      res  = HBLAS_DOTU(N,&X[0],1,&Y[0],1);
+      res  = HBLAS_DOTUV(N,&X[0],1,&Y[0],1);
       auto end = std::chrono::high_resolution_clock::now();
       dur_opt += end - start;  
     }

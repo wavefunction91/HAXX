@@ -62,10 +62,10 @@ void hblas2_gemv_square_LDSame() {
 
     HAXX::quaternion<double> tmp;
     if( _TA == 'C' )
-      tmp = HBLAS_DOTC(HBLAS1_VECLEN,&A[RANK2_INDX(AROW,ACOL,HBLAS1_VECLEN)],
+      tmp = HBLAS_DOTCV(HBLAS1_VECLEN,&A[RANK2_INDX(AROW,ACOL,HBLAS1_VECLEN)],
           AStride,&X[0],1);
     else
-      tmp = HBLAS_DOTU(HBLAS1_VECLEN,&A[RANK2_INDX(AROW,ACOL,HBLAS1_VECLEN)],
+      tmp = HBLAS_DOTUV(HBLAS1_VECLEN,&A[RANK2_INDX(AROW,ACOL,HBLAS1_VECLEN)],
           AStride,&X[0],1);
 
     BOOST_CHECK(CMP_Q(ALPHA*tmp + BETA*YC[i],Y[i]));

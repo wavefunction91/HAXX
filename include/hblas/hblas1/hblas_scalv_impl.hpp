@@ -7,8 +7,7 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_SCAL_IMPL_HPP
-#define __INCLUDED_HBLAS_SCAL_IMPL_HPP
+#pragma once
 
 #include "hblas/hblas1_def.hpp"
 
@@ -31,7 +30,7 @@ namespace HAXX {
  *  \f$ x_i = x_i \alpha  \f$
  */
 template <typename _F, typename _AlphaF>
-void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
+void HBLAS_SCALV(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA, 
   quaternion<_F> * const X, const HAXX_INT INCX) {
 
   if( N <= 0 or INCX <= 0 ) return;
@@ -85,4 +84,3 @@ void HBLAS_SCAL(const char SIDE, const HAXX_INT N, const _AlphaF ALPHA,
 
 }; // namespace HAXX
 
-#endif
