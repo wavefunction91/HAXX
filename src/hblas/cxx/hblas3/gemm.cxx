@@ -68,9 +68,12 @@ namespace HAXX {
 // Optimized GEMM
   
 
+template <typename T, typename U, typename V, typename _BetaF>
+inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __restrict__ B, V* __restrict__ C, 
+  HAXX_INT LDC);
 
 template <typename T, typename U, typename V, typename _BetaF>
-void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* A, U* B, V* C, 
+inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T*  A, U*  B, V*  C, 
   HAXX_INT LDC) {
 
   for(auto j = 0; j < N; j++)
@@ -89,6 +92,31 @@ void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* A, U* B, V* C,
   }
 
 }
+
+
+#if 0
+#if MR == 4 && NR == 2
+template <>
+inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, 
+  quaternion<double>* restrict A, quaternion<double>* restrict B, quaternion<double>* restrict C, 
+  HAXX_INT LDC) {
+
+  // Load 4x2 block of C
+  __m256d c00 = LOADD_UNALIGNED_AS(double,C  );
+  __m256d c10 = LOADD_UNALIGNED_AS(double,C+1);
+  __m256d c20 = LOADD_UNALIGNED_AS(double,C+2);
+  __m256d c30 = LOADD_UNALIGNED_AS(double,C+3);
+
+  __m256d c01 = LOADD_UNALIGNED_AS(double,C+LDC  );
+  __m256d c11 = LOADD_UNALIGNED_AS(double,C+LDC+1);
+  __m256d c21 = LOADD_UNALIGNED_AS(double,C+LDC+2);
+  __m256d c31 = LOADD_UNALIGNED_AS(double,C+LDC+3);
+
+}
+#endif
+#endif
+
+
 
 
 
