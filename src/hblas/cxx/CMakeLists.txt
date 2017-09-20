@@ -96,13 +96,13 @@ set(GEMM_SRC
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx
 )
 
-
 set(HBLAS3_SRC ${GEMM_SRC})
 
 
 ##### HBLAS LIB TARGET #####
 
 add_library(hblas_cxx STATIC ${HBLAS1_SRC} ${HBLAS3_SRC})
+target_include_directories(hblas_cxx PUBLIC ${PROJECT_SOURCE_DIR}/src/hblas/cxx/hblas3)
 
 
 
