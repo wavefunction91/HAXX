@@ -405,8 +405,6 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   const bool BCT   = TRANSB == 'C';
   const bool BCONJ = TRANSB == 'R';
 
-  std::cout << "HEREX\n";
-
   // Packed matricies (aligned)
   _BMATF *bPack = 
     (_BMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF));
@@ -510,15 +508,18 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 #endif
 
 
-        for( jj = 0; jj < jDo; jj += NR ) {
+#if 1
+        for( jj = 0; jj < nJ; jj += NR ) {
 
-          nJJJ = std::min(NR,nJ-jj);
+          //nJJJ = std::min(NR,jj-nJ);
+          nJJJ = NR;
 
           smallC = CBlk;
           smallA = aPack;
 
-          for( ii = 0; ii < iDo; ii += MR ) {
-            nIII = std::min(MR,nI-ii);
+          for( ii = 0; ii < nI; ii += MR ) {
+            //nIII = std::min(MR,ii-nI);
+            nIII = MR;
 
             // Perform kernel operation
             Kern(BETA,nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
@@ -530,6 +531,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
           BL1  += NR*nK;
           CBlk += NR*LDC;
         }
+#endif
 
         if( ATRAN or ACT ) Ai += nI*LDA;
         else               Ai += nI; 
