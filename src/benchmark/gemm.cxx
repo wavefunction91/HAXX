@@ -70,6 +70,10 @@ int main() {
     &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
   auto hgemmEnd = std::chrono::high_resolution_clock::now();
 
+  auto fortranStart = std::chrono::high_resolution_clock::now();
+  hgemmzz_(&TRANSA,&TRANSB,&gl,&gl,&gl,&ALPHA,&A[0],&gl,&B[0],&gl,&BETA,&C[0],&gl);
+  auto fortranEnd = std::chrono::high_resolution_clock::now();
+
 
   auto zgemmStart = std::chrono::high_resolution_clock::now();
   zgemm_(&TRANSA,&TRANSB,&x2x,&x2x,&x2x,&ALPHA,&AC[0],&x2x,
@@ -77,9 +81,11 @@ int main() {
   auto zgemmEnd = std::chrono::high_resolution_clock::now();
   
   std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
+  std::chrono::duration<double> fortranDur = fortranEnd - fortranStart;
   std::chrono::duration<double> zgemmDur = zgemmEnd - zgemmStart;
 
   std::cout << "HGEMM " << GEMM_LEN << " " << hgemmDur.count() << std::endl;
+  std::cout << "FORTRAN " << GEMM_LEN << " " << fortranDur.count() << std::endl;
   std::cout << "ZGEMM " << GEMM_LEN << " " << zgemmDur.count() << std::endl;
   }
 }

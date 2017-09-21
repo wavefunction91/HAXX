@@ -26,7 +26,9 @@ endif()
 
 add_executable(dot ${DOT_SRC})
 
+option( COMPARE_MKL_ZGEMM "Compare HGEMM to ZGEMM" OFF )
 
+if( NOT COMPARE_MKL_ZGEMM )
 # Reference BLAS / LAPACK
 include(ExternalProject)
 find_program(SED_EXEC sed)
@@ -45,7 +47,10 @@ add_library(blas STATIC IMPORTED)
 set_property(TARGET blas PROPERTY IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/deps/lib/libblas.a)
 
 add_dependencies(blas lapack)
-target_link_libraries(gemm ${Boost_LIBRARIES} hblas blas)
+target_link_libraries(gemm ${Boost_LIBRARIES} blas)
+endif()
+
+target_link_libraries(gemm ${Boost_LIBRARIES} hblas)
 target_link_libraries(dot ${Boost_LIBRARIES} hblas)
 
 #find_package(BLAS REQUIRED)
