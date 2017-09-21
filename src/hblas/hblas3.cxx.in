@@ -40,15 +40,15 @@ namespace HAXX {
     
 //GEMM_FORTRAN_IMPL(hgemmdd,double,quaternion<double>,quaternion<double>,
 //  double,double);
-  GEMM_FORTRAN_IMPL(hgemmdz,double,quaternion<double>,quaternion<double>,
-    double,std::complex<double>);
+//GEMM_FORTRAN_IMPL(hgemmdz,double,quaternion<double>,quaternion<double>,
+//  double,std::complex<double>);
   GEMM_FORTRAN_IMPL(hgemmdh,double,quaternion<double>,quaternion<double>,
     double,quaternion<double>);
 
-  GEMM_FORTRAN_IMPL(hgemmzd,double,quaternion<double>,quaternion<double>,
-    std::complex<double>,double);
-  GEMM_FORTRAN_IMPL(hgemmzz,double,quaternion<double>,quaternion<double>,
-    std::complex<double>,std::complex<double>);
+//GEMM_FORTRAN_IMPL(hgemmzd,double,quaternion<double>,quaternion<double>,
+//  std::complex<double>,double);
+//GEMM_FORTRAN_IMPL(hgemmzz,double,quaternion<double>,quaternion<double>,
+//  std::complex<double>,std::complex<double>);
   GEMM_FORTRAN_IMPL(hgemmzh,double,quaternion<double>,quaternion<double>,
     std::complex<double>,quaternion<double>);
 

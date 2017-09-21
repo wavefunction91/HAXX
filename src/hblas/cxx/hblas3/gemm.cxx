@@ -73,6 +73,7 @@ template <typename T, typename U, typename V, typename _BetaF>
 inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __restrict__ B, V* __restrict__ C, 
   HAXX_INT LDC) {
 
+
   for(auto j = 0; j < N; j++)
   for(auto i = 0; i < M; i++)
     C[i + j*LDC] *= BETA;
@@ -91,15 +92,51 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict_
 }
 
 
-#if MR == 2 && NR == 2
-//#if 0
-template <>
-inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, 
-  quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
-  quaternion<double>* __restrict__ C, HAXX_INT LDC) {
+template <typename _BetaF>
+inline void scaleC(_BetaF &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4);
 
+template <>
+inline void scaleC(double &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4) {
 
   const __m256d  beta = _mm256_broadcast_sd(&BETA);
+  c1 = MULD(beta,c1);
+  c2 = MULD(beta,c2);
+  c3 = MULD(beta,c3);
+  c4 = MULD(beta,c4);
+
+};
+
+template <>
+inline void scaleC(std::complex<double> &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4) {
+
+  const __m256i maskConj = _mm256_set_epi64x(
+                             0x8000000000000000, 0,
+                             0x8000000000000000, 0 );
+
+  __m128d beta = _mm_loadu_pd(reinterpret_cast<double*>(&BETA));
+
+  // XXX: this is not correct for right multiply
+  __m256d betaV  = D256_FROM_D128(_mm_castpd_ps(beta),_mm_castpd_ps(beta));
+  __m256d betaVC = _mm256_xor_pd( 
+                     _mm256_permute_pd(betaV,0x5),
+                     _mm256_castsi256_pd(maskConj)
+                   );
+
+  c1 = _mm256_hsub_pd(MULD(c1,betaV),MULD(c1,betaVC));
+  c2 = _mm256_hsub_pd(MULD(c2,betaV),MULD(c2,betaVC));
+  c3 = _mm256_hsub_pd(MULD(c3,betaV),MULD(c3,betaVC));
+  c4 = _mm256_hsub_pd(MULD(c4,betaV),MULD(c4,betaVC));
+
+
+};
+
+
+
+#if MR == 2 && NR == 2
+template <typename _BetaF>
+inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, 
+  quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
+  quaternion<double>* __restrict__ C, HAXX_INT LDC) {
 
   // Scratch registers
   // ymm12->15
@@ -119,10 +156,7 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   __m256d c11 = LOADD_UNALIGNED_AS(double,C+LDC+1);
 
   // Scale C by Beta
-  c00 = MULD(beta,c00);
-  c10 = MULD(beta,c10);
-  c01 = MULD(beta,c01);
-  c11 = MULD(beta,c11);
+  scaleC(BETA,c00,c10,c01,c11);
 
 
   quaternion<double> *locB = B, *locA = A;
@@ -186,22 +220,14 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     MULD4Q_NN(a00,a01,a10,a11,b00,b01,b10,b11,t1,t2,t3,t4);
 
 
-    // t1 (ymm12) = 
-    // [
-    //   P0000(S) + P0101(S)
-    //   P0000(I) + P0101(I)
-    //   P1010(S) + P1111(S)
-    //   P1010(I) + P1111(I)
-    // ]
+    // t1 (ymm12) =                t3 (ymm14) = 
+    // [                           [
+    //   P0000(S) + P0101(S)         P0000(J) + P0101(J)
+    //   P0000(I) + P0101(I)         P0000(K) + P0101(K)
+    //   P1010(S) + P1111(S)         P1010(J) + P1111(J)
+    //   P1010(I) + P1111(I)         P1010(K) + P1111(K)
+    // ]                           ]
     t1 = _mm256_hadd_pd(t1,t2);
-
-    // t3 (ymm14) = 
-    // [
-    //   P0000(J) + P0101(J)
-    //   P0000(K) + P0101(K)
-    //   P1010(J) + P1111(J)
-    //   P1010(K) + P1111(K)
-    // ]
     t3 = _mm256_hadd_pd(t3,t4);
 
 
@@ -209,18 +235,12 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     // register to the low bits of another?
 
 
-    // x2 (xmm13) =
-    // [
-    //   P0000(S) + P0101(S)
-    //   P0000(I) + P0101(I)
-    // ]
+    // x2 (xmm13) =              x4 (xmm15) =
+    // [                         [
+    //   P0000(S) + P0101(S)       P0000(J) + P0101(J)
+    //   P0000(I) + P0101(I)       P0000(K) + P0101(K)
+    // ]                         ]
     x2 = GET_LOD_256(t1);
-
-    // x4 (xmm15) =
-    // [
-    //   P0000(J) + P0101(J)
-    //   P0000(K) + P0101(K)
-    // ]
     x4 = GET_LOD_256(t3);
 
 
@@ -237,18 +257,12 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     c00 = ADDD(c00,t2);
 
 
-    // x2 (xmm13) =
-    // [
-    //   P1010(S) + P1111(S)
-    //   P1010(I) + P1111(I)
-    // ]
+    // x2 (xmm13) =             x4 (xmm15) =
+    // [                        [
+    //   P1010(S) + P1111(S)      P1010(J) + P1111(J)
+    //   P1010(I) + P1111(I)      P1010(K) + P1111(K)
+    // ]                        ]
     x2 = GET_HID_256(t1);
-
-    // x4 (xmm15) =
-    // [
-    //   P1010(J) + P1111(J)
-    //   P1010(K) + P1111(K)
-    // ]
     x4 = GET_HID_256(t3);
 
     // t2 (ymm13) =
@@ -294,22 +308,14 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     MULD4Q_NN(a00,a01,a10,a11,b00,b01,b10,b11,t1,t2,t3,t4);
 
 
-    // t1 (ymm12) = 
-    // [
-    //   P1000(S) + P1101(S)
-    //   P1000(I) + P1101(I)
-    //   P0010(S) + P0111(S)
-    //   P0010(I) + P0111(I)
-    // ]
+    // t1 (ymm12) =            t3 (ymm14) = 
+    // [                       [
+    //   P1000(S) + P1101(S)     P1000(J) + P1101(J)
+    //   P1000(I) + P1101(I)     P1000(K) + P1101(K)
+    //   P0010(S) + P0111(S)     P0010(J) + P0111(J)
+    //   P0010(I) + P0111(I)     P0010(K) + P0111(K)
+    // ]                       ]
     t1 = _mm256_hadd_pd(t1,t2);
-
-    // t3 (ymm14) = 
-    // [
-    //   P1000(J) + P1101(J)
-    //   P1000(K) + P1101(K)
-    //   P0010(J) + P0111(J)
-    //   P0010(K) + P0111(K)
-    // ]
     t3 = _mm256_hadd_pd(t3,t4);
 
 
@@ -317,18 +323,12 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     // register to the low bits of another?
 
 
-    // x2 (xmm13) =
-    // [
-    //   P1000(S) + P1101(S)
-    //   P1000(I) + P1101(I)
-    // ]
+    // x2 (xmm13) =            x4 (xmm15) =
+    // [                       [
+    //   P1000(S) + P1101(S)     P1000(J) + P1101(J)
+    //   P1000(I) + P1101(I)     P1000(K) + P1101(K)
+    // ]                       ]
     x2 = GET_LOD_256(t1);
-
-    // x4 (xmm15) =
-    // [
-    //   P1000(J) + P1101(J)
-    //   P1000(K) + P1101(K)
-    // ]
     x4 = GET_LOD_256(t3);
 
 
@@ -345,18 +345,12 @@ inline void Kern(double BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     c10 = ADDD(c10,t2);
 
 
-    // x2 (xmm13) =
-    // [
-    //   P0010(S) + P0111(S)
-    //   P0010(I) + P0111(I)
-    // ]
+    // x2 (xmm13) =           x4 (xmm15) =
+    // [                      [
+    //   P0010(S) + P0111(S)    P0010(J) + P0111(J)
+    //   P0010(I) + P0111(I)    P0010(K) + P0111(K)
+    // ]                      ]
     x2 = GET_HID_256(t1);
-
-    // x4 (xmm15) =
-    // [
-    //   P0010(J) + P0111(J)
-    //   P0010(K) + P0111(K)
-    // ]
     x4 = GET_HID_256(t3);
 
     // t2 (ymm13) =

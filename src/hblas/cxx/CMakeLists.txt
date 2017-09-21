@@ -86,14 +86,29 @@ set(HBLAS1_SRC ${DOT_SRC} ${AXPY_SCAL_SRC} ${COPY_SWAP_SRC})
 # GEMM functions
 configure_file(hblas3/gemm.cxx 
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx)
+configure_file(hblas3/gemm.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdz.cxx)
+configure_file(hblas3/gemm.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzd.cxx)
+configure_file(hblas3/gemm.cxx 
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzz.cxx)
 
 
 set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx
   PROPERTY COMPILE_DEFINITIONS "ALPHAF=DOUBLE" "BETAF=DOUBLE")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdz.cxx
+  PROPERTY COMPILE_DEFINITIONS "ALPHAF=DOUBLE" "BETAF=DCOMPLEX")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzd.cxx
+  PROPERTY COMPILE_DEFINITIONS "ALPHAF=DCOMPLEX" "BETAF=DOUBLE")
+set_property(SOURCE ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzz.cxx
+  PROPERTY COMPILE_DEFINITIONS "ALPHAF=DCOMPLEX" "BETAF=DCOMPLEX")
 
 
 set(GEMM_SRC
   ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdd.cxx
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzd.cxx
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmdz.cxx
+  ${PROJECT_BINARY_DIR}/src/hblas/cxx/hblas3/hgemmzz.cxx
 )
 
 set(HBLAS3_SRC ${GEMM_SRC})
