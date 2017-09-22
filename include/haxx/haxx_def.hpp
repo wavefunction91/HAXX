@@ -396,16 +396,6 @@ template <typename _F>
  */
 
 template <typename _F> inline _F SmartConj( _F& );
-template<> inline double SmartConj( double &x ) { return x; }
-template<> 
-  inline std::complex<double> SmartConj( std::complex<double> &x ) { 
-    return std::conj(x); 
-  }
-template<> 
-  inline quaternion<double> SmartConj( quaternion<double> &x ) { 
-    return conj(x); 
-  }
-
 /* @} */ // MiscFunctions 
 
 }; // HAXX namespace

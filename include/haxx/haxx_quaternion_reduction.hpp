@@ -40,6 +40,24 @@ inline quaternion<_F> conj(const quaternion<_F>& __q) {
 
 };
 
+#if defined(__AVX__) || defined(__AVX2__)
+
+  template<>
+  inline quaternion<double> conj(const quaternion<double> &__q) {
+  
+    quaternion<double> __r;
+  
+    __m256d r = LOAD_256D_UNALIGNED_AS(double,&__q);
+    r = QCONJ_256D(r);
+  
+    STORE_256D_UNALIGNED_AS(double,&__r,r);
+
+    return __r;
+  
+  }
+
+#endif
+
 /**
  *  \f$ q^{-1} = \dfrac{q^*}{\vert\vert q \vert\vert^2} \f$
  */
@@ -102,6 +120,19 @@ inline quaternion<_F> comm(const quaternion<_F>& q, const _F& p) {
   return quaternion<_F>(0.);
 
 }
+
+
+
+template<> inline double SmartConj( double &x ) { return x; }
+template<> 
+  inline std::complex<double> SmartConj( std::complex<double> &x ) { 
+    return std::conj(x); 
+  }
+template<> 
+  inline quaternion<double> SmartConj( quaternion<double> &x ) { 
+    return conj(x); 
+  }
+
 
 
 };
