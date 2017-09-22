@@ -73,27 +73,27 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
     // Load 4 X and Y elements
     if( isAligned ) {
 
-      x1 = LOADD_ALIGNED_AS(double,locX         );
-      x2 = LOADD_ALIGNED_AS(double,locX +   INCX);
-      x3 = LOADD_ALIGNED_AS(double,locX + 2*INCX);
-      x4 = LOADD_ALIGNED_AS(double,locX + 3*INCX);
+      x1 = LOAD_256D_ALIGNED_AS(double,locX         );
+      x2 = LOAD_256D_ALIGNED_AS(double,locX +   INCX);
+      x3 = LOAD_256D_ALIGNED_AS(double,locX + 2*INCX);
+      x4 = LOAD_256D_ALIGNED_AS(double,locX + 3*INCX);
 
-      y1 = LOADD_ALIGNED_AS(double,locY         );
-      y2 = LOADD_ALIGNED_AS(double,locY +   INCY);
-      y3 = LOADD_ALIGNED_AS(double,locY + 2*INCY);
-      y4 = LOADD_ALIGNED_AS(double,locY + 3*INCY);
+      y1 = LOAD_256D_ALIGNED_AS(double,locY         );
+      y2 = LOAD_256D_ALIGNED_AS(double,locY +   INCY);
+      y3 = LOAD_256D_ALIGNED_AS(double,locY + 2*INCY);
+      y4 = LOAD_256D_ALIGNED_AS(double,locY + 3*INCY);
 
     } else {
 
-      x1 = LOADD_UNALIGNED_AS(double,locX         );
-      x2 = LOADD_UNALIGNED_AS(double,locX +   INCX);
-      x3 = LOADD_UNALIGNED_AS(double,locX + 2*INCX);
-      x4 = LOADD_UNALIGNED_AS(double,locX + 3*INCX);
+      x1 = LOAD_256D_UNALIGNED_AS(double,locX         );
+      x2 = LOAD_256D_UNALIGNED_AS(double,locX +   INCX);
+      x3 = LOAD_256D_UNALIGNED_AS(double,locX + 2*INCX);
+      x4 = LOAD_256D_UNALIGNED_AS(double,locX + 3*INCX);
 
-      y1 = LOADD_UNALIGNED_AS(double,locY         );
-      y2 = LOADD_UNALIGNED_AS(double,locY +   INCY);
-      y3 = LOADD_UNALIGNED_AS(double,locY + 2*INCY);
-      y4 = LOADD_UNALIGNED_AS(double,locY + 3*INCY);
+      y1 = LOAD_256D_UNALIGNED_AS(double,locY         );
+      y2 = LOAD_256D_UNALIGNED_AS(double,locY +   INCY);
+      y3 = LOAD_256D_UNALIGNED_AS(double,locY + 2*INCY);
+      y4 = LOAD_256D_UNALIGNED_AS(double,locY + 3*INCY);
 
     }
 
@@ -133,9 +133,9 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   // Add up the four quaternions
   // r1 = r1 + r2 + r3 + r4
-  r1 = ADDD(r1,r2);
-  r1 = ADDD(r1,r3);
-  r1 = ADDD(r1,r4);
+  r1 = _mm256_add_pd(r1,r2);
+  r1 = _mm256_add_pd(r1,r3);
+  r1 = _mm256_add_pd(r1,r4);
 
 #endif
 
@@ -144,20 +144,20 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
     // Load a single element of X and Y
     if( isAligned ) {
-      x1 = LOADD_ALIGNED_AS(double,locX + i*INCX);
-      y1 = LOADD_ALIGNED_AS(double,locY + i*INCY);
+      x1 = LOAD_256D_ALIGNED_AS(double,locX + i*INCX);
+      y1 = LOAD_256D_ALIGNED_AS(double,locY + i*INCY);
     } else {
-      x1 = LOADD_UNALIGNED_AS(double,locX + i*INCX);
-      y1 = LOADD_UNALIGNED_AS(double,locY + i*INCY);
+      x1 = LOAD_256D_UNALIGNED_AS(double,locX + i*INCX);
+      y1 = LOAD_256D_UNALIGNED_AS(double,locY + i*INCY);
     }
 
     // r1 += CONJ(X) * Y
   #ifdef _CONJ
-    r1 = ADDD(r1,MULDQ_CN(x1,y1));
+    r1 = _mm256_add_pd(r1,MULDQ_CN(x1,y1));
 
     // r1 += X * Y
   #else
-    r1 = ADDD(r1,MULDQ_NN(x1,y1));
+    r1 = _mm256_add_pd(r1,MULDQ_NN(x1,y1));
 
   #endif
 
@@ -165,7 +165,7 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   // Store the result in a possibly unaligned
   // storage
-  STORED_UNALIGNED_AS(double,(&res),r1);   
+  STORE_256D_UNALIGNED_AS(double,(&res),r1);   
 
     
   // return

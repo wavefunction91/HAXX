@@ -56,14 +56,14 @@ void FNAME(const HAXX_INT N, quaternion<double> * const X,
 
   #if defined(__AVX__) || defined(__AVX2__)
 
-      x1 = LOADD_ALIGNED_AS(double,locX);
+      x1 = LOAD_256D_ALIGNED_AS(double,locX);
     #ifdef _SWAP
-      y1 = LOADD_ALIGNED_AS(double,locY);
+      y1 = LOAD_256D_ALIGNED_AS(double,locY);
     #endif
 
-      STORED_ALIGNED_AS(double,locY,x1);
+      STORE_256D_ALIGNED_AS(double,locY,x1);
     #ifdef _SWAP
-      STORED_ALIGNED_AS(double,locX,y1);
+      STORE_256D_ALIGNED_AS(double,locX,y1);
     #endif
 
   #endif
@@ -77,15 +77,15 @@ void FNAME(const HAXX_INT N, quaternion<double> * const X,
   
   #if defined(__AVX__) || defined(__AVX2__)
   
-      x1 = LOADD_UNALIGNED_AS(double,locX);
+      x1 = LOAD_256D_UNALIGNED_AS(double,locX);
     #ifdef _SWAP
-      y1 = LOADD_UNALIGNED_AS(double,locY);
+      y1 = LOAD_256D_UNALIGNED_AS(double,locY);
     #endif
 
 
-      STORED_UNALIGNED_AS(double,locY,x1);
+      STORE_256D_UNALIGNED_AS(double,locY,x1);
     #ifdef _SWAP
-      STORED_UNALIGNED_AS(double,locX,y1);
+      STORE_256D_UNALIGNED_AS(double,locX,y1);
     #endif
   
   #endif
