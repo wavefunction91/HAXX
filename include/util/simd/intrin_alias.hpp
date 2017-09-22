@@ -16,10 +16,6 @@
 // 256-bit vector length
 #if defined(__AVX__) || defined(__AVX2__)
 
-  // 64-bit float SIMD vector
-  #define VECD __m256d
-
-
   // 64-bit float Zero vector
   #define ZEROD _mm256_setzero_pd()
 

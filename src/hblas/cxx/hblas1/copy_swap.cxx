@@ -25,11 +25,11 @@ void FNAME(const HAXX_INT N, quaternion<double> * const X,
 
 #if defined(__AVX__) || defined(__AVX2__)
 
-  VECD x1;
+  __m256d x1;
 
 #ifdef _SWAP
 
-  VECD y1;
+  __m256d y1;
 
 #endif
 

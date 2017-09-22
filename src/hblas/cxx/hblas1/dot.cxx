@@ -30,25 +30,25 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
 #if defined(__AVX__) || defined(__AVX2__)
 
   // Load quaternions
-  VECD x1;
-  VECD x2;
-  VECD x3;
-  VECD x4;
+  __m256d x1;
+  __m256d x2;
+  __m256d x3;
+  __m256d x4;
 
-  VECD y1;
-  VECD y2;
-  VECD y3;
-  VECD y4;
+  __m256d y1;
+  __m256d y2;
+  __m256d y3;
+  __m256d y4;
   
 
   // Scratch space
-  VECD t1, t2, t3, t4;
+  __m256d t1, t2, t3, t4;
 
   // Result buffer (zeroed out)
-  VECD r1 = ZEROD;
-  VECD r2 = ZEROD;
-  VECD r3 = ZEROD;
-  VECD r4 = ZEROD;
+  __m256d r1 = ZEROD;
+  __m256d r2 = ZEROD;
+  __m256d r3 = ZEROD;
+  __m256d r4 = ZEROD;
   
 #endif
 
