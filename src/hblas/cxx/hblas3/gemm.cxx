@@ -99,10 +99,10 @@ template <>
 inline void scaleC(double &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4) {
 
   const __m256d  beta = _mm256_broadcast_sd(&BETA);
-  c1 = MULD(beta,c1);
-  c2 = MULD(beta,c2);
-  c3 = MULD(beta,c3);
-  c4 = MULD(beta,c4);
+  c1 = _mm256_mul_pd(beta,c1);
+  c2 = _mm256_mul_pd(beta,c2);
+  c3 = _mm256_mul_pd(beta,c3);
+  c4 = _mm256_mul_pd(beta,c4);
 
 };
 
@@ -116,16 +116,16 @@ inline void scaleC(std::complex<double> &BETA, __m256d &c1, __m256d &c2, __m256d
   __m128d beta = _mm_loadu_pd(reinterpret_cast<double*>(&BETA));
 
   // XXX: this is not correct for right multiply
-  __m256d betaV  = D256_FROM_D128(_mm_castpd_ps(beta),_mm_castpd_ps(beta));
+  __m256d betaV  = SET_256D_FROM_128D(beta,beta);
   __m256d betaVC = _mm256_xor_pd( 
                      _mm256_permute_pd(betaV,0x5),
                      _mm256_castsi256_pd(maskConj)
                    );
 
-  c1 = _mm256_hsub_pd(MULD(c1,betaV),MULD(c1,betaVC));
-  c2 = _mm256_hsub_pd(MULD(c2,betaV),MULD(c2,betaVC));
-  c3 = _mm256_hsub_pd(MULD(c3,betaV),MULD(c3,betaVC));
-  c4 = _mm256_hsub_pd(MULD(c4,betaV),MULD(c4,betaVC));
+  c1 = _mm256_hsub_pd(_mm256_mul_pd(c1,betaV),_mm256_mul_pd(c1,betaVC));
+  c2 = _mm256_hsub_pd(_mm256_mul_pd(c2,betaV),_mm256_mul_pd(c2,betaVC));
+  c3 = _mm256_hsub_pd(_mm256_mul_pd(c3,betaV),_mm256_mul_pd(c3,betaVC));
+  c4 = _mm256_hsub_pd(_mm256_mul_pd(c4,betaV),_mm256_mul_pd(c4,betaVC));
 
 
 };
@@ -150,10 +150,10 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   //   c01 (ymm1) = [ C01(S) C01(I) C01(J) C01(K) ]
   //   c10 (ymm2) = [ C10(S) C10(I) C10(J) C10(K) ]
   //   c11 (ymm3) = [ C11(S) C11(I) C11(J) C11(K) ]
-  __m256d c00 = LOADD_UNALIGNED_AS(double,C      );
-  __m256d c10 = LOADD_UNALIGNED_AS(double,C+1    );
-  __m256d c01 = LOADD_UNALIGNED_AS(double,C+LDC  );
-  __m256d c11 = LOADD_UNALIGNED_AS(double,C+LDC+1);
+  __m256d c00 = LOAD_256D_UNALIGNED_AS(double,C      );
+  __m256d c10 = LOAD_256D_UNALIGNED_AS(double,C+1    );
+  __m256d c01 = LOAD_256D_UNALIGNED_AS(double,C+LDC  );
+  __m256d c11 = LOAD_256D_UNALIGNED_AS(double,C+LDC+1);
 
   // Scale C by Beta
   scaleC(BETA,c00,c10,c01,c11);
@@ -168,18 +168,18 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   do {
 
     // Load A (4 new registers, ymm4->7 for A)
-    __m256d a00 = LOADD_ALIGNED_AS(double,locA);
-    __m256d a10 = LOADD_ALIGNED_AS(double,locA+1);
-    __m256d a01 = LOADD_ALIGNED_AS(double,locA+2);
-    __m256d a11 = LOADD_ALIGNED_AS(double,locA+3);
+    __m256d a00 = LOAD_256D_ALIGNED_AS(double,locA);
+    __m256d a10 = LOAD_256D_ALIGNED_AS(double,locA+1);
+    __m256d a01 = LOAD_256D_ALIGNED_AS(double,locA+2);
+    __m256d a11 = LOAD_256D_ALIGNED_AS(double,locA+3);
     locA += 4;
     
 
     // Load B (4 new registers -> ymm8->11 for B)
-    __m256d b00 = LOADD_ALIGNED_AS(double,locB);
-    __m256d b10 = LOADD_ALIGNED_AS(double,locB+1);
-    __m256d b01 = LOADD_ALIGNED_AS(double,locB+2);
-    __m256d b11 = LOADD_ALIGNED_AS(double,locB+3);
+    __m256d b00 = LOAD_256D_ALIGNED_AS(double,locB);
+    __m256d b10 = LOAD_256D_ALIGNED_AS(double,locB+1);
+    __m256d b01 = LOAD_256D_ALIGNED_AS(double,locB+2);
+    __m256d b11 = LOAD_256D_ALIGNED_AS(double,locB+3);
     locB += 4;
 
     // Transpose A (8 registers, ymm4->7 for A, ymm12->15 for T)
@@ -240,8 +240,8 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0000(S) + P0101(S)       P0000(J) + P0101(J)
     //   P0000(I) + P0101(I)       P0000(K) + P0101(K)
     // ]                         ]
-    x2 = GET_LOD_256(t1);
-    x4 = GET_LOD_256(t3);
+    x2 = GET_LO_128D_256D(t1);
+    x4 = GET_LO_128D_256D(t3);
 
 
     // t2 (ymm13) =
@@ -251,10 +251,10 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0000(J) + P0101(J)
     //   P0000(K) + P0101(K)
     // ]
-    t2 = D256_FROM_D128(_mm_castpd_ps(x2),_mm_castpd_ps(x4)); 
+    t2 = SET_256D_FROM_128D(x2,x4); 
     
     // C00 (ymm0) += t2 (ymm13)
-    c00 = ADDD(c00,t2);
+    c00 = _mm256_add_pd(c00,t2);
 
 
     // x2 (xmm13) =             x4 (xmm15) =
@@ -262,8 +262,8 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P1010(S) + P1111(S)      P1010(J) + P1111(J)
     //   P1010(I) + P1111(I)      P1010(K) + P1111(K)
     // ]                        ]
-    x2 = GET_HID_256(t1);
-    x4 = GET_HID_256(t3);
+    x2 = GET_HI_128D_256D(t1);
+    x4 = GET_HI_128D_256D(t3);
 
     // t2 (ymm13) =
     // [
@@ -272,10 +272,10 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P1010(J) + P1111(J)
     //   P1010(K) + P1111(K)
     // ]
-    t2 = D256_FROM_D128(_mm_castpd_ps(x2),_mm_castpd_ps(x4)); 
+    t2 = SET_256D_FROM_128D(x2,x4); 
 
     // C11 (ymm3) += t2 (ymm13)
-    c11 = ADDD(c11,t2);
+    c11 = _mm256_add_pd(c11,t2);
 
 
 
@@ -290,14 +290,14 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
     // Use X1 (xmm12) and X2 (xmm13) to store the low and high bits
 
-    x1 = GET_HID_256(a00); x2 = GET_LOD_256(a00); 
-      a00 = D256_FROM_D128(_mm_castpd_ps(x1),_mm_castpd_ps(x2));
-    x1 = GET_HID_256(a10); x2 = GET_LOD_256(a10); 
-      a10 = D256_FROM_D128(_mm_castpd_ps(x1),_mm_castpd_ps(x2));
-    x1 = GET_HID_256(a01); x2 = GET_LOD_256(a01); 
-      a01 = D256_FROM_D128(_mm_castpd_ps(x1),_mm_castpd_ps(x2));
-    x1 = GET_HID_256(a11); x2 = GET_LOD_256(a11); 
-      a11 = D256_FROM_D128(_mm_castpd_ps(x1),_mm_castpd_ps(x2));
+    x1 = GET_HI_128D_256D(a00); x2 = GET_LO_128D_256D(a00); 
+      a00 = SET_256D_FROM_128D(x1,x2);
+    x1 = GET_HI_128D_256D(a10); x2 = GET_LO_128D_256D(a10); 
+      a10 = SET_256D_FROM_128D(x1,x2);
+    x1 = GET_HI_128D_256D(a01); x2 = GET_LO_128D_256D(a01); 
+      a01 = SET_256D_FROM_128D(x1,x2);
+    x1 = GET_HI_128D_256D(a11); x2 = GET_LO_128D_256D(a11); 
+      a11 = SET_256D_FROM_128D(x1,x2);
 
     // Compute product in T (ymm12-ymm15)
     // t1 (ymm12) = [ P1000(S) P1101(S) P0010(S) P0111(S) ]
@@ -328,8 +328,8 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P1000(S) + P1101(S)     P1000(J) + P1101(J)
     //   P1000(I) + P1101(I)     P1000(K) + P1101(K)
     // ]                       ]
-    x2 = GET_LOD_256(t1);
-    x4 = GET_LOD_256(t3);
+    x2 = GET_LO_128D_256D(t1);
+    x4 = GET_LO_128D_256D(t3);
 
 
     // t2 (ymm13) =
@@ -339,10 +339,10 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P1000(J) + P1101(J)
     //   P1000(K) + P1101(K)
     // ]
-    t2 = D256_FROM_D128(_mm_castpd_ps(x2),_mm_castpd_ps(x4)); 
+    t2 = SET_256D_FROM_128D(x2,x4); 
     
     // C10 (ymm1) += t2 (ymm13)
-    c10 = ADDD(c10,t2);
+    c10 = _mm256_add_pd(c10,t2);
 
 
     // x2 (xmm13) =           x4 (xmm15) =
@@ -350,8 +350,8 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0010(S) + P0111(S)    P0010(J) + P0111(J)
     //   P0010(I) + P0111(I)    P0010(K) + P0111(K)
     // ]                      ]
-    x2 = GET_HID_256(t1);
-    x4 = GET_HID_256(t3);
+    x2 = GET_HI_128D_256D(t1);
+    x4 = GET_HI_128D_256D(t3);
 
     // t2 (ymm13) =
     // [
@@ -360,20 +360,20 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0010(J) + P0111(J)
     //   P0010(K) + P0111(K)
     // ]
-    t2 = D256_FROM_D128(_mm_castpd_ps(x2),_mm_castpd_ps(x4)); 
+    t2 = SET_256D_FROM_128D(x2,x4); 
 
     // C01 (ymm2) += t2 (ymm13)
-    c01 = ADDD(c01,t2);
+    c01 = _mm256_add_pd(c01,t2);
     
 
     k--;
   } while( k > 0 );
 
 
-  STORED_UNALIGNED_AS(double,C      ,c00);
-  STORED_UNALIGNED_AS(double,C+1    ,c10);
-  STORED_UNALIGNED_AS(double,C+LDC  ,c01);
-  STORED_UNALIGNED_AS(double,C+LDC+1,c11);
+  STORE_256D_UNALIGNED_AS(double,C      ,c00);
+  STORE_256D_UNALIGNED_AS(double,C+1    ,c10);
+  STORE_256D_UNALIGNED_AS(double,C+LDC  ,c01);
+  STORE_256D_UNALIGNED_AS(double,C+LDC+1,c11);
   
 
 }
