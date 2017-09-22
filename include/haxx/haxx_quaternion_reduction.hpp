@@ -40,7 +40,9 @@ inline quaternion<_F> conj(const quaternion<_F>& __q) {
 
 };
 
-#if defined(__AVX__) || defined(__AVX2__)
+// Attempt at SIMD conjugate, slows down the code
+#if 0
+//#if defined(__AVX__) || defined(__AVX2__)
 
   template<>
   inline quaternion<double> conj(const quaternion<double> &__q) {
