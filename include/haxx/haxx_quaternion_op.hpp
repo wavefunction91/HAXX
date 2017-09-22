@@ -138,11 +138,11 @@ inline quaternion<_F> operator*(const quaternion<_F>& __x,
     quaternion<double> __r;
   
     // Load x,y into 256-bit vector lanes and perform the multiplication
-    __m256d x = LOADD_UNALIGNED_AS(double,&__x);
-    __m256d y = LOADD_UNALIGNED_AS(double,&__y);
+    __m256d x = LOAD_256D_UNALIGNED_AS(double,&__x);
+    __m256d y = LOAD_256D_UNALIGNED_AS(double,&__y);
     __m256d r = MULDQ_NN(x,y);
   
-    STORED_UNALIGNED_AS(double,&__r,r);
+    STORE_256D_UNALIGNED_AS(double,&__r,r);
     
     return __r;
   };
