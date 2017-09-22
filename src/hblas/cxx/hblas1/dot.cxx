@@ -45,10 +45,10 @@ quaternion<double> FNAME(const HAXX_INT N, quaternion<double> * const X,
   __m256d t1, t2, t3, t4;
 
   // Result buffer (zeroed out)
-  __m256d r1 = ZEROD;
-  __m256d r2 = ZEROD;
-  __m256d r3 = ZEROD;
-  __m256d r4 = ZEROD;
+  __m256d r1 = _mm256_setzero_pd();
+  __m256d r2 = _mm256_setzero_pd();
+  __m256d r3 = _mm256_setzero_pd();
+  __m256d r4 = _mm256_setzero_pd();
   
 #endif
 
