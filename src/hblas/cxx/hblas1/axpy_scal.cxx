@@ -56,10 +56,10 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
 #if defined(__AVX__) || defined(__AVX2__)
 
   // Load quaternions
-  VECD x1; // Load space for an element of X
+  __m256d x1; // Load space for an element of X
 
   #ifdef _AXPY
-  VECD y1; // Load space for an element of Y
+  __m256d y1; // Load space for an element of Y
   #endif
   
 #endif
@@ -90,7 +90,7 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
   #if ALPHAF == DOUBLE
 
   // alpha = (ALPHA, ALPHA, ALPHA, ALPHA)
-  const VECD alpha = _mm256_broadcast_sd(&ALPHA);
+  const __m256d alpha = _mm256_broadcast_sd(&ALPHA);
 
   #elif ALPHAF == DCOMPLEX
 
@@ -124,15 +124,14 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
   // SIDE == 'R' -> 
   //   alpha      = (ALPHA_R,  ALPHA_I,  ALPHA_R, -ALPHA_I)
   //   alpha_conj = (ALPHA_I, -ALPHA_R, -ALPHA_I, -ALPHA_R)
-  const VECD alpha = D256_FROM_D128(_mm_castpd_ps(alphaC),
-                                    _mm_castpd_ps(alphaC_conj));
+  const __m256d alpha = SET_256D_FROM_128D(alphaC,alphaC_conj);
 
   // (0 -1 0 -1) mask
   const __m256i maskConj = _mm256_set_epi64x(
                              0x8000000000000000, 0,
                              0x8000000000000000, 0 );
 
-  const VECD alpha_conj = _mm256_xor_pd(
+  const __m256d alpha_conj = _mm256_xor_pd(
                             _mm256_permute_pd(alpha, 0x5),
                             _mm256_castsi256_pd(maskConj)
                           );
@@ -140,7 +139,7 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
   #elif ALPHAF == DQUATERNION
 
   // Load ALPHA as is
-  const VECD alpha = LOADD_UNALIGNED_AS(double,&ALPHA);
+  const __m256d alpha = LOAD_256D_UNALIGNED_AS(double,&ALPHA);
 
   #endif
 
@@ -153,16 +152,16 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
     // Load X and possibly Y
     if( isAligned ) {
 
-      x1 = LOADD_ALIGNED_AS(double,locX);
+      x1 = LOAD_256D_ALIGNED_AS(double,locX);
     #ifdef _AXPY
-      y1 = LOADD_ALIGNED_AS(double,locY);
+      y1 = LOAD_256D_ALIGNED_AS(double,locY);
     #endif
 
     } else {
 
-      x1 = LOADD_UNALIGNED_AS(double,locX);
+      x1 = LOAD_256D_UNALIGNED_AS(double,locX);
     #ifdef _AXPY
-      y1 = LOADD_UNALIGNED_AS(double,locY);
+      y1 = LOAD_256D_UNALIGNED_AS(double,locY);
     #endif
 
     }
@@ -171,37 +170,37 @@ void FNAME(const char SIDE, const HAXX_INT N, const _ALPHAF ALPHA,
 
   // X = ALPHA * X or X * ALPHA
   #if   ALPHAF == DOUBLE
-    x1 = MULD(alpha,x1);
+    x1 = _mm256_mul_pd(alpha,x1);
   #elif ALPHAF == DCOMPLEX
-    VECD p1 = MULD(x1,alpha);
-    VECD p2 = MULD(x1,alpha_conj);
-    x1      = _mm256_hsub_pd(p1,p2);
+    __m256d p1 = _mm256_mul_pd(x1,alpha);
+    __m256d p2 = _mm256_mul_pd(x1,alpha_conj);
+    x1         = _mm256_hsub_pd(p1,p2);
   #elif ALPHAF == DQUATERNION
     if( MulLeft ) x1 = MULDQ_NN(alpha,x1);
     else          x1 = MULDQ_NN(x1,alpha);
   #endif
 
   // Store X in place
-  if( isAligned ) STORED_ALIGNED_AS(  double,locX,x1);
-  else            STORED_UNALIGNED_AS(double,locX,x1);        
+  if( isAligned ) STORE_256D_ALIGNED_AS(  double,locX,x1);
+  else            STORE_256D_UNALIGNED_AS(double,locX,x1);        
 
 #elif defined(_AXPY)
 
   // Y = Y + ALPHA * X or Y + X * ALPHA
   #if   ALPHAF == DOUBLE
-    y1 = FMAD(alpha,x1,y1);
+    y1 = FMA_256D(alpha,x1,y1);
   #elif ALPHAF == DCOMPLEX
-    VECD p1 = MULD(x1,alpha);
-    VECD p2 = MULD(x1,alpha_conj);
-    y1      = ADDD(y1,_mm256_hsub_pd(p1,p2));
+    __m256d p1 = _mm256_mul_pd(x1,alpha);
+    __m256d p2 = _mm256_mul_pd(x1,alpha_conj);
+    y1         = _mm256_add_pd(y1,_mm256_hsub_pd(p1,p2));
   #elif ALPHAF == DQUATERNION
-    if( MulLeft ) y1 = ADDD(y1,MULDQ_NN(alpha,x1));
-    else          y1 = ADDD(y1,MULDQ_NN(x1,alpha));
+    if( MulLeft ) y1 = _mm256_add_pd(y1,MULDQ_NN(alpha,x1));
+    else          y1 = _mm256_add_pd(y1,MULDQ_NN(x1,alpha));
   #endif
 
   // Store Y in place
-  if( isAligned ) STORED_ALIGNED_AS(  double,locY,y1);
-  else            STORED_UNALIGNED_AS(double,locY,y1);        
+  if( isAligned ) STORE_256D_ALIGNED_AS(  double,locY,y1);
+  else            STORE_256D_UNALIGNED_AS(double,locY,y1);        
 
   #endif
 
