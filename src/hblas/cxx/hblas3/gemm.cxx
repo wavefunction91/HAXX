@@ -8,6 +8,7 @@
  */
 
 #include "haxx.hpp"
+#include "hblas/hblas1/hblas_scalm_impl.hpp"
 #include "hblas/hblas3_def.hpp"
 
 #include "util/simd.hpp"
@@ -69,14 +70,10 @@ namespace HAXX {
   
 
 
-template <typename T, typename U, typename V, typename _BetaF>
-inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __restrict__ B, V* __restrict__ C, 
+template <typename T, typename U, typename V>
+inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __restrict__ B, V* __restrict__ C, 
   HAXX_INT LDC) {
 
-
-  for(auto j = 0; j < N; j++)
-  for(auto i = 0; i < M; i++)
-    C[i + j*LDC] = BETA * C[i + j*LDC];
 
   for(auto k = 0; k < K; k++) {
 
@@ -92,50 +89,11 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict_
 }
 
 
-template <typename _BetaF>
-inline void scaleC(_BetaF &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4);
-
-template <>
-inline void scaleC(double &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4) {
-
-  const __m256d  beta = _mm256_broadcast_sd(&BETA);
-  c1 = _mm256_mul_pd(beta,c1);
-  c2 = _mm256_mul_pd(beta,c2);
-  c3 = _mm256_mul_pd(beta,c3);
-  c4 = _mm256_mul_pd(beta,c4);
-
-};
-
-template <>
-inline void scaleC(std::complex<double> &BETA, __m256d &c1, __m256d &c2, __m256d &c3, __m256d &c4) {
-
-  const __m256i maskConj = _mm256_set_epi64x(
-                             0x8000000000000000, 0,
-                             0x8000000000000000, 0 );
-
-  __m128d beta = _mm_loadu_pd(reinterpret_cast<double*>(&BETA));
-
-  // XXX: this is not correct for right multiply
-  __m256d betaV  = SET_256D_FROM_128D(beta,beta);
-  __m256d betaVC = _mm256_xor_pd( 
-                     _mm256_permute_pd(betaV,0x5),
-                     _mm256_castsi256_pd(maskConj)
-                   );
-
-  c1 = _mm256_hsub_pd(_mm256_mul_pd(c1,betaV),_mm256_mul_pd(c1,betaVC));
-  c2 = _mm256_hsub_pd(_mm256_mul_pd(c2,betaV),_mm256_mul_pd(c2,betaVC));
-  c3 = _mm256_hsub_pd(_mm256_mul_pd(c3,betaV),_mm256_mul_pd(c3,betaVC));
-  c4 = _mm256_hsub_pd(_mm256_mul_pd(c4,betaV),_mm256_mul_pd(c4,betaVC));
 
 
-};
-
-
-
-//#if MR == 2 && NR == 2
-#if 0
-template <typename _BetaF>
-inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, 
+#if MR == 2 && NR == 2
+//#if 0
+inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, 
   quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
   quaternion<double>* __restrict__ C, HAXX_INT LDC) {
 
@@ -155,10 +113,6 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
   __m256d c10 = LOAD_256D_UNALIGNED_AS(double,C+1    );
   __m256d c01 = LOAD_256D_UNALIGNED_AS(double,C+LDC  );
   __m256d c11 = LOAD_256D_UNALIGNED_AS(double,C+LDC+1);
-
-  // Scale C by Beta
-  scaleC(BETA,c00,c10,c01,c11);
-
 
   quaternion<double> *locB = B, *locA = A;
 
@@ -236,7 +190,6 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     // register to the low bits of another?
 
 
-#if 1
     // x2 (xmm13) =              x4 (xmm15) =
     // [                         [
     //   P0000(S) + P0101(S)       P0000(J) + P0101(J)
@@ -254,9 +207,6 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0000(K) + P0101(K)
     // ]
     t2 = SET_256D_FROM_128D(x2,x4); 
-#else
-    t2 = _mm256_permute2f128_pd(t1,t3,0x20);
-#endif
     
     // C00 (ymm0) += t2 (ymm13)
     c00 = _mm256_add_pd(c00,t2);
@@ -293,23 +243,10 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   a10 (ymm6) = [ A10(J) A11(J) A00(J) A01(J) ]
     //   a11 (ymm7) = [ A10(K) A11(K) A00(K) A01(K) ]
 
-    // Use X1 (xmm12) and X2 (xmm13) to store the low and high bits
-
-#if 0
-    x1 = GET_HI_128D_256D(a00); x2 = GET_LO_128D_256D(a00); 
-      a00 = SET_256D_FROM_128D(x1,x2);
-    x1 = GET_HI_128D_256D(a10); x2 = GET_LO_128D_256D(a10); 
-      a10 = SET_256D_FROM_128D(x1,x2);
-    x1 = GET_HI_128D_256D(a01); x2 = GET_LO_128D_256D(a01); 
-      a01 = SET_256D_FROM_128D(x1,x2);
-    x1 = GET_HI_128D_256D(a11); x2 = GET_LO_128D_256D(a11); 
-      a11 = SET_256D_FROM_128D(x1,x2);
-#else
     a00 = _mm256_permute2f128_pd(a00,a00,0x01);
     a10 = _mm256_permute2f128_pd(a10,a10,0x01);
     a01 = _mm256_permute2f128_pd(a01,a01,0x01);
     a11 = _mm256_permute2f128_pd(a11,a11,0x01);
-#endif
 
     // Compute product in T (ymm12-ymm15)
     // t1 (ymm12) = [ P1000(S) P1101(S) P0010(S) P0111(S) ]
@@ -418,6 +355,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
     (_AMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF));
 
 
+  // Scale C by BETA
+  HBLAS_SCALM('L','N',M,N,BETA,C,LDC,1);
+
   // Counter vars
   HAXX_INT j, nJ, jDo;
   HAXX_INT i, nI, iDo;
@@ -445,7 +385,6 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
     for( k = 0; k < K; k += KC ) {
 
       nK = std::min(K-k,KC);
-      std::cout << nK << ", " << K-k << ", " << KC << "\n";
 
       Ai = Ap;
       Ci = Cj;
@@ -529,7 +468,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
             nIII = MR;
 
             // Perform kernel operation
-            Kern(BETA,nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
+            Kern(nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
      
             smallC += MR;
             smallA += MR*nK;

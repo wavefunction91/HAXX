@@ -36,7 +36,7 @@ std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
 int main() {
 
-  for(int GEMM_LEN = 500; GEMM_LEN <= 10000; GEMM_LEN += 500) {
+  for(int GEMM_LEN = 500; GEMM_LEN <= 2500; GEMM_LEN += 500) {
   std::vector<HAXX::quaternion<double>> 
     A(GEMM_LEN*GEMM_LEN), B(GEMM_LEN*GEMM_LEN), C(GEMM_LEN*GEMM_LEN);
 
