@@ -84,11 +84,14 @@ void hblas3_gemm_square_LDSame() {
       HBLAS1_VECLEN,&B[BStart],BStride,0.,&SCR[0],1);
 
     for(auto i = 0; i < HBLAS1_VECLEN; i++) {
-      BOOST_CHECK( 
+      BOOST_CHECK_MESSAGE( 
         CMP_Q(
           SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)],
           C[RANK2_INDX(i,j,HBLAS1_VECLEN)]
-        )
+        ),
+        "\n i = " << i << " j = " << j << ", HBLAS_GEMM = " 
+                  << C[RANK2_INDX(i,j,HBLAS1_VECLEN)] << ", REFERENCE = "
+                  << SCR[i] + BETA*CC[RANK2_INDX(i,j,HBLAS1_VECLEN)]
       );
     }
   }

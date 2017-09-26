@@ -42,9 +42,9 @@
 #define _BMATF quaternion<double>
 
 
-#define MC 128
-#define NC 512
-#define KC 128
+#define MC 64
+#define NC 1024
+#define KC 64
 #define MR 2
 #define NR 2
 
@@ -76,7 +76,7 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict_
 
   for(auto j = 0; j < N; j++)
   for(auto i = 0; i < M; i++)
-    C[i + j*LDC] *= BETA;
+    C[i + j*LDC] = BETA * C[i + j*LDC];
 
   for(auto k = 0; k < K; k++) {
 
@@ -132,7 +132,8 @@ inline void scaleC(std::complex<double> &BETA, __m256d &c1, __m256d &c2, __m256d
 
 
 
-#if MR == 2 && NR == 2
+//#if MR == 2 && NR == 2
+#if 0
 template <typename _BetaF>
 inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K, 
   quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
@@ -235,6 +236,7 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     // register to the low bits of another?
 
 
+#if 1
     // x2 (xmm13) =              x4 (xmm15) =
     // [                         [
     //   P0000(S) + P0101(S)       P0000(J) + P0101(J)
@@ -252,6 +254,9 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
     //   P0000(K) + P0101(K)
     // ]
     t2 = SET_256D_FROM_128D(x2,x4); 
+#else
+    t2 = _mm256_permute2f128_pd(t1,t3,0x20);
+#endif
     
     // C00 (ymm0) += t2 (ymm13)
     c00 = _mm256_add_pd(c00,t2);
@@ -290,6 +295,7 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
     // Use X1 (xmm12) and X2 (xmm13) to store the low and high bits
 
+#if 0
     x1 = GET_HI_128D_256D(a00); x2 = GET_LO_128D_256D(a00); 
       a00 = SET_256D_FROM_128D(x1,x2);
     x1 = GET_HI_128D_256D(a10); x2 = GET_LO_128D_256D(a10); 
@@ -298,6 +304,12 @@ inline void Kern(_BetaF BETA, HAXX_INT M, HAXX_INT N, HAXX_INT K,
       a01 = SET_256D_FROM_128D(x1,x2);
     x1 = GET_HI_128D_256D(a11); x2 = GET_LO_128D_256D(a11); 
       a11 = SET_256D_FROM_128D(x1,x2);
+#else
+    a00 = _mm256_permute2f128_pd(a00,a00,0x01);
+    a10 = _mm256_permute2f128_pd(a10,a10,0x01);
+    a01 = _mm256_permute2f128_pd(a01,a01,0x01);
+    a11 = _mm256_permute2f128_pd(a11,a11,0x01);
+#endif
 
     // Compute product in T (ymm12-ymm15)
     // t1 (ymm12) = [ P1000(S) P1101(S) P0010(S) P0111(S) ]
@@ -433,6 +445,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
     for( k = 0; k < K; k += KC ) {
 
       nK = std::min(K-k,KC);
+      std::cout << nK << ", " << K-k << ", " << KC << "\n";
 
       Ai = Ap;
       Ci = Cj;

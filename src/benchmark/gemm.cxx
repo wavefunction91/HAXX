@@ -47,6 +47,7 @@ int main() {
   for(auto &x : C) 
     x = HAXX::quaternion<double>(dis(gen),dis(gen),dis(gen),dis(gen));
   
+#ifdef _DO_COMPLEX
   std::vector<std::complex<double>> 
     AC(2*GEMM_LEN*2*GEMM_LEN), BC(2*GEMM_LEN*2*GEMM_LEN), CC(2*GEMM_LEN*2*GEMM_LEN);
 
@@ -55,6 +56,7 @@ int main() {
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&A[0],GEMM_LEN,&AC[0],2*GEMM_LEN);
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&B[0],GEMM_LEN,&BC[0],2*GEMM_LEN);
   HBLAS_COMPLEX_EXPAND('S',GEMM_LEN,GEMM_LEN,&C[0],GEMM_LEN,&CC[0],2*GEMM_LEN);
+#endif
 
 
   char TRANSA = 'N', TRANSB = 'N';
@@ -69,23 +71,27 @@ int main() {
   HBLAS_GEMM(TRANSA,TRANSB,GEMM_LEN,GEMM_LEN,GEMM_LEN,ALPHA,&A[0],GEMM_LEN,
     &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
   auto hgemmEnd = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
+  std::cout << "HGEMM " << GEMM_LEN << " " << 
+    32.*GEMM_LEN*GEMM_LEN*GEMM_LEN/hgemmDur.count()/1.e9 << std::endl;
 
+#ifdef _DO_FORTRAN
   auto fortranStart = std::chrono::high_resolution_clock::now();
   hgemmzz_(&TRANSA,&TRANSB,&gl,&gl,&gl,&ALPHA,&A[0],&gl,&B[0],&gl,&BETA,&C[0],&gl);
   auto fortranEnd = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> fortranDur = fortranEnd - fortranStart;
+  std::cout << "FORTRAN " << GEMM_LEN << " " << fortranDur.count() << std::endl;
+#endif
 
-
+#ifdef _DO_COMPLEX
   auto zgemmStart = std::chrono::high_resolution_clock::now();
   zgemm_(&TRANSA,&TRANSB,&x2x,&x2x,&x2x,&ALPHA,&AC[0],&x2x,
     &BC[0],&x2x,&BETA,&CC[0],&x2x);
   auto zgemmEnd = std::chrono::high_resolution_clock::now();
-  
-  std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
-  std::chrono::duration<double> fortranDur = fortranEnd - fortranStart;
   std::chrono::duration<double> zgemmDur = zgemmEnd - zgemmStart;
-
-  std::cout << "HGEMM " << GEMM_LEN << " " << hgemmDur.count() << std::endl;
-  std::cout << "FORTRAN " << GEMM_LEN << " " << fortranDur.count() << std::endl;
   std::cout << "ZGEMM " << GEMM_LEN << " " << zgemmDur.count() << std::endl;
+#endif
+  
+
   }
 }
