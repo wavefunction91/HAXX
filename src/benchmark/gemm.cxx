@@ -12,6 +12,7 @@
 #include <random>
 #include <iterator>
 #include <iostream>
+#include <iomanip>
 #include <limits>
 #include <chrono>
 #include "hblas/hblas3_def.hpp"
@@ -33,6 +34,27 @@ extern "C" {
 std::random_device rd;
 std::mt19937 gen(rd());
 std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
+
+
+#define _DO_COMPLEX
+#define _DO_FORTRAN
+
+
+void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {
+
+  std::cout << std::setw(15) << std::left  << name;
+  std::cout << std::setw(15) << std::left << LEN;
+
+  std::cout << std::setprecision(8);
+
+  std::cout << std::setw(15) << std::right << count;
+  std::cout << std::setw(15) << std::right << FLOPS/count/1.e9;
+
+  std::cout << std::endl;
+
+
+
+};
 
 int main() {
 
@@ -72,15 +94,17 @@ int main() {
     &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
   auto hgemmEnd = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
-  std::cout << "HGEMM " << GEMM_LEN << " " << 
-    32.*GEMM_LEN*GEMM_LEN*GEMM_LEN/hgemmDur.count()/1.e9 << std::endl;
+
+  outTime("HGEMM",GEMM_LEN,32.*GEMM_LEN*GEMM_LEN*GEMM_LEN,hgemmDur.count());
 
 #ifdef _DO_FORTRAN
   auto fortranStart = std::chrono::high_resolution_clock::now();
   hgemmzz_(&TRANSA,&TRANSB,&gl,&gl,&gl,&ALPHA,&A[0],&gl,&B[0],&gl,&BETA,&C[0],&gl);
   auto fortranEnd = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> fortranDur = fortranEnd - fortranStart;
-  std::cout << "FORTRAN " << GEMM_LEN << " " << fortranDur.count() << std::endl;
+
+  outTime("HGEMM_FORTRAN",GEMM_LEN,32.*GEMM_LEN*GEMM_LEN*GEMM_LEN,
+    fortranDur.count());
 #endif
 
 #ifdef _DO_COMPLEX
@@ -89,7 +113,8 @@ int main() {
     &BC[0],&x2x,&BETA,&CC[0],&x2x);
   auto zgemmEnd = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> zgemmDur = zgemmEnd - zgemmStart;
-  std::cout << "ZGEMM " << GEMM_LEN << " " << zgemmDur.count() << std::endl;
+
+  outTime("ZGEMM",GEMM_LEN,64.*GEMM_LEN*GEMM_LEN*GEMM_LEN,zgemmDur.count());
 #endif
   
 

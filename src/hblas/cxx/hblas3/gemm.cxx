@@ -89,9 +89,6 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __res
 }
 
 
-//#define _MUL4Q_KERN
-
-
 #if MR == 2 && NR == 2
 //#if 0
 inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, 
@@ -99,42 +96,19 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
   quaternion<double>* __restrict__ C, HAXX_INT LDC) {
 
   __m256d t1,t2,t3,t4;
-#ifdef _MUL4Q_KERN
-  // Scratch registers
-  // ymm12->15
-  // xmm12->15
-  __m128d x1,x2,x3,x4;
-#else
-  const __m256i maskScalar = _mm256_set_epi64x(0,0,0,0x8000000000000000);
-#endif
-
 
   // Load C
-  //   c00 (ymm0) = [ C00(S) C00(I) C00(J) C00(K) ]
-  //   c01 (ymm1) = [ C01(S) C01(I) C01(J) C01(K) ]
-  //   c10 (ymm2) = [ C10(S) C10(I) C10(J) C10(K) ]
-  //   c11 (ymm3) = [ C11(S) C11(I) C11(J) C11(K) ]
   __m256d c00 = LOAD_256D_UNALIGNED_AS(double,C      );
   __m256d c10 = LOAD_256D_UNALIGNED_AS(double,C+1    );
   __m256d c01 = LOAD_256D_UNALIGNED_AS(double,C+LDC  );
   __m256d c11 = LOAD_256D_UNALIGNED_AS(double,C+LDC+1);
 
-#ifndef _MUL4Q_KERN
-
   _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
-
-#endif
 
 
   quaternion<double> *locB = B, *locA = A;
 
-
-
-#ifdef _MUL4Q_KERN
-  HAXX_INT k = K / 2;
-#else
   HAXX_INT k = K;
-#endif
 
   if( k > 0 )
   do {
@@ -142,248 +116,32 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     // Load A 
     __m256d a00 = LOAD_256D_ALIGNED_AS(double,locA);
     __m256d a10 = LOAD_256D_ALIGNED_AS(double,locA+1);
-#ifdef _MUL4Q_KERN
-    __m256d a01 = LOAD_256D_ALIGNED_AS(double,locA+2);
-    __m256d a11 = LOAD_256D_ALIGNED_AS(double,locA+3);
-    locA += 4;
-    // ymm4->7 for A
-#else
     locA += 2;
-    // ymm4->5 for A
-#endif
     
 
     // Load B 
     __m256d b00 = LOAD_256D_ALIGNED_AS(double,locB);
     __m256d b10 = LOAD_256D_ALIGNED_AS(double,locB+1);
-#ifdef _MUL4Q_KERN
-    __m256d b01 = LOAD_256D_ALIGNED_AS(double,locB+2);
-    __m256d b11 = LOAD_256D_ALIGNED_AS(double,locB+3);
-    locB += 4;
-    // ymm8->11
-#else
     locB += 2;
-    // ymm6->7
-#endif
-
-
-#ifdef _MUL4Q_KERN
-    // Transpose A (8 registers, ymm4->7 for A, ymm12->15 for T)
-    //   a00 (ymm4) = [ A00(S) A01(S) A10(S) A11(S) ]
-    //   a01 (ymm5) = [ A00(I) A01(I) A10(I) A11(I) ]
-    //   a10 (ymm6) = [ A00(J) A01(J) A10(J) A11(J) ]
-    //   a11 (ymm7) = [ A00(K) A01(K) A10(K) A11(K) ]
-    _MM_TRANSPOSE_4x4_PD(a00,a01,a10,a11,t1,t2,t3,t4);
-
-    // Transpose B (8 registers, ymm8->11 for A, ymm12->15 for T)
-    //   b00 (ymm8)  = [ B00(S) B01(S) B10(S) B11(S) ]
-    //   b01 (ymm9)  = [ B00(I) B01(I) B10(I) B11(I) ]
-    //   b10 (ymm10) = [ B00(J) B01(J) B10(J) B11(J) ]
-    //   b11 (ymm11) = [ B00(K) B01(K) B10(K) B11(K) ]
-    _MM_TRANSPOSE_4x4_PD(b00,b01,b10,b11,t1,t2,t3,t4);
-    
-
-
-    // Let PIJKL = AIJ * BKL
-    //  s.t.
-    //    C00 = P0000 + P0101
-    //    C10 = P1000 + P1101
-    //    C01 = P0010 + P0111
-    //    C11 = P1010 + P1111
 
 
 
-    // COMPUTE THE DIAGONAL CONTRIBUTIONS TO THE PRODUCT
+    __m256d a00c = a00;
+    __m256d a10c = a10;
+    _MM_TRANSPOSE_4x4_PD(a00,a00c,a10,a10c,t1,t2,t3,t4);
 
-
-
-    // Compute product in T (ymm12-ymm15)
-    // t1 (ymm12) = [ P0000(S) P0101(S) P1010(S) P1111(S) ]
-    // t2 (ymm13) = [ P0000(I) P0101(I) P1010(I) P1111(I) ]
-    // t3 (ymm14) = [ P0000(J) P0101(J) P1010(J) P1111(J) ]
-    // t4 (ymm15) = [ P0000(K) P0101(K) P1010(K) P1111(K) ]
-    // Multiplication requires no register stratch?
-    MULD4Q_NN(a00,a01,a10,a11,b00,b01,b10,b11,t1,t2,t3,t4);
-
-
-    // t1 (ymm12) =                t3 (ymm14) = 
-    // [                           [
-    //   P0000(S) + P0101(S)         P0000(J) + P0101(J)
-    //   P0000(I) + P0101(I)         P0000(K) + P0101(K)
-    //   P1010(S) + P1111(S)         P1010(J) + P1111(J)
-    //   P1010(I) + P1111(I)         P1010(K) + P1111(K)
-    // ]                           ]
-    t1 = _mm256_hadd_pd(t1,t2);
-    t3 = _mm256_hadd_pd(t3,t4);
-
-
-    // XXX: Is there a better way to set the high bits of one
-    // register to the low bits of another?
-
-
-    // x2 (xmm13) =              x4 (xmm15) =
-    // [                         [
-    //   P0000(S) + P0101(S)       P0000(J) + P0101(J)
-    //   P0000(I) + P0101(I)       P0000(K) + P0101(K)
-    // ]                         ]
-    x2 = GET_LO_128D_256D(t1);
-    x4 = GET_LO_128D_256D(t3);
-
-
-    // t2 (ymm13) =
-    // [
-    //   P0000(S) + P0101(S)
-    //   P0000(I) + P0101(I)
-    //   P0000(J) + P0101(J)
-    //   P0000(K) + P0101(K)
-    // ]
-    t2 = SET_256D_FROM_128D(x2,x4); 
-    
-    // C00 (ymm0) += t2 (ymm13)
-    c00 = _mm256_add_pd(c00,t2);
-
-
-    // x2 (xmm13) =             x4 (xmm15) =
-    // [                        [
-    //   P1010(S) + P1111(S)      P1010(J) + P1111(J)
-    //   P1010(I) + P1111(I)      P1010(K) + P1111(K)
-    // ]                        ]
-    x2 = GET_HI_128D_256D(t1);
-    x4 = GET_HI_128D_256D(t3);
-
-    // t2 (ymm13) =
-    // [
-    //   P1010(S) + P1111(S)
-    //   P1010(I) + P1111(I)
-    //   P1010(J) + P1111(J)
-    //   P1010(K) + P1111(K)
-    // ]
-    t2 = SET_256D_FROM_128D(x2,x4); 
-
-    // C11 (ymm3) += t2 (ymm13)
-    c11 = _mm256_add_pd(c11,t2);
-
-
-
-
-    // COMPUTE OFF DIAGONAL CONTRIBUTIONS TO PRODUCT
-
-    // Permute A
-    //   a00 (ymm4) = [ A10(S) A11(S) A00(S) A01(S) ]
-    //   a01 (ymm5) = [ A10(I) A11(I) A00(I) A01(I) ]
-    //   a10 (ymm6) = [ A10(J) A11(J) A00(J) A01(J) ]
-    //   a11 (ymm7) = [ A10(K) A11(K) A00(K) A01(K) ]
-
-    a00 = _mm256_permute2f128_pd(a00,a00,0x01);
-    a10 = _mm256_permute2f128_pd(a10,a10,0x01);
-    a01 = _mm256_permute2f128_pd(a01,a01,0x01);
-    a11 = _mm256_permute2f128_pd(a11,a11,0x01);
-
-    // Compute product in T (ymm12-ymm15)
-    // t1 (ymm12) = [ P1000(S) P1101(S) P0010(S) P0111(S) ]
-    // t2 (ymm13) = [ P1000(I) P1101(I) P0010(I) P0111(I) ]
-    // t3 (ymm14) = [ P1000(J) P1101(J) P0010(J) P0111(J) ]
-    // t4 (ymm15) = [ P1000(K) P1101(K) P0010(K) P0111(K) ]
-    // Multiplication requires no register stratch?
-    MULD4Q_NN(a00,a01,a10,a11,b00,b01,b10,b11,t1,t2,t3,t4);
-
-
-    // t1 (ymm12) =            t3 (ymm14) = 
-    // [                       [
-    //   P1000(S) + P1101(S)     P1000(J) + P1101(J)
-    //   P1000(I) + P1101(I)     P1000(K) + P1101(K)
-    //   P0010(S) + P0111(S)     P0010(J) + P0111(J)
-    //   P0010(I) + P0111(I)     P0010(K) + P0111(K)
-    // ]                       ]
-    t1 = _mm256_hadd_pd(t1,t2);
-    t3 = _mm256_hadd_pd(t3,t4);
-
-
-    // XXX: Is there a better way to set the high bits of one
-    // register to the low bits of another?
-
-
-    // x2 (xmm13) =            x4 (xmm15) =
-    // [                       [
-    //   P1000(S) + P1101(S)     P1000(J) + P1101(J)
-    //   P1000(I) + P1101(I)     P1000(K) + P1101(K)
-    // ]                       ]
-    x2 = GET_LO_128D_256D(t1);
-    x4 = GET_LO_128D_256D(t3);
-
-
-    // t2 (ymm13) =
-    // [
-    //   P1000(S) + P1101(S)
-    //   P1000(I) + P1101(I)
-    //   P1000(J) + P1101(J)
-    //   P1000(K) + P1101(K)
-    // ]
-    t2 = SET_256D_FROM_128D(x2,x4); 
-    
-    // C10 (ymm1) += t2 (ymm13)
-    c10 = _mm256_add_pd(c10,t2);
-
-
-    // x2 (xmm13) =           x4 (xmm15) =
-    // [                      [
-    //   P0010(S) + P0111(S)    P0010(J) + P0111(J)
-    //   P0010(I) + P0111(I)    P0010(K) + P0111(K)
-    // ]                      ]
-    x2 = GET_HI_128D_256D(t1);
-    x4 = GET_HI_128D_256D(t3);
-
-    // t2 (ymm13) =
-    // [
-    //   P0010(S) + P0111(S)
-    //   P0010(I) + P0111(I)
-    //   P0010(J) + P0111(J)
-    //   P0010(K) + P0111(K)
-    // ]
-    t2 = SET_256D_FROM_128D(x2,x4); 
-
-    // C01 (ymm2) += t2 (ymm13)
-    c01 = _mm256_add_pd(c01,t2);
-
-#else
-
-
-/*
-  __m256d a00_b00 = MULDQ_NN(a00,b00);
-  __m256d a00_b10 = MULDQ_NN(a00,b10);
-  __m256d a10_b00 = MULDQ_NN(a10,b00);
-  __m256d a10_b10 = MULDQ_NN(a10,b10);
-
-  c00 = _mm256_add_pd(c00,a00_b00);
-  c01 = _mm256_add_pd(c01,a00_b10);
-  c10 = _mm256_add_pd(c10,a10_b00);
-  c11 = _mm256_add_pd(c11,a10_b10);
-*/
-
-  __m256d a00c = a00;
-  __m256d a10c = a10;
-  _MM_TRANSPOSE_4x4_PD(a00,a00c,a10,a10c,t1,t2,t3,t4);
-
-  __m256d b00c = b00;
-  __m256d b10c = b10;
-  _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
+    __m256d b00c = b00;
+    __m256d b10c = b10;
+    _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
   
 
-  INC_MULD4Q_NN(a00,a00c,a10,a10c,b00,b10,b00c,b10c,c00,c01,c10,c11);
+    INC_MULD4Q_NN(a00,a00c,a10,a10c,b00,b10,b00c,b10c,c00,c01,c10,c11);
   
-
-#endif
-    
 
     k--;
   } while( k > 0 );
 
-#ifndef _MUL4Q_KERN
-
   _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
-
-#endif
-
 
   STORE_256D_UNALIGNED_AS(double,C      ,c00);
   STORE_256D_UNALIGNED_AS(double,C+1    ,c10);
