@@ -89,6 +89,7 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __res
 }
 
 
+//#define _MUL4Q_KERN
 
 
 #if MR == 2 && NR == 2
@@ -97,11 +98,15 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
   quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
   quaternion<double>* __restrict__ C, HAXX_INT LDC) {
 
+  __m256d t1,t2,t3,t4;
+#ifdef _MUL4Q_KERN
   // Scratch registers
   // ymm12->15
-  __m256d t1,t2,t3,t4;
   // xmm12->15
   __m128d x1,x2,x3,x4;
+#else
+  const __m256i maskScalar = _mm256_set_epi64x(0,0,0,0x8000000000000000);
+#endif
 
 
   // Load C
@@ -114,29 +119,55 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
   __m256d c01 = LOAD_256D_UNALIGNED_AS(double,C+LDC  );
   __m256d c11 = LOAD_256D_UNALIGNED_AS(double,C+LDC+1);
 
+#ifndef _MUL4Q_KERN
+
+  _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
+
+#endif
+
+
   quaternion<double> *locB = B, *locA = A;
 
 
+
+#ifdef _MUL4Q_KERN
   HAXX_INT k = K / 2;
+#else
+  HAXX_INT k = K;
+#endif
 
   if( k > 0 )
   do {
 
-    // Load A (4 new registers, ymm4->7 for A)
+    // Load A 
     __m256d a00 = LOAD_256D_ALIGNED_AS(double,locA);
     __m256d a10 = LOAD_256D_ALIGNED_AS(double,locA+1);
+#ifdef _MUL4Q_KERN
     __m256d a01 = LOAD_256D_ALIGNED_AS(double,locA+2);
     __m256d a11 = LOAD_256D_ALIGNED_AS(double,locA+3);
     locA += 4;
+    // ymm4->7 for A
+#else
+    locA += 2;
+    // ymm4->5 for A
+#endif
     
 
-    // Load B (4 new registers -> ymm8->11 for B)
+    // Load B 
     __m256d b00 = LOAD_256D_ALIGNED_AS(double,locB);
     __m256d b10 = LOAD_256D_ALIGNED_AS(double,locB+1);
+#ifdef _MUL4Q_KERN
     __m256d b01 = LOAD_256D_ALIGNED_AS(double,locB+2);
     __m256d b11 = LOAD_256D_ALIGNED_AS(double,locB+3);
     locB += 4;
+    // ymm8->11
+#else
+    locB += 2;
+    // ymm6->7
+#endif
 
+
+#ifdef _MUL4Q_KERN
     // Transpose A (8 registers, ymm4->7 for A, ymm12->15 for T)
     //   a00 (ymm4) = [ A00(S) A01(S) A10(S) A11(S) ]
     //   a01 (ymm5) = [ A00(I) A01(I) A10(I) A11(I) ]
@@ -313,10 +344,45 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
     // C01 (ymm2) += t2 (ymm13)
     c01 = _mm256_add_pd(c01,t2);
+
+#else
+
+
+/*
+  __m256d a00_b00 = MULDQ_NN(a00,b00);
+  __m256d a00_b10 = MULDQ_NN(a00,b10);
+  __m256d a10_b00 = MULDQ_NN(a10,b00);
+  __m256d a10_b10 = MULDQ_NN(a10,b10);
+
+  c00 = _mm256_add_pd(c00,a00_b00);
+  c01 = _mm256_add_pd(c01,a00_b10);
+  c10 = _mm256_add_pd(c10,a10_b00);
+  c11 = _mm256_add_pd(c11,a10_b10);
+*/
+
+  __m256d a00c = a00;
+  __m256d a10c = a10;
+  _MM_TRANSPOSE_4x4_PD(a00,a00c,a10,a10c,t1,t2,t3,t4);
+
+  __m256d b00c = b00;
+  __m256d b10c = b10;
+  _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
+  
+
+  INC_MULD4Q_NN(a00,a00c,a10,a10c,b00,b10,b00c,b10c,c00,c01,c10,c11);
+  
+
+#endif
     
 
     k--;
   } while( k > 0 );
+
+#ifndef _MUL4Q_KERN
+
+  _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
+
+#endif
 
 
   STORE_256D_UNALIGNED_AS(double,C      ,c00);
@@ -354,6 +420,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   _AMATF *aPack = 
     (_AMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF));
 
+  std::cout << "BPack " << FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF) << std::endl;
+  std::cout << "APack " << FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF) << std::endl;
+
 
   // Scale C by BETA
   HBLAS_SCALM('L','N',M,N,BETA,C,LDC,1);
@@ -389,6 +458,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
       Ai = Ap;
       Ci = Cj;
 
+// Turn off B Pack
+#if 1
+
 #ifdef _FACTOR_ALPHA_IN_B_PACK
   #if NR == 4
       if( BTRAN )      NPACK4 (ALPHA,nJ,nK,Bp,LDB,bPack);
@@ -415,6 +487,8 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   #endif
 #endif
 
+#endif
+
       for( i = 0; i < M; i += MC ) {
 
         nI  = std::min(M-i,MC);
@@ -422,6 +496,9 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 
         BL1  = bPack;
         CBlk = Ci;
+
+// Turn off A Pack
+#if 1
 
 #ifdef _FACTOR_ALPHA_IN_A_PACK
   #if MR == 4
@@ -453,7 +530,10 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   #endif
 #endif
 
+#endif
 
+
+// Turn off Kernel evaluation
 #if 1
         for( jj = 0; jj < nJ; jj += NR ) {
 
