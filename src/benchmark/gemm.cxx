@@ -36,8 +36,8 @@ std::mt19937 gen(rd());
 std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
 
-#define _DO_COMPLEX
-#define _DO_FORTRAN
+//#define _DO_COMPLEX
+//#define _DO_FORTRAN
 
 
 void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {

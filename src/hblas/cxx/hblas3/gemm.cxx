@@ -57,6 +57,9 @@
   #error NR must be 4 or 2
 #endif
 
+
+#define _FACTOR_TRANSPOSE_INTO_PACK
+
 #include "gemm_pack_4.hpp"
 #include "gemm_pack_2.hpp"
 
@@ -125,6 +128,7 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     locB += 2;
 
 
+#if 1
 
     __m256d a00c = a00;
     __m256d a10c = a10;
@@ -133,7 +137,29 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     __m256d b00c = b00;
     __m256d b10c = b10;
     _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
+
+#else
   
+    //__m256d a_SISI = _mm256_permute2f128_pd(a00,a10, 0x20);
+    //__m256d a_JKJK = _mm256_permute2f128_pd(a00,a10, 0x31);
+  
+    __m256d a_SISI = _mm256_undefined_pd();
+    __m256d a_JKJK = _mm256_undefined_pd();
+
+    a00    = _mm256_permute_pd(a_SISI, 0x0);
+    a_SISI = _mm256_permute_pd(a_SISI, 0xF);
+  
+    a10    = _mm256_permute_pd(a_JKJK, 0x0);
+    a_JKJK = _mm256_permute_pd(a_JKJK, 0xF);
+  
+    __m256d &a00c = a_SISI;
+    __m256d &a10c = a_JKJK;
+
+    __m256d b00c = b00;
+    __m256d b10c = b10;
+    _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
+
+#endif
 
     INC_MULD4Q_NN(a00,a00c,a10,a10c,b00,b10,b00c,b10c,c00,c01,c10,c11);
   
@@ -178,8 +204,8 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   _AMATF *aPack = 
     (_AMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF));
 
-  std::cout << "BPack " << FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF) << std::endl;
-  std::cout << "APack " << FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF) << std::endl;
+//std::cout << "BPack " << FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF) << std::endl;
+//std::cout << "APack " << FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF) << std::endl;
 
 
   // Scale C by BETA
