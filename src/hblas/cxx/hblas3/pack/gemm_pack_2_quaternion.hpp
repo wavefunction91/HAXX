@@ -58,21 +58,14 @@ inline void TPACK2(const HAXX_INT M, const HAXX_INT N,
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
 
-      for( j = 0; j < (N % 2); j++) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
-        STORE_256D_ALIGNED_AS(double,_xp,x);
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-        _xp++;
-      }
+      _x++; _xp += 2;
 
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
     }
   }
 
@@ -127,24 +120,18 @@ inline void TPACK2(const double ALPHA, const HAXX_INT M,
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
 
-      for( j = 0; j < (N % 2); j++) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
-        x = _mm256_mul_pd(alpha,x);
+      x = _mm256_mul_pd(alpha,x);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-      }
+      _x++; _xp += 2;
 
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
     }
+
   }
 
 };
@@ -216,27 +203,19 @@ inline void TPACK2(const std::complex<double> ALPHA,
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
 
-      for( j = 0; j < (N % 2); j++) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
+      __m256d p1 = _mm256_mul_pd(x,alpha);
+      __m256d p2 = _mm256_mul_pd(x,alpha_conj);
 
-        __m256d p1 = _mm256_mul_pd(x,alpha);
-        __m256d p2 = _mm256_mul_pd(x,alpha_conj);
+      x = _mm256_hsub_pd(p1,p2);
 
-        x = _mm256_hsub_pd(p1,p2);
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
+      _x++; _xp += 2;
 
-      }
-
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
     }
   }
 
@@ -289,25 +268,15 @@ inline void TPACKC2(const HAXX_INT M, const HAXX_INT N,
 
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-      for( j = 0; j < (N % 2); j++) {
+      x = QCONJ_256D(x);
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-        x = QCONJ_256D(x);
-
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-
-        _xp++;
-      }
-
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
+      _x++; _xp += 2;
     }
   }
 
@@ -366,25 +335,16 @@ inline void TPACKC2(const double ALPHA, const HAXX_INT M,
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
 
-      for( j = 0; j < (N % 2); j++) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
+      x = QCONJ_256D(x);
+      x = _mm256_mul_pd(alpha,x);
 
-        x = QCONJ_256D(x);
-        x = _mm256_mul_pd(alpha,x);
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-
-      }
-
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
+      _x++; _xp += 2;
     }
   }
 
@@ -460,29 +420,21 @@ inline void TPACKC2(const std::complex<double> ALPHA,
   if( N % 2 ) {
     for( i = 0; i < M; i++ ) {
 
-      for( j = 0; j < (N % 2); j++) {
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+j*LDX);
+      x = QCONJ_256D(x);
 
-        x = QCONJ_256D(x);
+      __m256d p1 = _mm256_mul_pd(x,alpha);
+      __m256d p2 = _mm256_mul_pd(x,alpha_conj);
 
-        __m256d p1 = _mm256_mul_pd(x,alpha);
-        __m256d p2 = _mm256_mul_pd(x,alpha_conj);
+      x = _mm256_hsub_pd(p1,p2);
 
-        x = _mm256_hsub_pd(p1,p2);
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
+      _x++; _xp += 2;
 
-      }
-
-      for( j = 0; j < 2 - (N % 2); j++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x++;
     }
   }
 
@@ -528,19 +480,15 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-      _x += LDX;
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
+
+      _x+=LDX; _xp += 2;
+
     }
   }
 
@@ -590,20 +538,15 @@ inline void NPACK2(const double ALPHA, const HAXX_INT M,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
-        x = _mm256_mul_pd(alpha,x);
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
+      x = _mm256_mul_pd(alpha,x);
 
-      _x += LDX;
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
+
+      _x += LDX; _xp += 2;
     }
   }
 
@@ -669,25 +612,20 @@ inline void NPACK2(const std::complex<double> ALPHA,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
 
-        __m256d p1 = _mm256_mul_pd(x,alpha);
-        __m256d p2 = _mm256_mul_pd(x,alpha_conj);
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        x = _mm256_hsub_pd(p1,p2);
+      __m256d p1 = _mm256_mul_pd(x,alpha);
+      __m256d p2 = _mm256_mul_pd(x,alpha_conj);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
+      x = _mm256_hsub_pd(p1,p2);
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-      _x += LDX;
+      _x += LDX; _xp += 2;
+
     }
   }
 
@@ -736,20 +674,15 @@ inline void NPACKC2(const HAXX_INT M, const HAXX_INT N,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
-        x = QCONJ_256D(x);
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
+      x = QCONJ_256D(x);
 
-      _x += LDX;
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
+
+      _x += LDX; _xp += 2;
     }
   }
 
@@ -801,21 +734,16 @@ inline void NPACKC2(const double ALPHA, const HAXX_INT M,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
-        x = QCONJ_256D(x);
-        x = _mm256_mul_pd(alpha,x);
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
+      x = QCONJ_256D(x);
+      x = _mm256_mul_pd(alpha,x);
 
-      _x += LDX;
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
+
+      _x += LDX; _xp += 2;
     }
   }
 
@@ -883,27 +811,20 @@ inline void NPACKC2(const std::complex<double> ALPHA,
 
   if( M % 2 ) {
     for( j = 0; j < N; j++ ) {
-      for( i = 0; i < (M % 2); i++ ){
-        __m256d x = LOAD_256D_UNALIGNED_AS(double,_x+i);
+      __m256d x = LOAD_256D_UNALIGNED_AS(double,_x);
+      __m256d xz = _mm256_setzero_pd();
 
-        x = QCONJ_256D(x);
+      x = QCONJ_256D(x);
 
-        __m256d p1 = _mm256_mul_pd(x,alpha);
-        __m256d p2 = _mm256_mul_pd(x,alpha_conj);
+      __m256d p1 = _mm256_mul_pd(x,alpha);
+      __m256d p2 = _mm256_mul_pd(x,alpha_conj);
 
-        x = _mm256_hsub_pd(p1,p2);
+      x = _mm256_hsub_pd(p1,p2);
 
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++; 
-      }
+      STORE_256D_ALIGNED_AS(double,_xp  ,x );
+      STORE_256D_ALIGNED_AS(double,_xp+1,xz);
 
-      for( i = 0; i < 2 - (M % 2); i++) {
-        __m256d x = _mm256_setzero_pd();
-        STORE_256D_ALIGNED_AS(double,_xp,x);
-        _xp++;
-      }
-
-      _x += LDX;
+      _x += LDX; _xp += 2;
     }
   }
 
