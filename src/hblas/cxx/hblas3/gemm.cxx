@@ -65,21 +65,48 @@
 #define _FACTOR_ALPHA_IN_A_PACK
 //#define _FACTOR_ALPHA_IN_B_PACK
 
-#define _FACTOR_TRANSPOSE_INTO_PACK
+#define _FACTOR_TRANSPOSE_INTO_A_PACK
+#define _FACTOR_TRANSPOSE_INTO_B_PACK
 
-#if NR == 4
-  #define BPACKT  NPACK4  
-  #define BPACKCT NPACKC4
-  #define BPACKR  TPACKC4 
-  #define BPACK   TPACK4   
-#elif NR == 2
-  #define BPACKT  NPACK2  
-  #define BPACKCT NPACKC2
-  #define BPACKR  TPACKC2 
-  #define BPACK   TPACK2   
+#if defined(_FACTOR_TRANSPOSE_INTO_A_PACK) || \
+    defined(_FACTOR_TRANSPOSE_INTO_B_PACK)
+
+  #define _FACTOR_TRANSPOSE_INTO_PACK
+
 #endif
 
-#ifdef _FACTOR_TRANSPOSE_INTO_PACK
+
+#ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
+
+  #if NR == 4
+    #define BPACKT  NPACK4_T2  
+    #define BPACKCT NPACKC4_T2
+    #define BPACKR  TPACKC4_T2 
+    #define BPACK   TPACK4_T2   
+  #elif NR == 2
+    #define BPACKT  NPACK2_T2 
+    #define BPACKCT NPACKC2_T2
+    #define BPACKR  TPACKC2_T2
+    #define BPACK   TPACK2_T2   
+  #endif
+
+#else
+
+  #if NR == 4
+    #define BPACKT  NPACK4  
+    #define BPACKCT NPACKC4
+    #define BPACKR  TPACKC4 
+    #define BPACK   TPACK4   
+  #elif NR == 2
+    #define BPACKT  NPACK2 
+    #define BPACKCT NPACKC2
+    #define BPACKR  TPACKC2
+    #define BPACK   TPACK2   
+  #endif
+
+#endif
+
+#ifdef _FACTOR_TRANSPOSE_INTO_A_PACK
 
   #if MR == 4
     #define APACKT  TPACK4_T1 
@@ -165,9 +192,18 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     locA += 2;
     
 
-    // Load B 
+    // Load B
+
+#ifndef _FACTOR_TRANSPOSE_INTO_B_PACK
     __m256d b00 = LOAD_256D_ALIGNED_AS(double,locB);
     __m256d b10 = LOAD_256D_ALIGNED_AS(double,locB+1);
+#else
+    double *BasDouble = reinterpret_cast<double*>(locB);
+    __m128d b00lo = LOAD_128D_ALIGNED(BasDouble);
+    __m128d b00hi = LOAD_128D_ALIGNED(BasDouble+2);
+    __m128d b10lo = LOAD_128D_ALIGNED(BasDouble+4);
+    __m128d b10hi = LOAD_128D_ALIGNED(BasDouble+6);
+#endif
     locB += 2;
 
 
@@ -194,12 +230,13 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     __m256d &a10c = a_KKKK;
 
 
-#if 1
+#if 0
     __m256d b00c = b00;
     __m256d b10c = b10;
     _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
 #else
 
+/*
     __m256d b_SSJJ = _mm256_unpacklo_pd(b00,b10);
     __m256d b_IIKK = _mm256_unpackhi_pd(b00,b10);
 
@@ -218,6 +255,17 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
     __m256d &b00c = b_SSJJ;
     __m256d &b10c = b_IIKK;
+*/
+
+    __m256d bSSSS = SET_256D_FROM_128D(b00lo,b00lo);
+    __m256d bIIII = SET_256D_FROM_128D(b10lo,b10lo);
+    __m256d bJJJJ = SET_256D_FROM_128D(b00hi,b00hi);
+    __m256d bKKKK = SET_256D_FROM_128D(b10hi,b10hi);
+
+    __m256d &b00  = bSSSS;
+    __m256d &b10  = bIIII;
+    __m256d &b00c = bJJJJ;
+    __m256d &b10c = bKKKK;
 #endif
 
 #endif
