@@ -58,13 +58,56 @@
 #endif
 
 
-#define _FACTOR_TRANSPOSE_INTO_PACK
 
 #include "gemm_pack_4.hpp"
 #include "gemm_pack_2.hpp"
 
 #define _FACTOR_ALPHA_IN_A_PACK
 //#define _FACTOR_ALPHA_IN_B_PACK
+
+#define _FACTOR_TRANSPOSE_INTO_PACK
+
+#if NR == 4
+  #define BPACKT  NPACK4  
+  #define BPACKCT NPACKC4
+  #define BPACKR  TPACKC4 
+  #define BPACK   TPACK4   
+#elif NR == 2
+  #define BPACKT  NPACK2  
+  #define BPACKCT NPACKC2
+  #define BPACKR  TPACKC2 
+  #define BPACK   TPACK2   
+#endif
+
+#ifdef _FACTOR_TRANSPOSE_INTO_PACK
+
+  #if MR == 4
+    #define APACKT  TPACK4_T1 
+    #define APACKCT TPACKC4_T1
+    #define APACKR  NPACKC4_T1 
+    #define APACK   NPACK4_T1   
+  #elif MR == 2
+    #define APACKT  TPACK2_T1  
+    #define APACKCT TPACKC2_T1
+    #define APACKR  NPACKC2_T1 
+    #define APACK   NPACK2_T1   
+  #endif
+
+#else
+
+  #if MR == 4
+    #define APACKT  TPACK4  
+    #define APACKCT TPACKC4
+    #define APACKR  NPACKC4 
+    #define APACK   NPACK4   
+  #elif MR == 2
+    #define APACKT  TPACK2  
+    #define APACKCT TPACKC2
+    #define APACKR  NPACKC2 
+    #define APACK   NPACK2   
+  #endif
+
+#endif
 
 
 namespace HAXX {
@@ -128,7 +171,7 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     locB += 2;
 
 
-#if 1
+#ifndef _FACTOR_TRANSPOSE_INTO_PACK
 
     __m256d a00c = a00;
     __m256d a10c = a10;
@@ -140,20 +183,15 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
 
 #else
   
-    //__m256d a_SISI = _mm256_permute2f128_pd(a00,a10, 0x20);
-    //__m256d a_JKJK = _mm256_permute2f128_pd(a00,a10, 0x31);
-  
-    __m256d a_SISI = _mm256_undefined_pd();
-    __m256d a_JKJK = _mm256_undefined_pd();
 
-    a00    = _mm256_permute_pd(a_SISI, 0x0);
-    a_SISI = _mm256_permute_pd(a_SISI, 0xF);
+    __m256d a_IIII = _mm256_permute_pd(a00,0xF);
+    a00            = _mm256_permute_pd(a00,0x0); // SSSS
   
-    a10    = _mm256_permute_pd(a_JKJK, 0x0);
-    a_JKJK = _mm256_permute_pd(a_JKJK, 0xF);
-  
-    __m256d &a00c = a_SISI;
-    __m256d &a10c = a_JKJK;
+    __m256d a_KKKK = _mm256_permute_pd(a10,0xF);
+    a10            = _mm256_permute_pd(a10,0x0); // SSSS
+
+    __m256d &a00c = a_IIII;
+    __m256d &a10c = a_KKKK;
 
     __m256d b00c = b00;
     __m256d b10c = b10;
@@ -246,29 +284,15 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 #if 1
 
 #ifdef _FACTOR_ALPHA_IN_B_PACK
-  #if NR == 4
-      if( BTRAN )      NPACK4 (ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCT )   NPACKC4(ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCONJ ) TPACKC4(ALPHA,nK,nJ,Bp,LDB,bPack);
-      else             TPACK4 (ALPHA,nK,nJ,Bp,LDB,bPack);
-  #elif NR == 2
-      if( BTRAN )      NPACK2 (ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCT )   NPACKC2(ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCONJ ) TPACKC2(ALPHA,nK,nJ,Bp,LDB,bPack);
-      else             TPACK2 (ALPHA,nK,nJ,Bp,LDB,bPack);
-  #endif
+      if( BTRAN )      BPACKT (ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   BPACKCT(ALPHA,nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) BPACKR (ALPHA,nK,nJ,Bp,LDB,bPack);
+      else             BPACK  (ALPHA,nK,nJ,Bp,LDB,bPack);
 #else
-  #if NR == 4
-      if( BTRAN )      NPACK4 (nJ,nK,Bp,LDB,bPack);
-      else if( BCT )   NPACKC4(nJ,nK,Bp,LDB,bPack);
-      else if( BCONJ ) TPACKC4(nK,nJ,Bp,LDB,bPack);
-      else             TPACK4 (nK,nJ,Bp,LDB,bPack);
-  #elif NR == 2
-      if( BTRAN )      NPACK2 (nJ,nK,Bp,LDB,bPack);
-      else if( BCT )   NPACKC2(nJ,nK,Bp,LDB,bPack);
-      else if( BCONJ ) TPACKC2(nK,nJ,Bp,LDB,bPack);
-      else             TPACK2 (nK,nJ,Bp,LDB,bPack);
-  #endif
+      if( BTRAN )      BPACKT (nJ,nK,Bp,LDB,bPack);
+      else if( BCT )   BPACKCT(nJ,nK,Bp,LDB,bPack);
+      else if( BCONJ ) BPACKR (nK,nJ,Bp,LDB,bPack);
+      else             BPACK  (nK,nJ,Bp,LDB,bPack);
 #endif
 
 #endif
@@ -285,29 +309,15 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 #if 1
 
 #ifdef _FACTOR_ALPHA_IN_A_PACK
-  #if MR == 4
-        if( ATRAN )      TPACK4 (ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACT )   TPACKC4(ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACONJ ) NPACKC4(ALPHA,nI,nK,Ai,LDA,aPack);
-        else             NPACK4 (ALPHA,nI,nK,Ai,LDA,aPack);
-  #elif MR == 2
-        if( ATRAN )      TPACK2 (ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACT )   TPACKC2(ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACONJ ) NPACKC2(ALPHA,nI,nK,Ai,LDA,aPack);
-        else             NPACK2 (ALPHA,nI,nK,Ai,LDA,aPack);
-  #endif
+        if( ATRAN )      APACKT (ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACT )   APACKCT(ALPHA,nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) APACKR (ALPHA,nI,nK,Ai,LDA,aPack);
+        else             APACK  (ALPHA,nI,nK,Ai,LDA,aPack);
 #else
-  #if MR == 4
-        if( ATRAN )      TPACK4 (nK,nI,Ai,LDA,aPack);
-        else if( ACT )   TPACKC4(nK,nI,Ai,LDA,aPack);
-        else if( ACONJ ) NPACKC4(nI,nK,Ai,LDA,aPack);
-        else             NPACK4 (nI,nK,Ai,LDA,aPack);
-  #elif MR == 2
-        if( ATRAN )      TPACK2 (nK,nI,Ai,LDA,aPack);
-        else if( ACT )   TPACKC2(nK,nI,Ai,LDA,aPack);
-        else if( ACONJ ) NPACKC2(nI,nK,Ai,LDA,aPack);
-        else             NPACK2 (nI,nK,Ai,LDA,aPack);
-  #endif
+        if( ATRAN )      APACKT (nK,nI,Ai,LDA,aPack);
+        else if( ACT )   APACKCT(nK,nI,Ai,LDA,aPack);
+        else if( ACONJ ) APACKR (nI,nK,Ai,LDA,aPack);
+        else             APACK  (nI,nK,Ai,LDA,aPack);
   
   #ifndef _FACTOR_ALPHA_IN_B_PACK
         std::transform(aPack,&aPack[nK*iDo],aPack,[&](_AMATF x){ return ALPHA*x;});
