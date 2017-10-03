@@ -68,14 +68,6 @@
 #define _FACTOR_TRANSPOSE_INTO_A_PACK
 #define _FACTOR_TRANSPOSE_INTO_B_PACK
 
-#if defined(_FACTOR_TRANSPOSE_INTO_A_PACK) || \
-    defined(_FACTOR_TRANSPOSE_INTO_B_PACK)
-
-  #define _FACTOR_TRANSPOSE_INTO_PACK
-
-#endif
-
-
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
   #if NR == 4
@@ -207,18 +199,7 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     locB += 2;
 
 
-#ifndef _FACTOR_TRANSPOSE_INTO_PACK
-
-    __m256d a00c = a00;
-    __m256d a10c = a10;
-    _MM_TRANSPOSE_4x4_PD(a00,a00c,a10,a10c,t1,t2,t3,t4);
-
-    __m256d b00c = b00;
-    __m256d b10c = b10;
-    _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
-
-#else
-  
+#ifdef _FACTOR_TRANSPOSE_INTO_A_PACK
 
     __m256d a_IIII = _mm256_permute_pd(a00,0xF);
     a00            = _mm256_permute_pd(a00,0x0); // SSSS
@@ -229,33 +210,15 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     __m256d &a00c = a_IIII;
     __m256d &a10c = a_KKKK;
 
-
-#if 0
-    __m256d b00c = b00;
-    __m256d b10c = b10;
-    _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
 #else
 
-/*
-    __m256d b_SSJJ = _mm256_unpacklo_pd(b00,b10);
-    __m256d b_IIKK = _mm256_unpackhi_pd(b00,b10);
+    __m256d a00c = a00;
+    __m256d a10c = a10;
+    _MM_TRANSPOSE_4x4_PD(a00,a00c,a10,a10c,t1,t2,t3,t4);
 
-    b00   = SET_256D_FROM_128D(
-              GET_LO_128D_256D(b_SSJJ),
-              GET_LO_128D_256D(b_SSJJ));
-    b10   = SET_256D_FROM_128D(
-              GET_LO_128D_256D(b_IIKK),
-              GET_LO_128D_256D(b_IIKK));
-    b_SSJJ= SET_256D_FROM_128D(
-              GET_HI_128D_256D(b_SSJJ),
-              GET_HI_128D_256D(b_SSJJ));
-    b_IIKK= SET_256D_FROM_128D(
-              GET_HI_128D_256D(b_IIKK),
-              GET_HI_128D_256D(b_IIKK));
+#endif
 
-    __m256d &b00c = b_SSJJ;
-    __m256d &b10c = b_IIKK;
-*/
+#ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
     __m256d bSSSS = SET_256D_FROM_128D(b00lo,b00lo);
     __m256d bIIII = SET_256D_FROM_128D(b10lo,b10lo);
@@ -266,7 +229,12 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     __m256d &b10  = bIIII;
     __m256d &b00c = bJJJJ;
     __m256d &b10c = bKKKK;
-#endif
+
+#else
+
+    __m256d b00c = b00;
+    __m256d b10c = b10;
+    _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
 
 #endif
 
@@ -285,6 +253,7 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
   
 
 }
+
 #endif
 
 
