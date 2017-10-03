@@ -11,3 +11,4 @@
 #include "util/simd.hpp"
 
 #include "pack/gemm_pack_2_generic.hpp"
+#include "pack/gemm_pack_2_quaternion.hpp"

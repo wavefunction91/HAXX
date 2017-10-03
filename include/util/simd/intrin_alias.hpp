@@ -19,11 +19,19 @@
 #define LOAD_256D_ALIGNED(X)    _mm256_load_pd(X)
 #define LOAD_256D_UNALIGNED(X)  _mm256_loadu_pd(X)
 
+#define LOAD_128D_ALIGNED(X)    _mm_load_pd(X)
+#define LOAD_128D_UNALIGNED(X)  _mm_loadu_pd(X)
+
 // Load operations with proper cast
 #define LOAD_256D_ALIGNED_AS(T,X)\
   LOAD_256D_ALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
 #define LOAD_256D_UNALIGNED_AS(T,X)\
   LOAD_256D_UNALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
+
+#define LOAD_128D_ALIGNED_AS(T,X)\
+  LOAD_128D_ALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
+#define LOAD_128D_UNALIGNED_AS(T,X)\
+  LOAD_128D_UNALIGNED(const_cast<T*>(reinterpret_cast<const T*>(X)))
 
 
 // Store operations
