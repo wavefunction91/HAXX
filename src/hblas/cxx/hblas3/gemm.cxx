@@ -193,9 +193,32 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K,
     __m256d &a00c = a_IIII;
     __m256d &a10c = a_KKKK;
 
+
+#if 1
     __m256d b00c = b00;
     __m256d b10c = b10;
     _MM_TRANSPOSE_4x4_PD(b00,b10,b00c,b10c,t1,t2,t3,t4);
+#else
+
+    __m256d b_SSJJ = _mm256_unpacklo_pd(b00,b10);
+    __m256d b_IIKK = _mm256_unpackhi_pd(b00,b10);
+
+    b00   = SET_256D_FROM_128D(
+              GET_LO_128D_256D(b_SSJJ),
+              GET_LO_128D_256D(b_SSJJ));
+    b10   = SET_256D_FROM_128D(
+              GET_LO_128D_256D(b_IIKK),
+              GET_LO_128D_256D(b_IIKK));
+    b_SSJJ= SET_256D_FROM_128D(
+              GET_HI_128D_256D(b_SSJJ),
+              GET_HI_128D_256D(b_SSJJ));
+    b_IIKK= SET_256D_FROM_128D(
+              GET_HI_128D_256D(b_IIKK),
+              GET_HI_128D_256D(b_IIKK));
+
+    __m256d &b00c = b_SSJJ;
+    __m256d &b10c = b_IIKK;
+#endif
 
 #endif
 
