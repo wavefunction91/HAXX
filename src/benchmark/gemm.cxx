@@ -36,8 +36,8 @@ std::mt19937 gen(rd());
 std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
 
-//#define _DO_COMPLEX
-//#define _DO_FORTRAN
+#define _DO_COMPLEX
+#define _DO_FORTRAN
 
 
 void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {
@@ -58,7 +58,7 @@ void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {
 
 int main() {
 
-  for(int GEMM_LEN = 500; GEMM_LEN <= 2500; GEMM_LEN += 500) {
+  for(int GEMM_LEN = 500; GEMM_LEN <= 10000; GEMM_LEN += 500) {
   std::vector<HAXX::quaternion<double>> 
     A(GEMM_LEN*GEMM_LEN), B(GEMM_LEN*GEMM_LEN), C(GEMM_LEN*GEMM_LEN);
 
@@ -89,14 +89,6 @@ int main() {
   HBLAS_GEMM(TRANSA,TRANSB,GEMM_LEN,GEMM_LEN,GEMM_LEN,ALPHA,&A[0],GEMM_LEN,
     &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
 
-  auto hgemmStart = std::chrono::high_resolution_clock::now();
-  HBLAS_GEMM(TRANSA,TRANSB,GEMM_LEN,GEMM_LEN,GEMM_LEN,ALPHA,&A[0],GEMM_LEN,
-    &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
-  auto hgemmEnd = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
-
-  outTime("HGEMM",GEMM_LEN,32.*GEMM_LEN*GEMM_LEN*GEMM_LEN,hgemmDur.count());
-
 #ifdef _DO_FORTRAN
   auto fortranStart = std::chrono::high_resolution_clock::now();
   hgemmzz_(&TRANSA,&TRANSB,&gl,&gl,&gl,&ALPHA,&A[0],&gl,&B[0],&gl,&BETA,&C[0],&gl);
@@ -106,6 +98,15 @@ int main() {
   outTime("HGEMM_FORTRAN",GEMM_LEN,32.*GEMM_LEN*GEMM_LEN*GEMM_LEN,
     fortranDur.count());
 #endif
+
+  auto hgemmStart = std::chrono::high_resolution_clock::now();
+  HBLAS_GEMM(TRANSA,TRANSB,GEMM_LEN,GEMM_LEN,GEMM_LEN,ALPHA,&A[0],GEMM_LEN,
+    &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);
+  auto hgemmEnd = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> hgemmDur = hgemmEnd - hgemmStart;
+
+  outTime("HGEMM",GEMM_LEN,32.*GEMM_LEN*GEMM_LEN*GEMM_LEN,hgemmDur.count());
+
 
 #ifdef _DO_COMPLEX
   auto zgemmStart = std::chrono::high_resolution_clock::now();

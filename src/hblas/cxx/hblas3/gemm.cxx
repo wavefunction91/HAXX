@@ -382,6 +382,7 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
             nIII = MR;
 
             // Perform kernel operation
+            #pragma noinline
             Kern(nIII,nJJJ,nK,smallA,BL1,smallC,LDC);
      
             smallC += MR;
