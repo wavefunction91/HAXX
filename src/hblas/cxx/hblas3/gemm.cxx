@@ -65,8 +65,8 @@
 #define _FACTOR_ALPHA_IN_A_PACK
 //#define _FACTOR_ALPHA_IN_B_PACK
 
-#define _FACTOR_TRANSPOSE_INTO_A_PACK
-#define _FACTOR_TRANSPOSE_INTO_B_PACK
+//#define _FACTOR_TRANSPOSE_INTO_A_PACK
+//#define _FACTOR_TRANSPOSE_INTO_B_PACK
 
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
@@ -90,10 +90,10 @@
     #define BPACKR  TPACKC4 
     #define BPACK   TPACK4   
   #elif NR == 2
-    #define BPACKT  NPACK2 
-    #define BPACKCT NPACKC2
-    #define BPACKR  TPACKC2
-    #define BPACK   TPACK2   
+    #define BPACKT  NPACK2<_BMATF, GenericPackOps<_BMATF>>
+    #define BPACKCT NPACK2<_BMATF, ConjPackOps<_BMATF>>
+    #define BPACKR  TPACK2<_BMATF, ConjPackOps<_BMATF>>
+    #define BPACK   TPACK2<_BMATF, GenericPackOps<_BMATF>>   
   #endif
 
 #endif
@@ -120,10 +120,10 @@
     #define APACKR  NPACKC4 
     #define APACK   NPACK4   
   #elif MR == 2
-    #define APACKT  TPACK2  
-    #define APACKCT TPACKC2
-    #define APACKR  NPACKC2 
-    #define APACK   NPACK2   
+    #define APACKT  TPACK2<_AMATF, GenericPackOps<_AMATF>>
+    #define APACKCT TPACK2<_AMATF, ConjPackOps<_AMATF>>
+    #define APACKR  NPACK2<_AMATF, ConjPackOps<_AMATF>>
+    #define APACK   NPACK2<_AMATF, GenericPackOps<_AMATF>>    
   #endif
 
 #endif
@@ -324,10 +324,10 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 #if 1
 
 #ifdef _FACTOR_ALPHA_IN_B_PACK
-      if( BTRAN )      BPACKT (ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCT )   BPACKCT(ALPHA,nJ,nK,Bp,LDB,bPack);
-      else if( BCONJ ) BPACKR (ALPHA,nK,nJ,Bp,LDB,bPack);
-      else             BPACK  (ALPHA,nK,nJ,Bp,LDB,bPack);
+      if( BTRAN )      BPACKT (nJ,nK,Bp,LDB,bPack,ALPHA);
+      else if( BCT )   BPACKCT(nJ,nK,Bp,LDB,bPack,ALPHA);
+      else if( BCONJ ) BPACKR (nK,nJ,Bp,LDB,bPack,ALPHA);
+      else             BPACK  (nK,nJ,Bp,LDB,bPack,ALPHA);
 #else
       if( BTRAN )      BPACKT (nJ,nK,Bp,LDB,bPack);
       else if( BCT )   BPACKCT(nJ,nK,Bp,LDB,bPack);
@@ -349,10 +349,10 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 #if 1
 
 #ifdef _FACTOR_ALPHA_IN_A_PACK
-        if( ATRAN )      APACKT (ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACT )   APACKCT(ALPHA,nK,nI,Ai,LDA,aPack);
-        else if( ACONJ ) APACKR (ALPHA,nI,nK,Ai,LDA,aPack);
-        else             APACK  (ALPHA,nI,nK,Ai,LDA,aPack);
+        if( ATRAN )      APACKT (nK,nI,Ai,LDA,aPack,ALPHA);
+        else if( ACT )   APACKCT(nK,nI,Ai,LDA,aPack,ALPHA);
+        else if( ACONJ ) APACKR (nI,nK,Ai,LDA,aPack,ALPHA);
+        else             APACK  (nI,nK,Ai,LDA,aPack,ALPHA);
 #else
         if( ATRAN )      APACKT (nK,nI,Ai,LDA,aPack);
         else if( ACT )   APACKCT(nK,nI,Ai,LDA,aPack);
