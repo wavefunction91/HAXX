@@ -9,7 +9,7 @@
 
 #pragma once 
 
-#include "hblas/hblas1_def.hpp"
+#include "hblas/hblas1.hpp"
 
 namespace HAXX {
 

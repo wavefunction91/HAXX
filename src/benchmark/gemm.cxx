@@ -15,7 +15,7 @@
 #include <iomanip>
 #include <limits>
 #include <chrono>
-#include "hblas/hblas3_def.hpp"
+#include "hblas/hblas3.hpp"
 #include "hblas/hblas_util.hpp"
 
 extern "C" {

@@ -9,7 +9,7 @@
 
 
 #include "haxx_ut.hpp"
-#include "hblas/hblas1_def.hpp"
+#include "hblas/hblas1.hpp"
 
 BOOST_AUTO_TEST_SUITE(HBLAS1)
 

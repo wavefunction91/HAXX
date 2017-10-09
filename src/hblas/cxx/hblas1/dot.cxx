@@ -8,7 +8,7 @@
  */
 
 #include "haxx.hpp"
-#include "hblas/hblas1_def.hpp"
+#include "hblas/hblas1.hpp"
 
 #include "util/simd.hpp"
 

@@ -10,7 +10,7 @@
 #ifndef __INCLUDED_HBLAS_GEMM_IMPL_HPP
 #define __INCLUDED_HBLAS_GEMM_IMPL_HPP
 
-#include "hblas/hblas3_def.hpp"
+#include "hblas/hblas3.hpp"
 
 namespace HAXX {
 
