@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include <util/simd.hpp>
+#include <util/macro.hpp>
 
 
 // Determine type of scaling parameter ALPHA

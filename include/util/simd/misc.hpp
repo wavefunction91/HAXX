@@ -11,13 +11,6 @@
 #define __INCLUDED_SIMD_MISC_HPP__
 
 
-// Misc macros
-
-
-// Alignment checking
-#define IS_ALIGNED(X,B) ( ((unsigned long)(X) & (B-1)) == 0 )
-
-
 // Load operations
 
 // Load aligned with cast

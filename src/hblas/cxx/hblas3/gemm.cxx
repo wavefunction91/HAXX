@@ -12,8 +12,7 @@
 #include "hblas/hblas3.hpp"
 
 #include "util/simd.hpp"
-
-#define FixMod(X,N) (( (X) % (N) ) ? (X) + (N) - ((X) % (N)) : (X))
+#include <util/macro.hpp>
 
 // Determine type of scaling parameter ALPHA
 #if ALPHAF == DOUBLE

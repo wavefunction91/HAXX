@@ -11,6 +11,7 @@
 #include "hblas/hblas1.hpp"
 
 #include "util/simd.hpp"
+#include <util/macro.hpp>
 
 #include <cassert>
 
