@@ -13,7 +13,7 @@
 namespace HAXX {
 
 template <typename T>
-struct GenericPackOps {
+struct GenericPackOpsBase {
 
   struct noscalar_t {};
 
@@ -35,18 +35,23 @@ struct GenericPackOps {
   static const T preOP(T &x, noscalar_t &z) { return x; }
 
 
+};
+
+template <typename T>
+struct GenericPackOps2 : public GenericPackOpsBase<T> {
+
   static T OP1(T &x1, T &x2) { return x1; }
   static T OP2(T &x1, T &x2) { return x2; }
 
 };
 
 template <typename T>
-struct ConjPackOps : public GenericPackOps<T> {
+struct ConjPackOps2 : public GenericPackOps2<T> {
 
   template <typename U>
   static const T preOP(T &x, U &alpha){ 
     auto y = SmartConj(x); 
-    return GenericPackOps<T>::preOP(y,alpha); 
+    return GenericPackOpsBase<T>::preOP(y,alpha); 
   } 
 
 };
@@ -131,7 +136,7 @@ struct ConjPackOps_T1 : public GenericPackOps_T1 {
 
   template <typename U>
   static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return GenericPackOps_T1::preOP(y,z);
+    auto y = QCONJ_256D(x); return QDPackOpsBase::preOP(y,z);
   }
 
 };
@@ -154,7 +159,7 @@ struct ConjPackOps_T2 : public GenericPackOps_T2 {
 
   template <typename U>
   static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return GenericPackOps_T2::preOP(y,z);
+    auto y = QCONJ_256D(x); return QDPackOpsBase::preOP(y,z);
   }
 
 };
