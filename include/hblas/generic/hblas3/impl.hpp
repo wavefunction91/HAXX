@@ -7,11 +7,9 @@
  *  See LICENSE.txt 
  */
 
-#include "haxx.hpp"
-#include "hblas/generic/util/impl.hpp"
+#ifndef __INCLUDED_HBLAS3_IMPL_HPP
+#define __INCLUDED_HBLAS3_IMPL_HPP
 
-namespace HAXX {
+#include "hblas_gemm_impl.hpp"
 
-
-};
-
+#endif

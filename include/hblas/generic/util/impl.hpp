@@ -7,10 +7,11 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS3_IMPL_HPP
-#define __INCLUDED_HBLAS3_IMPL_HPP
+#ifndef __INCLUDED_HBLAS_UTIL_IMPL_HPP
+#define __INCLUDED_HBLAS_UTIL_IMPL_HPP
 
-// HBLAS_GEMM
-#include "hblas/hblas3/hblas_gemm_impl.hpp"
+#include "expand_impl.hpp"
+#include "contract_impl.hpp"
 
 #endif
+

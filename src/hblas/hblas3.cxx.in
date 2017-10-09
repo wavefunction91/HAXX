@@ -8,7 +8,7 @@
  */
 
 #include "haxx.hpp"
-#include "hblas/hblas3_impl.hpp"
+#include "hblas/generic/hblas3/impl.hpp"
 
 // Preprocessor macros for quick CXX implementations
   

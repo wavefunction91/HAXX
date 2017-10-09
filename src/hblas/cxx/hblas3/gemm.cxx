@@ -8,7 +8,7 @@
  */
 
 #include "haxx.hpp"
-#include "hblas/hblas1/hblas_scalm_impl.hpp"
+#include "hblas/hblas1.hpp"
 #include "hblas/hblas3.hpp"
 
 #include "util/simd.hpp"

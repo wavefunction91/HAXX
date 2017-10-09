@@ -8,7 +8,7 @@
  */
 
 #include "haxx.hpp"
-#include "hblas/hblas1_impl.hpp"
+#include "hblas/generic/hblas1/impl.hpp"
 
 #cmakedefine ENABLE_GENERIC_FORTRAN
 #cmakedefine ENABLE_GENERIC_CXX
