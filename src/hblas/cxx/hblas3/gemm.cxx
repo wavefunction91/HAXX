@@ -14,27 +14,7 @@
 #include "util/simd.hpp"
 #include <util/macro.hpp>
 
-// Determine type of scaling parameter ALPHA
-#if ALPHAF == DOUBLE
-  #define _ALPHAF double
-#elif ALPHAF == DCOMPLEX
-  #define _ALPHAF std::complex<double>
-#elif ALPHAF == DQUATERNION
-  #define _ALPHAF quaternion<double>
-#else
-  #error GEMM Only Supports 64-bit floats
-#endif
-
-// Determine type of scaling parameter BETA
-#if BETAF == DOUBLE
-  #define _BETAF double
-#elif BETAF == DCOMPLEX
-  #define _BETAF std::complex<double>
-#elif BETAF == DQUATERNION
-  #define _BETAF quaternion<double>
-#else
-  #error GEMM Only Supports 64-bit floats
-#endif
+#include "hblas/hblas_compile_config.hpp"
 
 #define _AMATF quaternion<double>
 #define _BMATF quaternion<double>

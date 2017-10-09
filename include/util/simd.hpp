@@ -14,11 +14,6 @@
   
 #include <immintrin.h>
 
-// Compile time type constants
-#define DOUBLE      0
-#define DCOMPLEX    1
-#define DQUATERNION 2
-
 // Required boundary alignment for aligned data
 #if defined(__AVX__) || defined(__AVX2__)
   #define REQ_ALIGN 32

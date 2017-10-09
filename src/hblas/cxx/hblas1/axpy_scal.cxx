@@ -15,17 +15,8 @@
 #include <util/simd.hpp>
 #include <util/macro.hpp>
 
+#include "hblas/hblas_compile_config.hpp"
 
-// Determine type of scaling parameter ALPHA
-#if ALPHAF == DOUBLE
-  #define _ALPHAF double
-#elif ALPHAF == DCOMPLEX
-  #define _ALPHAF std::complex<double>
-#elif ALPHAF == DQUATERNION
-  #define _ALPHAF quaternion<double>
-#else
-  #error AXPY/SCAL Only Supports 64-bit floats
-#endif
 
 
 namespace HAXX {
