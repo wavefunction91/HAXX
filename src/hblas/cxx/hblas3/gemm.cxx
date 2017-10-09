@@ -13,8 +13,6 @@
 
 #include "util/simd.hpp"
 
-#include <algorithm>
-
 #define FixMod(X,N) (( (X) % (N) ) ? (X) + (N) - ((X) % (N)) : (X))
 
 // Determine type of scaling parameter ALPHA
@@ -155,7 +153,6 @@ inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, T* __restrict__ A, U* __res
 
 
 #if MR == 2 && NR == 2
-//#if 0
 inline void Kern(HAXX_INT M, HAXX_INT N, HAXX_INT K, 
   quaternion<double>* __restrict__ A, quaternion<double>* __restrict__ B, 
   quaternion<double>* __restrict__ C, HAXX_INT LDC) {
@@ -282,11 +279,8 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   _AMATF *aPack = 
     (_AMATF*)aligned_alloc(REQ_ALIGN,FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF));
 
-//std::cout << "BPack " << FixMod(KC*NC,REQ_ALIGN)*sizeof(_BMATF) << std::endl;
-//std::cout << "APack " << FixMod(KC*MC,REQ_ALIGN)*sizeof(_AMATF) << std::endl;
 
-
-  // Scale C by BETA
+  // Scale C (on the left) by BETA
   HBLAS_SCALM('L','N',M,N,BETA,C,LDC,1);
 
   // Counter vars
@@ -358,10 +352,6 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
         else if( ACT )   APACKCT(nK,nI,Ai,LDA,aPack);
         else if( ACONJ ) APACKR (nI,nK,Ai,LDA,aPack);
         else             APACK  (nI,nK,Ai,LDA,aPack);
-  
-  #ifndef _FACTOR_ALPHA_IN_B_PACK
-        std::transform(aPack,&aPack[nK*iDo],aPack,[&](_AMATF x){ return ALPHA*x;});
-  #endif
 #endif
 
 #endif
