@@ -65,8 +65,8 @@
 #define _FACTOR_ALPHA_IN_A_PACK
 //#define _FACTOR_ALPHA_IN_B_PACK
 
-//#define _FACTOR_TRANSPOSE_INTO_A_PACK
-//#define _FACTOR_TRANSPOSE_INTO_B_PACK
+#define _FACTOR_TRANSPOSE_INTO_A_PACK
+#define _FACTOR_TRANSPOSE_INTO_B_PACK
 
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
@@ -76,10 +76,10 @@
     #define BPACKR  TPACKC4_T2 
     #define BPACK   TPACK4_T2   
   #elif NR == 2
-    #define BPACKT  NPACK2_T2 
-    #define BPACKCT NPACKC2_T2
-    #define BPACKR  TPACKC2_T2
-    #define BPACK   TPACK2_T2   
+    #define BPACKT  NPACK2<_AMATF, GenericPackOps_T2>    
+    #define BPACKCT NPACK2<_AMATF, ConjPackOps_T2>
+    #define BPACKR  TPACK2<_AMATF, ConjPackOps_T2>
+    #define BPACK   TPACK2<_AMATF, GenericPackOps_T2>      
   #endif
 
 #else
@@ -106,10 +106,10 @@
     #define APACKR  NPACKC4_T1 
     #define APACK   NPACK4_T1   
   #elif MR == 2
-    #define APACKT  TPACK2_T1  
-    #define APACKCT TPACKC2_T1
-    #define APACKR  NPACKC2_T1 
-    #define APACK   NPACK2_T1   
+    #define APACKT  TPACK2<_AMATF, GenericPackOps_T1> 
+    #define APACKCT TPACK2<_AMATF, ConjPackOps_T1>
+    #define APACKR  NPACK2<_AMATF, ConjPackOps_T1>
+    #define APACK   NPACK2<_AMATF, GenericPackOps_T1>   
   #endif
 
 #else
