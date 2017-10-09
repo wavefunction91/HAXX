@@ -11,7 +11,6 @@
 #define __INCLUDED_HBLAS_UTIL_HPP
 
 #include "haxx/haxx_def.hpp" 
-#include "hblas/hblas_config.hpp"
 
 extern "C" {
 

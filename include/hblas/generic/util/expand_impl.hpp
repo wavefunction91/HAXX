@@ -10,6 +10,7 @@
 #ifndef __INCLUDED_HBLAS_UTIL_EXPAND_IMPL_HPP
 #define __INCLUDED_HBLAS_UTIL_EXPAND_IMPL_HPP
 
+#include <cassert>
 #include "hblas/hblas_util.hpp"
 
 namespace HAXX {

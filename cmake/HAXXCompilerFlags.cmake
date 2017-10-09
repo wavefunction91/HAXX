@@ -50,4 +50,12 @@ if( HAXX_USE_HOST_SIMD )
 
 endif()
 
+# HAXX Types
+
+# Index Integer Type
+if( NOT HAXX_INT )
+  set( HAXX_INT int32_t )
+endif()
+add_definitions("-DHAXX_INT=${HAXX_INT}")
+
 

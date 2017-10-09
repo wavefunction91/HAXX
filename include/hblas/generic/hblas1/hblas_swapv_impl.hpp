@@ -11,6 +11,8 @@
 
 #include "hblas/hblas1.hpp"
 
+#define HAXX_SWAP_UNROLL 3
+
 namespace HAXX {
 
 /**

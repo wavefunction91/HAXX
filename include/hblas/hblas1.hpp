@@ -11,8 +11,6 @@
 #define __INCLUDED_HBLAS1_HPP
 
 #include "haxx/haxx_def.hpp"
-#include "hblas/hblas_config.hpp"
-
 
 // Preprocessor macros for quick FORTRAN declarations
 

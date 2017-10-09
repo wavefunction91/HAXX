@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <cassert>
 #include "hblas/hblas1.hpp"
 
 namespace HAXX {

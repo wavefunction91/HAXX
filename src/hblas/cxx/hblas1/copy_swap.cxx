@@ -12,6 +12,8 @@
 
 #include "util/simd.hpp"
 
+#include <cassert>
+
 namespace HAXX {
 
 // Optimized Copy

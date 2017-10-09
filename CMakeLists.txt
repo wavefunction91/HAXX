@@ -28,7 +28,6 @@ option( HAXX_ENABLE_BENCHMARK "Enable Build of HAXX / HBLAS Benchmark" OFF )
 option( HAXX_ENABLE_TESTING   "Enable Build of HAXX / HBLAS Unit Tests" ON )
 option( HAXX_USE_HOST_SIMD    "Use Host Native Flags for SIMD"          ON )
 
-
 include(HAXXCompilerFlags)
 include(HAXXHandleSIMD)
 

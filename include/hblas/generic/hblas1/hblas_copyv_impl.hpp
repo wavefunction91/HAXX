@@ -11,6 +11,8 @@
 
 #include "hblas/hblas1.hpp"
 
+#define HAXX_COPY_UNROLL 7
+
 namespace HAXX {
 
 /**

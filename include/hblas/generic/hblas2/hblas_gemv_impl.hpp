@@ -10,6 +10,7 @@
 #ifndef __INCLUDED_HBLAS_GEMV_IMPL_HPP
 #define __INCLUDED_HBLAS_GEMV_IMPL_HPP
 
+#include <cassert>
 #include "hblas/hblas2.hpp"
 
 namespace HAXX {

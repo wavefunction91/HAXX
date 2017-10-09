@@ -11,7 +11,7 @@
 #define __INCLUDED_HBLAS2_HPP
 
 #include "haxx/haxx_def.hpp"
-#include "hblas/hblas_config.hpp"
+#include "util/macro.hpp"
 
 #define GEMV_FORTRAN_DECL(NAME,F,MATF,VECF,ALPHAF,BETAF) \
 void NAME##_(const char*, const HAXX_INT*, const HAXX_INT*, const ALPHAF*,\

@@ -10,6 +10,9 @@
 #pragma once
 
 #include "hblas/hblas1.hpp"
+#include <iostream>
+
+#define HAXX_SCAL_UNROLL 5
 
 namespace HAXX {
 

@@ -15,7 +15,7 @@ set( HBLAS_IMPL_SRC
   util.cxx
 )
 
-add_library( hblas STATIC ${HBLAS1_OBJ} ${HBLAS3_OBJ} ${HBLAS_IMPL_SRC} )
+add_library( hblas STATIC ${HBLAS_IMPL_SRC} ${HBLAS1_OBJ} ${HBLAS3_OBJ}  )
 
 target_link_libraries(hblas PUBLIC hblas_fortran)
 

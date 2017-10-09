@@ -11,8 +11,6 @@
 #define __INCLUDED_HBLAS3_HPP
 
 #include "haxx/haxx_def.hpp"
-#include "hblas/hblas_config.hpp"
-
 
 #define GEMM_FORTRAN_DECL(NAME,F,AMATF,BMATF,ALPHAF,BETAF) \
 void NAME##_(const char*, const char*, const HAXX_INT*, const HAXX_INT*,\
