@@ -12,8 +12,6 @@
 
 #include "util/constants.hpp"
 
-/** COMMON DEFS FOR ALL HBLAS ROUTINES **/
-
 // Determine type of scaling parameter ALPHA
 #ifdef ALPHAF
   #if ALPHAF == DOUBLE
@@ -22,8 +20,6 @@
     #define _ALPHAF std::complex<double>
   #elif ALPHAF == DQUATERNION
     #define _ALPHAF quaternion<double>
-  #else
-    #error GEMM Only Supports 64-bit floats
   #endif
 #endif
 
@@ -35,8 +31,28 @@
     #define _BETAF std::complex<double>
   #elif BETAF == DQUATERNION
     #define _BETAF quaternion<double>
-  #else
-    #error GEMM Only Supports 64-bit floats
+  #endif
+#endif
+
+// Determine type of matrix type AMAT
+#ifdef AMATF
+  #if AMATF == DOUBLE
+    #define _AMATF double
+  #elif AMATF == DCOMPLEX
+    #define _AMATF std::complex<double>
+  #elif AMATF == DQUATERNION
+    #define _AMATF quaternion<double>
+  #endif
+#endif
+
+// Determine type of matrix type BMAT
+#ifdef BMATF
+  #if BMATF == DOUBLE
+    #define _BMATF double
+  #elif BMATF == DCOMPLEX
+    #define _BMATF std::complex<double>
+  #elif BMATF == DQUATERNION
+    #define _BMATF quaternion<double>
   #endif
 #endif
 

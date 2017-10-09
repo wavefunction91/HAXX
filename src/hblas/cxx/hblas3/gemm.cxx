@@ -16,10 +16,6 @@
 
 #include "hblas/hblas_compile_config.hpp"
 
-#define _AMATF quaternion<double>
-#define _BMATF quaternion<double>
-
-
 #define MC 64
 #define NC 1024
 #define KC 64
