@@ -12,84 +12,19 @@
 #include "hblas/hblas3.hpp"
 
 #include "util/simd.hpp"
-#include <util/macro.hpp>
+#include "util/macro.hpp"
 
 #include "hblas/config/types.hpp"
+#include "hblas/config/hblas3/gemm.hpp"
 
-#define MC 64
-#define NC 1024
-#define KC 64
-#define MR 2
-#define NR 2
 
-#if MR != 4 && MR != 2
-  #error MR must be 4 or 2
-#endif
-
-#if NR != 4 && NR != 2
-  #error NR must be 4 or 2
-#endif
 
 
 
 #include "gemm_pack_4.hpp"
 #include "gemm_pack_2.hpp"
 
-#define _FACTOR_ALPHA_IN_A_PACK
-//#define _FACTOR_ALPHA_IN_B_PACK
 
-#define _FACTOR_TRANSPOSE_INTO_A_PACK
-#define _FACTOR_TRANSPOSE_INTO_B_PACK
-
-#ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
-
-  #if NR == 2
-    #define BPACKT  NPACK2< _AMATF, GenericPackOps_T2 >    
-    #define BPACKCT NPACK2< _AMATF, ConjPackOps_T2    >
-    #define BPACKR  TPACK2< _AMATF, ConjPackOps_T2    >
-    #define BPACK   TPACK2< _AMATF, GenericPackOps_T2 >      
-  #endif
-
-#else
-
-  #if NR == 4
-    #define BPACKT  NPACK4  
-    #define BPACKCT NPACKC4
-    #define BPACKR  TPACKC4 
-    #define BPACK   TPACK4   
-  #elif NR == 2
-    #define BPACKT  NPACK2< _BMATF, GenericPackOps2<_BMATF> >
-    #define BPACKCT NPACK2< _BMATF, ConjPackOps2   <_BMATF> >
-    #define BPACKR  TPACK2< _BMATF, ConjPackOps2   <_BMATF> >
-    #define BPACK   TPACK2< _BMATF, GenericPackOps2<_BMATF> >   
-  #endif
-
-#endif
-
-#ifdef _FACTOR_TRANSPOSE_INTO_A_PACK
-
-  #if MR == 2
-    #define APACKT  TPACK2< _AMATF, GenericPackOps_T1 > 
-    #define APACKCT TPACK2< _AMATF, ConjPackOps_T1    >
-    #define APACKR  NPACK2< _AMATF, ConjPackOps_T1    >
-    #define APACK   NPACK2< _AMATF, GenericPackOps_T1 >   
-  #endif
-
-#else
-
-  #if MR == 4
-    #define APACKT  TPACK4  
-    #define APACKCT TPACKC4
-    #define APACKR  NPACKC4 
-    #define APACK   NPACK4   
-  #elif MR == 2
-    #define APACKT  TPACK2< _AMATF, GenericPackOps2<_AMATF> >
-    #define APACKCT TPACK2< _AMATF, ConjPackOps2   <_AMATF> >
-    #define APACKR  NPACK2< _AMATF, ConjPackOps2   <_AMATF> >
-    #define APACK   NPACK2< _AMATF, GenericPackOps2<_AMATF> >    
-  #endif
-
-#endif
 
 
 namespace HAXX {

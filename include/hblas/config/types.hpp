@@ -7,8 +7,8 @@
  *  See LICENSE.txt 
  */
 
-#ifndef __INCLUDED_HBLAS_COMPILE_CONFIG_HPP
-#define __INCLUDED_HBLAS_COMPILE_CONFIG_HPP
+#ifndef __INCLUDED_HBLAS_CONFIG_TYPES_HPP
+#define __INCLUDED_HBLAS_CONFIG_TYPES_HPP
 
 #include "util/constants.hpp"
 
