@@ -14,7 +14,7 @@
 #include "util/simd.hpp"
 #include <util/macro.hpp>
 
-#include "hblas/hblas_compile_config.hpp"
+#include "hblas/config/types.hpp"
 
 #define MC 64
 #define NC 1024
@@ -43,16 +43,11 @@
 
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
-  #if NR == 4
-    #define BPACKT  NPACK4_T2  
-    #define BPACKCT NPACKC4_T2
-    #define BPACKR  TPACKC4_T2 
-    #define BPACK   TPACK4_T2   
-  #elif NR == 2
-    #define BPACKT  NPACK2<_AMATF, GenericPackOps_T2>    
-    #define BPACKCT NPACK2<_AMATF, ConjPackOps_T2>
-    #define BPACKR  TPACK2<_AMATF, ConjPackOps_T2>
-    #define BPACK   TPACK2<_AMATF, GenericPackOps_T2>      
+  #if NR == 2
+    #define BPACKT  NPACK2< _AMATF, GenericPackOps_T2 >    
+    #define BPACKCT NPACK2< _AMATF, ConjPackOps_T2    >
+    #define BPACKR  TPACK2< _AMATF, ConjPackOps_T2    >
+    #define BPACK   TPACK2< _AMATF, GenericPackOps_T2 >      
   #endif
 
 #else
@@ -63,26 +58,21 @@
     #define BPACKR  TPACKC4 
     #define BPACK   TPACK4   
   #elif NR == 2
-    #define BPACKT  NPACK2<_BMATF, GenericPackOps2<_BMATF>>
-    #define BPACKCT NPACK2<_BMATF, ConjPackOps2<_BMATF>>
-    #define BPACKR  TPACK2<_BMATF, ConjPackOps2<_BMATF>>
-    #define BPACK   TPACK2<_BMATF, GenericPackOps2<_BMATF>>   
+    #define BPACKT  NPACK2< _BMATF, GenericPackOps2<_BMATF> >
+    #define BPACKCT NPACK2< _BMATF, ConjPackOps2   <_BMATF> >
+    #define BPACKR  TPACK2< _BMATF, ConjPackOps2   <_BMATF> >
+    #define BPACK   TPACK2< _BMATF, GenericPackOps2<_BMATF> >   
   #endif
 
 #endif
 
 #ifdef _FACTOR_TRANSPOSE_INTO_A_PACK
 
-  #if MR == 4
-    #define APACKT  TPACK4_T1 
-    #define APACKCT TPACKC4_T1
-    #define APACKR  NPACKC4_T1 
-    #define APACK   NPACK4_T1   
-  #elif MR == 2
-    #define APACKT  TPACK2<_AMATF, GenericPackOps_T1> 
-    #define APACKCT TPACK2<_AMATF, ConjPackOps_T1>
-    #define APACKR  NPACK2<_AMATF, ConjPackOps_T1>
-    #define APACK   NPACK2<_AMATF, GenericPackOps_T1>   
+  #if MR == 2
+    #define APACKT  TPACK2< _AMATF, GenericPackOps_T1 > 
+    #define APACKCT TPACK2< _AMATF, ConjPackOps_T1    >
+    #define APACKR  NPACK2< _AMATF, ConjPackOps_T1    >
+    #define APACK   NPACK2< _AMATF, GenericPackOps_T1 >   
   #endif
 
 #else
@@ -93,10 +83,10 @@
     #define APACKR  NPACKC4 
     #define APACK   NPACK4   
   #elif MR == 2
-    #define APACKT  TPACK2<_AMATF, GenericPackOps2<_AMATF>>
-    #define APACKCT TPACK2<_AMATF, ConjPackOps2<_AMATF>>
-    #define APACKR  NPACK2<_AMATF, ConjPackOps2<_AMATF>>
-    #define APACK   NPACK2<_AMATF, GenericPackOps2<_AMATF>>    
+    #define APACKT  TPACK2< _AMATF, GenericPackOps2<_AMATF> >
+    #define APACKCT TPACK2< _AMATF, ConjPackOps2   <_AMATF> >
+    #define APACKR  NPACK2< _AMATF, ConjPackOps2   <_AMATF> >
+    #define APACK   NPACK2< _AMATF, GenericPackOps2<_AMATF> >    
   #endif
 
 #endif

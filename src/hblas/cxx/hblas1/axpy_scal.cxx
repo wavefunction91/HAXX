@@ -15,7 +15,7 @@
 #include <util/simd.hpp>
 #include <util/macro.hpp>
 
-#include "hblas/hblas_compile_config.hpp"
+#include "hblas/config/types.hpp"
 
 
 
