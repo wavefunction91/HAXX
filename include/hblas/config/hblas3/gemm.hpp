@@ -50,8 +50,8 @@
 
 // Determine where to factor the transpose operation
 // for GEMM kernel
-#define _FACTOR_TRANSPOSE_INTO_A_PACK
-#define _FACTOR_TRANSPOSE_INTO_B_PACK
+//#define _FACTOR_TRANSPOSE_INTO_A_PACK
+//#define _FACTOR_TRANSPOSE_INTO_B_PACK
 
 
 

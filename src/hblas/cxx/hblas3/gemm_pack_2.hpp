@@ -12,69 +12,33 @@
 
 namespace HAXX {
 
+
 template <typename T>
-struct GenericPackOpsBase {
+struct GenericTypeWrapper {
+
+  typedef T load_t;
 
   struct noscalar_t {};
 
-  static T load(T* x){ return *x; }
-  static T load()    { return T(0.); }
-
-  static void store(T* x, T y){ *x = y; }
 
   template <typename U>
   static const U cacheScalar( U &alpha ){ return alpha; }
 
-  static noscalar_t cacheScalar(){ return noscalar_t(); }
-
-
-
-  template <typename U>
-  static const T preOP(T &x, U &alpha){ return alpha * x; } 
-
-  static const T preOP(T &x, noscalar_t &z) { return x; }
+  static noscalar_t cacheScalar(){ return noscalar_t{}; }
 
 
 };
 
-template <typename T>
-struct GenericPackOps2 : public GenericPackOpsBase<T> {
+struct AVX64BitTypeWrapper {
 
-  static T OP1(T &x1, T &x2) { return x1; }
-  static T OP2(T &x1, T &x2) { return x2; }
+  typedef __m256d load_t;
 
-};
-
-template <typename T>
-struct ConjPackOps2 : public GenericPackOps2<T> {
-
-  template <typename U>
-  static const T preOP(T &x, U &alpha){ 
-    auto y = SmartConj(x); 
-    return GenericPackOpsBase<T>::preOP(y,alpha); 
-  } 
-
-};
+  struct noscalar_t   {};
+  struct real_t       { __m256d x;            };
+  struct complex_t    { __m256d x; __m256d y; };
+  struct quaternion_t { __m256d x;            };
 
 
-template<>
-struct GenericPackOpsBase< quaternion<double> > {
-
-  typedef quaternion<double> qd;
-  struct noscalar_t {};
-  struct real_t{ __m256d x; };
-  struct complex_t{ __m256d x; __m256d  y; };
-  struct quaternion_t{ __m256d x; };
-
-  static inline __m256d load(qd *x){ 
-    return LOAD_256D_UNALIGNED_AS(double,x);
-  }
-
-  static inline __m256d load(){ return _mm256_setzero_pd(); }
-
-  static inline void store(qd* x, __m256d &y) {
-    STORE_256D_ALIGNED_AS(double,x,y);
-  }
 
   static inline noscalar_t cacheScalar(){ return noscalar_t(); }
 
@@ -99,8 +63,79 @@ struct GenericPackOpsBase< quaternion<double> > {
     return complex_t{ alpha, alpha_C };
   }
 
-  static inline const quaternion_t cacheScalar( qd& alpha ) {
+  static inline const quaternion_t cacheScalar( quaternion<double>& alpha ) {
     return quaternion_t{LOAD_256D_UNALIGNED_AS(double,&alpha)};
+  }
+
+
+};
+
+
+
+
+template <typename T, typename _TypeWrapper>
+struct GenericPackOpsBase {
+
+  typedef _TypeWrapper TypeWrapper;
+
+  typedef typename _TypeWrapper::load_t     load_t;
+  typedef typename _TypeWrapper::noscalar_t noscalar_t;
+
+  static load_t load(T* x){ return load_t(*x); }
+  static load_t load()    { return load_t(0.); }
+
+  static void store(T* x, load_t y){ *x = y; }
+
+
+  template <typename U>
+  static load_t preOP(load_t &x, U &alpha){ return alpha * x; } 
+
+  static load_t preOP(load_t &x, noscalar_t &z) { return x; }
+
+
+};
+
+template <typename T>
+struct GenericPackOps2 : 
+  public GenericPackOpsBase<T,GenericTypeWrapper<T>> {
+
+  static T OP1(T &x1, T &x2) { return x1; }
+  static T OP2(T &x1, T &x2) { return x2; }
+
+};
+
+template <typename T>
+struct ConjPackOps2 : public GenericPackOps2<T> {
+
+  template <typename U>
+  static const T preOP(T &x, U &alpha){ 
+    auto y = SmartConj(x); 
+    return GenericPackOpsBase<T,GenericTypeWrapper<T>>::preOP(y,alpha); 
+  } 
+
+};
+
+
+template<>
+struct GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
+
+  typedef quaternion<double>    qd;
+  typedef AVX64BitTypeWrapper   TypeWrapper;
+
+  typedef typename TypeWrapper::noscalar_t noscalar_t;
+  typedef typename TypeWrapper::real_t real_t;
+  typedef typename TypeWrapper::complex_t complex_t;
+  typedef typename TypeWrapper::quaternion_t quaternion_t;
+
+
+  static inline __m256d load(qd *x){ 
+    return LOAD_256D_UNALIGNED_AS(double,x);
+  }
+
+  static inline __m256d load(){ return _mm256_setzero_pd(); }
+
+  static inline void store(qd* x, __m256d &y) {
+    STORE_256D_ALIGNED_AS(double,x,y);
   }
 
 
@@ -118,9 +153,11 @@ struct GenericPackOpsBase< quaternion<double> > {
   }
 
 
+
 };
 
-struct GenericPackOps_T1 : public GenericPackOpsBase< quaternion<double> > {
+struct GenericPackOps_T1 : 
+  public GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
 
   static inline __m256d OP1(__m256d &x1, __m256d &x2) {
     return _mm256_permute2f128_pd(x1,x2, 0x20);
@@ -142,7 +179,8 @@ struct ConjPackOps_T1 : public GenericPackOps_T1 {
 
 };
 
-struct GenericPackOps_T2 : public GenericPackOpsBase< quaternion<double> > {
+struct GenericPackOps_T2 : 
+  public GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
 
   static inline __m256d OP1(__m256d &x1, __m256d &x2) {
     return _mm256_unpacklo_pd(x1, x2);
@@ -183,7 +221,7 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
   _x  = X;
   _xp = Xp;
 
-  auto alpha = PackOps::cacheScalar(args...);
+  auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
 
   j = N / 2;
 
@@ -253,7 +291,7 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
   _x = X;
   _xp = Xp;
 
-  auto alpha = PackOps::cacheScalar(args...);
+  auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
 
   i = M / 2;
   if( i > 0 )
