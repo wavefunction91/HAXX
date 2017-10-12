@@ -57,7 +57,8 @@ struct ConjPackOps2 : public GenericPackOps2<T> {
 };
 
 
-struct QDPackOpsBase {
+template<>
+struct GenericPackOpsBase< quaternion<double> > {
 
   typedef quaternion<double> qd;
   struct noscalar_t {};
@@ -119,7 +120,7 @@ struct QDPackOpsBase {
 
 };
 
-struct GenericPackOps_T1 : public QDPackOpsBase {
+struct GenericPackOps_T1 : public GenericPackOpsBase< quaternion<double> > {
 
   static inline __m256d OP1(__m256d &x1, __m256d &x2) {
     return _mm256_permute2f128_pd(x1,x2, 0x20);
@@ -136,12 +137,12 @@ struct ConjPackOps_T1 : public GenericPackOps_T1 {
 
   template <typename U>
   static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return QDPackOpsBase::preOP(y,z);
+    auto y = QCONJ_256D(x); return GenericPackOps_T1::preOP(y,z);
   }
 
 };
 
-struct GenericPackOps_T2 : public QDPackOpsBase {
+struct GenericPackOps_T2 : public GenericPackOpsBase< quaternion<double> > {
 
   static inline __m256d OP1(__m256d &x1, __m256d &x2) {
     return _mm256_unpacklo_pd(x1, x2);
@@ -159,7 +160,7 @@ struct ConjPackOps_T2 : public GenericPackOps_T2 {
 
   template <typename U>
   static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return QDPackOpsBase::preOP(y,z);
+    auto y = QCONJ_256D(x); return GenericPackOps_T2::preOP(y,z);
   }
 
 };
@@ -202,8 +203,8 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       x1 = PackOps::preOP(x1,alpha);
       x2 = PackOps::preOP(x2,alpha);
 
-      auto  x1_t = PackOps::OP1(x1, x2);
-      auto  x2_t = PackOps::OP2(x1, x2);
+      auto x1_t = PackOps::OP1(x1, x2);
+      auto x2_t = PackOps::OP2(x1, x2);
 
       PackOps::store(_xp,   x1_t);
       PackOps::store(_xp+1, x2_t);
@@ -226,8 +227,8 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       x1 = PackOps::preOP(x1,alpha);
       x2 = PackOps::preOP(x2,alpha);
 
-      auto  x1_t = PackOps::OP1(x1, x2);
-      auto  x2_t = PackOps::OP2(x1, x2);
+      auto x1_t = PackOps::OP1(x1, x2);
+      auto x2_t = PackOps::OP2(x1, x2);
 
       PackOps::store(_xp,   x1_t);
       PackOps::store(_xp+1, x2_t);
@@ -270,8 +271,8 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       x1 = PackOps::preOP(x1,alpha);
       x2 = PackOps::preOP(x2,alpha);
 
-      auto  x1_t = PackOps::OP1(x1, x2);
-      auto  x2_t = PackOps::OP2(x1, x2);
+      auto x1_t = PackOps::OP1(x1, x2);
+      auto x2_t = PackOps::OP2(x1, x2);
 
       PackOps::store(_xp,   x1_t);
       PackOps::store(_xp+1, x2_t);
@@ -291,8 +292,8 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       x1 = PackOps::preOP(x1,alpha);
       x2 = PackOps::preOP(x2,alpha);
 
-      auto  x1_t = PackOps::OP1(x1, x2);
-      auto  x2_t = PackOps::OP2(x1, x2);
+      auto x1_t = PackOps::OP1(x1, x2);
+      auto x2_t = PackOps::OP2(x1, x2);
 
       PackOps::store(_xp,   x1_t);
       PackOps::store(_xp+1, x2_t);
