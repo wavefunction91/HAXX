@@ -10,7 +10,112 @@
 #include "haxx.hpp"
 #include "util/simd.hpp"
 
+#include <tuple>
+
+
+
 namespace HAXX {
+
+
+
+
+// Helper functions
+template <typename T, size_t... Is>
+constexpr auto ptrSeq_impl(T seed, size_t INC, std::index_sequence<Is...>) {
+
+  return std::make_tuple( (seed + Is*INC)... );
+
+};
+
+template <size_t N, typename T>
+constexpr auto ptrSeq(T seed, size_t INC) {
+
+  return ptrSeq_impl(seed,INC,std::make_index_sequence<N>{});
+
+};
+
+
+template < typename F, class Tuple, size_t... Is>
+constexpr auto apply_impl( const F &op, Tuple &t, std::index_sequence<Is...>) {
+
+  return std::make_tuple( op(std::get<Is>(t))... );
+
+};
+
+
+
+template < typename F, class Tuple>
+constexpr auto apply( const F &op, Tuple &t) {
+
+  return apply_impl(op,t,
+    std::make_index_sequence<std::tuple_size<Tuple>::value>{});
+
+};
+
+
+template < size_t N, typename F, class Tuple, 
+  typename std::enable_if_t< (N > 0), int> = 0 >
+constexpr auto apply_n_impl( const F &op, const Tuple &prev ) {
+
+  return std::tuple_cat( apply_n_impl<N-1>(op,prev), std::make_tuple(op()) );
+
+};
+
+template < size_t N, typename F, class Tuple, 
+  typename std::enable_if_t< (N == 0), int> = 0 >
+constexpr auto apply_n_impl( const F &op, const Tuple &prev ) {
+
+  return apply(op,prev);
+
+};
+
+template < size_t N, typename F, class Tuple >
+constexpr auto apply_n( const F &op, const Tuple &t ) {
+
+  static_assert( 
+    (N >= std::tuple_size<Tuple>::value), 
+    "N must be >= sizeof(Tuple)"
+  );
+
+  return apply_n_impl<N - std::tuple_size<Tuple>::value>(op,t); 
+
+};
+
+
+
+template <typename F, typename T, typename U, typename... Args>
+constexpr inline std::enable_if_t<(sizeof...(Args) > 0),void> 
+  arrExc_impl( const F &op, T *ptr, U &param, Args... args) {
+
+  op(ptr,param); arrExc_impl(op,++ptr,args...);
+
+};
+
+template <typename F, typename T, typename U, typename... Args>
+constexpr inline void arrExc_impl( const F &op, T *ptr, U &param) {
+
+  op(ptr,param); 
+
+};
+
+template <typename F, typename T, class Tuple, size_t... Is>
+constexpr inline void arrExc_impl( const F &op, T* ptr, Tuple &t, 
+  std::index_sequence<Is...>) {
+
+  arrExc_impl(op,ptr,(std::get<Is>(t))...);
+
+};
+
+template <typename F, typename T, class Tuple>
+constexpr inline void arrExc(const F &op, T* ptr, Tuple &t) {
+
+  arrExc_impl(op,ptr,t,
+    std::make_index_sequence<std::tuple_size<Tuple>::value>{});
+
+}
+
+
+
 
 
 template <typename T>
@@ -26,6 +131,8 @@ struct GenericTypeWrapper {
 
   static noscalar_t cacheScalar(){ return noscalar_t{}; }
 
+  template <typename U>
+  static U conjOp( U &t ) { return SmartConj(t); }
 
 };
 
@@ -67,14 +174,15 @@ struct AVX64BitTypeWrapper {
     return quaternion_t{LOAD_256D_UNALIGNED_AS(double,&alpha)};
   }
 
+  static __m256d conjOp( __m256d &t ) { return QCONJ_256D(t); }
 
 };
 
 
 
 
-template <typename T, typename _TypeWrapper>
-struct GenericPackOpsBase {
+template <typename T, typename _TypeWrapper = GenericTypeWrapper<T> >
+struct GenericPackOps {
 
   typedef _TypeWrapper TypeWrapper;
 
@@ -92,32 +200,30 @@ struct GenericPackOpsBase {
 
   static load_t preOP(load_t &x, noscalar_t &z) { return x; }
 
+  template <class Tuple>
+  static Tuple OP(Tuple &t){ return t; }
 
 };
 
-template <typename T>
-struct GenericPackOps2 : 
-  public GenericPackOpsBase<T,GenericTypeWrapper<T>> {
 
-  static T OP1(T &x1, T &x2) { return x1; }
-  static T OP2(T &x1, T &x2) { return x2; }
+template < typename T, typename _TypeWrapper = GenericTypeWrapper<T>,
+  template<typename,typename> class PackOps = GenericPackOps >
+struct ConjPackOps : public PackOps<T,_TypeWrapper> {
 
-};
-
-template <typename T>
-struct ConjPackOps2 : public GenericPackOps2<T> {
+  typedef typename  PackOps<T,_TypeWrapper>::load_t load_t;
 
   template <typename U>
-  static const T preOP(T &x, U &alpha){ 
-    auto y = SmartConj(x); 
-    return GenericPackOpsBase<T,GenericTypeWrapper<T>>::preOP(y,alpha); 
-  } 
+  static load_t preOP(load_t &x, U &alpha){ 
+    auto y = _TypeWrapper::conjOp(x); 
+    return PackOps<T,_TypeWrapper>::preOP(y,alpha); 
+  }
 
 };
+
 
 
 template<>
-struct GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
+struct GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
 
   typedef quaternion<double>    qd;
   typedef AVX64BitTypeWrapper   TypeWrapper;
@@ -126,6 +232,7 @@ struct GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
   typedef typename TypeWrapper::real_t real_t;
   typedef typename TypeWrapper::complex_t complex_t;
   typedef typename TypeWrapper::quaternion_t quaternion_t;
+  typedef typename TypeWrapper::load_t     load_t;
 
 
   static inline __m256d load(qd *x){ 
@@ -156,52 +263,58 @@ struct GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
 
 };
 
-struct GenericPackOps_T1 : 
-  public GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
 
-  static inline __m256d OP1(__m256d &x1, __m256d &x2) {
-    return _mm256_permute2f128_pd(x1,x2, 0x20);
+template < typename T = quaternion<double>, 
+  typename _TypeWrapper = AVX64BitTypeWrapper > struct GenericPackOps_T1;
+
+template < typename T = quaternion<double>, 
+  typename _TypeWrapper = AVX64BitTypeWrapper > struct GenericPackOps_T2;
+
+
+template <typename T = quaternion<double>, 
+  typename _TypeWrapper = AVX64BitTypeWrapper>
+using ConjPackOps_T1 = ConjPackOps<T,_TypeWrapper,GenericPackOps_T1>;
+
+template <typename T = quaternion<double>, 
+  typename _TypeWrapper = AVX64BitTypeWrapper>
+using ConjPackOps_T2 = ConjPackOps<T,_TypeWrapper,GenericPackOps_T2>;
+
+
+
+
+template<>
+struct GenericPackOps_T1< quaternion<double>, AVX64BitTypeWrapper >: 
+  public GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
+
+  using twoTuple = std::tuple<__m256d,__m256d>;
+
+  static inline twoTuple  OP( twoTuple &t ) {
+    return std::make_tuple(
+      _mm256_permute2f128_pd(std::get<0>(t),std::get<1>(t), 0x20),
+      _mm256_permute2f128_pd(std::get<0>(t),std::get<1>(t), 0x31)
+    );
   }
 
-  static inline __m256d OP2(__m256d &x1, __m256d &x2) {
-    return _mm256_permute2f128_pd(x1,x2, 0x31);
+};
+
+
+
+
+template<>
+struct GenericPackOps_T2< quaternion<double>, AVX64BitTypeWrapper >: 
+  public GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
+
+  using twoTuple = std::tuple<__m256d,__m256d>;
+
+  static inline twoTuple  OP( twoTuple &t ) {
+    return std::make_tuple(
+      _mm256_unpacklo_pd(std::get<0>(t),std::get<1>(t)),
+      _mm256_unpackhi_pd(std::get<0>(t),std::get<1>(t))
+    );
   }
 
 };
 
-
-struct ConjPackOps_T1 : public GenericPackOps_T1 {
-
-  template <typename U>
-  static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return GenericPackOps_T1::preOP(y,z);
-  }
-
-};
-
-struct GenericPackOps_T2 : 
-  public GenericPackOpsBase< quaternion<double>, AVX64BitTypeWrapper > {
-
-  static inline __m256d OP1(__m256d &x1, __m256d &x2) {
-    return _mm256_unpacklo_pd(x1, x2);
-  }
-
-  static inline __m256d OP2(__m256d &x1, __m256d &x2) {
-    return _mm256_unpackhi_pd(x1, x2);
-  }
-
-};
-
-
-
-struct ConjPackOps_T2 : public GenericPackOps_T2 {
-
-  template <typename U>
-  static __m256d preOP(__m256d &x, U &z) {
-    auto y = QCONJ_256D(x); return GenericPackOps_T2::preOP(y,z);
-  }
-
-};
 
 
 
@@ -209,6 +322,13 @@ struct ConjPackOps_T2 : public GenericPackOps_T2 {
 template <typename T, typename PackOps, typename... Args>
 void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
   const HAXX_INT LDX, T *Xp, Args... args) {
+
+
+  // Sanity Check
+  static_assert(
+    (sizeof(PackOps::load_t) % sizeof(T)) == 0,
+    "The size of the loaded variable must be an integer multiple of T" 
+  );
 
 
   HAXX_INT i,j;
@@ -223,32 +343,34 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
   auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
 
-  j = N / 2;
 
+  auto load_preOP = 
+    [&](auto &t){ 
+      auto x = PackOps::load(t);        
+      return PackOps::preOP(x,alpha);
+    };
+
+  auto ptrInc = [](auto &t){ return t + 1; };
+
+  auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
+
+  j = N / 2;
   if( j > 0 )
   do {
 
-    _x1 = _x;
-    _x2 = _x1 + LDX;
- 
+    auto xCol = ptrSeq<2>(_x,LDX);
+
     _x += 2*LDX;
 
     for( i = 0; i < M; i++ ) {
 
-      auto x1 = PackOps::load(_x1);
-      auto x2 = PackOps::load(_x2);
+      auto x   = apply( load_preOP, xCol );
+      auto x_t = PackOps::OP(x);
 
-      x1 = PackOps::preOP(x1,alpha);
-      x2 = PackOps::preOP(x2,alpha);
+      arrExc( store, _xp, x_t );
 
-      auto x1_t = PackOps::OP1(x1, x2);
-      auto x2_t = PackOps::OP2(x1, x2);
-
-      PackOps::store(_xp,   x1_t);
-      PackOps::store(_xp+1, x2_t);
-
+      xCol = apply( ptrInc, xCol );
       _xp += 2;
-      _x1++; _x2++;
 
     }
     
@@ -257,6 +379,14 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
   } while(j > 0);
 
   if( N % 2 ) {
+
+    #ifdef _NDEBUG
+      #undef _NDEBUG
+      assert(false /* This has yet to be worked out */);
+      #define _NDEBUG
+    #endif
+
+#if 0
     for( i = 0; i < M; i++ ) {
 
       auto x1 = PackOps::load(_x);
@@ -274,6 +404,8 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       _xp +=2; _x++;
 
     }
+#endif
+
   }
 
 }
@@ -293,35 +425,47 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
   auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
 
+  auto load_preOP = 
+    [&](auto &t){ 
+      auto x = PackOps::load(t);        
+      return PackOps::preOP(x,alpha);
+    };
+
+  auto ptrInc = [&](auto &t){ return t + LDX; };
+
+  auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
+
   i = M / 2;
   if( i > 0 )
   do {
 
-    _x1 = _x;
-    _x += 2;
+    auto xCol = ptrSeq<2>(_x,1);
 
+    _x += 2;
 
     for( j = 0; j < N; j++ ) {
 
-      auto x1 = PackOps::load(_x1    );
-      auto x2 = PackOps::load(_x1 + 1);
+      auto x   = apply( load_preOP, xCol );
+      auto x_t = PackOps::OP(x);
+      arrExc( store, _xp, x_t );
 
-      x1 = PackOps::preOP(x1,alpha);
-      x2 = PackOps::preOP(x2,alpha);
+      xCol = apply( ptrInc, xCol );
+      _xp += 2;
 
-      auto x1_t = PackOps::OP1(x1, x2);
-      auto x2_t = PackOps::OP2(x1, x2);
-
-      PackOps::store(_xp,   x1_t);
-      PackOps::store(_xp+1, x2_t);
-
-      _xp += 2; _x1 += LDX;
     }
 
     i--;
   } while( i > 0 );
 
   if( M % 2 ) {
+
+    #ifdef _NDEBUG
+      #undef _NDEBUG
+      assert(false /* This has yet to be worked out */);
+      #define _NDEBUG
+    #endif
+
+#if 0
     for( j = 0; j < N; j++ ) {
 
       auto x1 = PackOps::load(_x);
@@ -339,6 +483,8 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       _x += LDX; _xp += 2;
 
     }
+#endif
+
   }
 
 };
