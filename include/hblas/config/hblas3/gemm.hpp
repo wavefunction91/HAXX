@@ -56,7 +56,9 @@
 
 
 // Determine packing utility for GEMM
-// See pack.hpp
+
+#include "hblas/pack/pack.hpp"
+
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
   #define BPACKT  NPACK< NR, _AMATF, GenericPackOps_T2<> >    

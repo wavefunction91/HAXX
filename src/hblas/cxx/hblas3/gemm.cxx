@@ -21,8 +21,6 @@
 
 
 
-#include "gemm_pack_4.hpp"
-#include "gemm_pack_2.hpp"
 
 
 
