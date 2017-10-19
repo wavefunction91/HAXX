@@ -9,110 +9,13 @@
 
 #include "haxx.hpp"
 #include "util/simd.hpp"
-
-#include <tuple>
+#include "util/boilerplate.hpp"
 
 
 
 namespace HAXX {
 
 
-
-
-// Helper functions
-template <typename T, size_t... Is>
-constexpr auto ptrSeq_impl(T seed, size_t INC, std::index_sequence<Is...>) {
-
-  return std::make_tuple( (seed + Is*INC)... );
-
-};
-
-template <size_t N, typename T>
-constexpr auto ptrSeq(T seed, size_t INC) {
-
-  return ptrSeq_impl(seed,INC,std::make_index_sequence<N>{});
-
-};
-
-
-template < typename F, class Tuple, size_t... Is>
-constexpr auto apply_impl( const F &op, Tuple &t, std::index_sequence<Is...>) {
-
-  return std::make_tuple( op(std::get<Is>(t))... );
-
-};
-
-
-
-template < typename F, class Tuple>
-constexpr auto apply( const F &op, Tuple &t) {
-
-  return apply_impl(op,t,
-    std::make_index_sequence<std::tuple_size<Tuple>::value>{});
-
-};
-
-
-template < size_t N, typename F, class Tuple, 
-  typename std::enable_if_t< (N > 0), int> = 0 >
-constexpr auto apply_n_impl( const F &op, const Tuple &prev ) {
-
-  return std::tuple_cat( apply_n_impl<N-1>(op,prev), std::make_tuple(op()) );
-
-};
-
-template < size_t N, typename F, class Tuple, 
-  typename std::enable_if_t< (N == 0), int> = 0 >
-constexpr auto apply_n_impl( const F &op, const Tuple &prev ) {
-
-  return apply(op,prev);
-
-};
-
-template < size_t N, typename F, class Tuple >
-constexpr auto apply_n( const F &op, const Tuple &t ) {
-
-  static_assert( 
-    (N >= std::tuple_size<Tuple>::value), 
-    "N must be >= sizeof(Tuple)"
-  );
-
-  return apply_n_impl<N - std::tuple_size<Tuple>::value>(op,t); 
-
-};
-
-
-
-template <typename F, typename T, typename U, typename... Args>
-constexpr inline std::enable_if_t<(sizeof...(Args) > 0),void> 
-  arrExc_impl( const F &op, T *ptr, U &param, Args... args) {
-
-  op(ptr,param); arrExc_impl(op,++ptr,args...);
-
-};
-
-template <typename F, typename T, typename U, typename... Args>
-constexpr inline void arrExc_impl( const F &op, T *ptr, U &param) {
-
-  op(ptr,param); 
-
-};
-
-template <typename F, typename T, class Tuple, size_t... Is>
-constexpr inline void arrExc_impl( const F &op, T* ptr, Tuple &t, 
-  std::index_sequence<Is...>) {
-
-  arrExc_impl(op,ptr,(std::get<Is>(t))...);
-
-};
-
-template <typename F, typename T, class Tuple>
-constexpr inline void arrExc(const F &op, T* ptr, Tuple &t) {
-
-  arrExc_impl(op,ptr,t,
-    std::make_index_sequence<std::tuple_size<Tuple>::value>{});
-
-}
 
 
 
@@ -319,16 +222,17 @@ struct GenericPackOps_T2< quaternion<double>, AVX64BitTypeWrapper >:
 
 
 
-template <typename T, typename PackOps, typename... Args>
-void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
+template <size_t PK, typename T, typename PackOps, typename... Args>
+void TPACK(const HAXX_INT M, const HAXX_INT N, T *X,
   const HAXX_INT LDX, T *Xp, Args... args) {
 
 
   // Sanity Check
   static_assert(
-    (sizeof(PackOps::load_t) % sizeof(T)) == 0,
+    (sizeof(typename PackOps::load_t) % sizeof(T)) == 0,
     "The size of the loaded variable must be an integer multiple of T" 
   );
+
 
 
   HAXX_INT i,j;
@@ -354,13 +258,13 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
   auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
 
-  j = N / 2;
+  j = N / PK;
   if( j > 0 )
   do {
 
-    auto xCol = ptrSeq<2>(_x,LDX);
+    auto xCol = ptrSeq<PK>(_x,LDX);
 
-    _x += 2*LDX;
+    _x += PK*LDX;
 
     for( i = 0; i < M; i++ ) {
 
@@ -370,7 +274,7 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       arrExc( store, _xp, x_t );
 
       xCol = apply( ptrInc, xCol );
-      _xp += 2;
+      _xp += PK;
 
     }
     
@@ -378,7 +282,7 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
   } while(j > 0);
 
-  if( N % 2 ) {
+  if( N % PK ) {
 
     #ifdef _NDEBUG
       #undef _NDEBUG
@@ -410,11 +314,16 @@ void TPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
 }
 
-// NPACK2, no scalar
-template <typename T, typename PackOps, typename... Args>
-inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X, 
+// NPACK
+template <size_t PK, typename T, typename PackOps, typename... Args>
+inline void NPACK(const HAXX_INT M, const HAXX_INT N, T *X, 
   const HAXX_INT LDX, T *Xp, Args... args) {
 
+  // Sanity Check
+  static_assert(
+    (sizeof(typename PackOps::load_t) % sizeof(T)) == 0,
+    "The size of the loaded variable must be an integer multiple of T" 
+  );
 
   HAXX_INT i,j;
   T *_x,*_x1,*_x2;
@@ -435,13 +344,13 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
 
   auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
 
-  i = M / 2;
+  i = M / PK;
   if( i > 0 )
   do {
 
-    auto xCol = ptrSeq<2>(_x,1);
+    auto xCol = ptrSeq<PK>(_x,1);
 
-    _x += 2;
+    _x += PK;
 
     for( j = 0; j < N; j++ ) {
 
@@ -450,14 +359,14 @@ inline void NPACK2(const HAXX_INT M, const HAXX_INT N, T *X,
       arrExc( store, _xp, x_t );
 
       xCol = apply( ptrInc, xCol );
-      _xp += 2;
+      _xp += PK;
 
     }
 
     i--;
   } while( i > 0 );
 
-  if( M % 2 ) {
+  if( M % PK ) {
 
     #ifdef _NDEBUG
       #undef _NDEBUG

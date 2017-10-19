@@ -44,7 +44,7 @@
 //#define _FACTOR_ALPHA_IN_B_PACK
 
 #if defined(_FACTOR_ALPHA_IN_A_PACK) && defined(_FACTOR_ALPHA_IN_B_PACK)
-  #error "Cannot factor ALPHA into both A and B packs
+  #error "Cannot factor ALPHA into both A and B packs"
 #endif
 
 
@@ -59,51 +59,33 @@
 // See pack.hpp
 #ifdef _FACTOR_TRANSPOSE_INTO_B_PACK
 
-  #if NR == 2
-    #define BPACKT  NPACK2< _AMATF, GenericPackOps_T2<> >    
-    #define BPACKCT NPACK2< _AMATF, ConjPackOps_T2   <> >
-    #define BPACKR  TPACK2< _AMATF, ConjPackOps_T2   <> >
-    #define BPACK   TPACK2< _AMATF, GenericPackOps_T2<> >      
-  #endif
+  #define BPACKT  NPACK< NR, _AMATF, GenericPackOps_T2<> >    
+  #define BPACKCT NPACK< NR, _AMATF, ConjPackOps_T2   <> >
+  #define BPACKR  TPACK< NR, _AMATF, ConjPackOps_T2   <> >
+  #define BPACK   TPACK< NR, _AMATF, GenericPackOps_T2<> >      
 
 #else
 
-  #if NR == 4
-    #define BPACKT  NPACK4  
-    #define BPACKCT NPACKC4
-    #define BPACKR  TPACKC4 
-    #define BPACK   TPACK4   
-  #elif NR == 2
-    #define BPACKT  NPACK2< _BMATF, GenericPackOps<_BMATF> >
-    #define BPACKCT NPACK2< _BMATF, ConjPackOps   <_BMATF> >
-    #define BPACKR  TPACK2< _BMATF, ConjPackOps   <_BMATF> >
-    #define BPACK   TPACK2< _BMATF, GenericPackOps<_BMATF> >   
-  #endif
+  #define BPACKT  NPACK< NR, _BMATF, GenericPackOps<_BMATF> >
+  #define BPACKCT NPACK< NR, _BMATF, ConjPackOps   <_BMATF> >
+  #define BPACKR  TPACK< NR, _BMATF, ConjPackOps   <_BMATF> >
+  #define BPACK   TPACK< NR, _BMATF, GenericPackOps<_BMATF> >   
 
 #endif
 
 #ifdef _FACTOR_TRANSPOSE_INTO_A_PACK
 
-  #if MR == 2
-    #define APACKT  TPACK2< _AMATF, GenericPackOps_T1<> > 
-    #define APACKCT TPACK2< _AMATF, ConjPackOps_T1   <> >
-    #define APACKR  NPACK2< _AMATF, ConjPackOps_T1   <> >
-    #define APACK   NPACK2< _AMATF, GenericPackOps_T1<> >   
-  #endif
+  #define APACKT  TPACK< MR, _AMATF, GenericPackOps_T1<> > 
+  #define APACKCT TPACK< MR, _AMATF, ConjPackOps_T1   <> >
+  #define APACKR  NPACK< MR, _AMATF, ConjPackOps_T1   <> >
+  #define APACK   NPACK< MR, _AMATF, GenericPackOps_T1<> >   
 
 #else
 
-  #if MR == 4
-    #define APACKT  TPACK4  
-    #define APACKCT TPACKC4
-    #define APACKR  NPACKC4 
-    #define APACK   NPACK4   
-  #elif MR == 2
-    #define APACKT  TPACK2< _AMATF, GenericPackOps<_AMATF> >
-    #define APACKCT TPACK2< _AMATF, ConjPackOps   <_AMATF> >
-    #define APACKR  NPACK2< _AMATF, ConjPackOps   <_AMATF> >
-    #define APACK   NPACK2< _AMATF, GenericPackOps<_AMATF> >    
-  #endif
+  #define APACKT  TPACK< MR, _AMATF, GenericPackOps<_AMATF> >
+  #define APACKCT TPACK< MR, _AMATF, ConjPackOps   <_AMATF> >
+  #define APACKR  NPACK< MR, _AMATF, ConjPackOps   <_AMATF> >
+  #define APACK   NPACK< MR, _AMATF, GenericPackOps<_AMATF> >    
 
 #endif
 
