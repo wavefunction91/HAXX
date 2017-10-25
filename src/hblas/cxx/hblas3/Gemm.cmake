@@ -1,8 +1,8 @@
 # GEMM functions
-add_library( hblas_gemmdd OBJECT gemm.cxx )
-add_library( hblas_gemmdz OBJECT gemm.cxx )
-add_library( hblas_gemmzd OBJECT gemm.cxx )
-add_library( hblas_gemmzz OBJECT gemm.cxx )
+add_library( hblas_gemmdd OBJECT gemm.cxx kern.cxx)
+add_library( hblas_gemmdz OBJECT gemm.cxx kern.cxx)
+add_library( hblas_gemmzd OBJECT gemm.cxx kern.cxx)
+add_library( hblas_gemmzz OBJECT gemm.cxx kern.cxx)
 
 target_compile_definitions( hblas_gemmdd PRIVATE "AMATF=DQUATERNION" "BMATF=DQUATERNION" "ALPHAF=DOUBLE"   "BETAF=DOUBLE"   )
 target_compile_definitions( hblas_gemmdz PRIVATE "AMATF=DQUATERNION" "BMATF=DQUATERNION" "ALPHAF=DOUBLE"   "BETAF=DCOMPLEX" )

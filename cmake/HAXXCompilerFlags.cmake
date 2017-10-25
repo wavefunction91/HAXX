@@ -1,7 +1,7 @@
 include(CheckCXXCompilerFlag)
 include(CheckFortranCompilerFlag)
 
-# Handle C++11 Flags
+# Handle C++14 Flags
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
 
@@ -22,6 +22,15 @@ else()
 endif()
 
 
+# Check IPO
+check_cxx_compiler_flag("-ipo" CXX_USES_IPO)
+
+if( CXX_USES_IPO )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ipo" )
+endif()
+
+
+# Host SIMD flags
 if( HAXX_USE_HOST_SIMD )
 
   # Determine CXX opt flags
