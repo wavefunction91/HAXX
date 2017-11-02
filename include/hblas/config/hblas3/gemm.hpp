@@ -11,10 +11,7 @@
 #define __INCLUDED_HBLAS_CONFIG_HBLAS3_GEMM_HPP
 
 
-// This file only makes sense if types.hpp has been included
-#ifndef __INCLUDED_HBLAS_CONFIG_TYPES_HPP
-  #error "types.hpp must be included before gemm.hpp in config"
-#endif
+#include "hblas/config/types.hpp"
 
 // Caching dimensions
 #define MC 64
@@ -24,19 +21,6 @@
 // Register block size
 #define MR 2
 #define NR 2
-
-
-// Only allow for certian values of MR 
-// (per implemented packing utilities)
-#if MR != 4 && MR != 2
-  #error MR must be 4 or 2
-#endif
-
-// Only allow for certian values of NR 
-// (per implemented packing utilities)
-#if NR != 4 && NR != 2
-  #error NR must be 4 or 2
-#endif
 
 
 // Determine where to factor ALPHA scaling

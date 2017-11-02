@@ -140,16 +140,13 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
 // Turn off Kernel evaluation
 #if 1
         for( jj = 0; jj < nJ; jj += NR ) {
-
-          //nJJJ = std::min(NR,jj-nJ);
-          nJJJ = NR;
+          nJJJ = std::min(NR,nJ-jj);
 
           smallC = CBlk;
           smallA = aPack;
 
           for( ii = 0; ii < nI; ii += MR ) {
-            //nIII = std::min(MR,ii-nI);
-            nIII = MR;
+            nIII = std::min(MR,nI-ii);
 
             // Perform kernel operation
             Kern(nIII,nJJJ,nK,smallA,BL1,smallC,LDC);

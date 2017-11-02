@@ -27,7 +27,7 @@ C
      $     ( (ALPHA.EQ.ZERO) .AND. (BETA.EQ.ONE) ) ) RETURN
 C
       NOCONJ = LSAME('T',TRANS)
-      IF ( LSAME('T',TRANS) ) THEN
+      IF ( LSAME('N',TRANS) ) THEN
         LENX = N
         LENY = M
       ELSE

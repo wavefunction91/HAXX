@@ -31,11 +31,20 @@ template<>
 
   __m256d t1,t2,t3,t4;
 
+  const bool M2 = (M == 2);
+  const bool N2 = (N == 2);
+
   // Load C
   __m256d c00 = LOAD_256D_UNALIGNED_AS(double,C      );
-  __m256d c10 = LOAD_256D_UNALIGNED_AS(double,C+1    );
-  __m256d c01 = LOAD_256D_UNALIGNED_AS(double,C+LDC  );
-  __m256d c11 = LOAD_256D_UNALIGNED_AS(double,C+LDC+1);
+
+  __m256d c10 = M2 ? LOAD_256D_UNALIGNED_AS(double,C+1    ) :
+                           _mm256_setzero_pd();
+
+  __m256d c01 = N2 ? LOAD_256D_UNALIGNED_AS(double,C+LDC  ) :
+                           _mm256_setzero_pd();
+
+  __m256d c11 = ( M2 and N2 ) ?  LOAD_256D_UNALIGNED_AS(double,C+LDC+1) :
+                                 _mm256_setzero_pd();
 
   _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
 
@@ -116,9 +125,9 @@ template<>
   _MM_TRANSPOSE_4x4_PD(c00,c01,c10,c11,t1,t2,t3,t4);
 
   STORE_256D_UNALIGNED_AS(double,C      ,c00);
-  STORE_256D_UNALIGNED_AS(double,C+1    ,c10);
-  STORE_256D_UNALIGNED_AS(double,C+LDC  ,c01);
-  STORE_256D_UNALIGNED_AS(double,C+LDC+1,c11);
+  if( M2 ) STORE_256D_UNALIGNED_AS(double,C+1    ,c10);
+  if( N2 ) STORE_256D_UNALIGNED_AS(double,C+LDC  ,c01);
+  if( M2 and N2 ) STORE_256D_UNALIGNED_AS(double,C+LDC+1,c11);
   
 
 }
