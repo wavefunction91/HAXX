@@ -25,7 +25,7 @@ endif()
 # Check IPO
 check_cxx_compiler_flag("-ipo" CXX_USES_IPO)
 
-if( CXX_USES_IPO )
+if( CXX_USES_IPO AND NOT DISABLE_IPO )
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ipo" )
 endif()
 

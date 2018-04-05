@@ -11,6 +11,7 @@
 #define __INCLUDED_HBLAS_PACK_PACKOPS_HPP
 
 #include "haxx.hpp"
+#include "util/types.hpp"
 #include "util/simd.hpp"
 
 namespace HAXX {
@@ -22,7 +23,7 @@ namespace HAXX {
    *
    *  Will work for an arbitrary data type
    */ 
-  template <typename T, typename _TypeWrapper = GenericTypeWrapper<T> >
+  template <typename T, typename _TypeWrapper = GenericType<T> >
   struct GenericPackOps {
   
     typedef _TypeWrapper TypeWrapper;
@@ -31,31 +32,26 @@ namespace HAXX {
     typedef typename _TypeWrapper::noscalar_t noscalar_t;
   
 
-    /// Generic implementation of memory load
-    static load_t load(T* x){ return load_t(*x); }
-
-    /**
-     * Accounts for fringe case where the dimension being packed
-     * is not divisible by the packing size. Loads zero
-     */
-    static load_t load()    { return load_t(0.); }
-  
-    /// Generic implementation of store
-    static void store(T* x, load_t y){ *x = y; }
-  
-  
     /**
      *  Generic implementation of scaling operations used prior to internal
      *  operations.
      */
     template <typename U>
-    static load_t preOP(load_t &x, U &alpha){ return alpha * x; } 
+    static load_t preOP(load_t &x, U &alpha){ return Mul(alpha,x); } 
+
+
+    template <typename U, typename... Args>
+    static load_t Load(U &alpha, Args... args) {
+
+      auto x = TypeWrapper::Load(args...);
+      return preOP(x,alpha);
+
+    }
   
     /**
      *  Generic implementation of scaling operations used prior to internal
      *  operations. Case when no scaling is needed.
      */
-    static load_t preOP(load_t &x, noscalar_t &z) { return x; }
   
     /// Generic implementation of (no-op) internal packing operation.
     template <class Tuple>
@@ -70,7 +66,7 @@ namespace HAXX {
    *
    *  The passed TypeWrapper must have conjOp defined.
    */ 
-  template < typename T, typename _TypeWrapper = GenericTypeWrapper<T>,
+  template < typename T, typename _TypeWrapper = GenericType<T>,
     template<typename,typename> class PackOps = GenericPackOps >
   struct ConjPackOps : public PackOps<T,_TypeWrapper> {
   
@@ -78,10 +74,18 @@ namespace HAXX {
   
     template <typename U>
     static load_t preOP(load_t &x, U &alpha){ 
-      auto y = _TypeWrapper::conjOp(x); 
+      auto y = _TypeWrapper::Conj(x); 
       return PackOps<T,_TypeWrapper>::preOP(y,alpha); 
     }
   
+    template <typename U, typename... Args>
+    static load_t Load(U &alpha, Args... args) {
+
+      auto x = _TypeWrapper::Load(args...);
+      return preOP(x,alpha);
+
+    }
+
   };
   
   
@@ -91,10 +95,10 @@ namespace HAXX {
    *  quaternions on AVX / AVX2
    */ 
   template<>
-  struct GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
+  struct GenericPackOps< quaternion<double>, AVXType<double> > {
   
     typedef quaternion<double>    qd;
-    typedef AVX64BitTypeWrapper   TypeWrapper;
+    typedef AVXType<double>       TypeWrapper;
   
     typedef typename TypeWrapper::noscalar_t noscalar_t;
     typedef typename TypeWrapper::real_t real_t;
@@ -103,36 +107,16 @@ namespace HAXX {
     typedef typename TypeWrapper::load_t     load_t;
   
   
-    /// Load quaternion as __m256d
-    static inline __m256d load(qd *x){ 
-      return LOAD_256D_UNALIGNED_AS(double,x);
+    template <typename U>
+    static inline __m256d preOP(__m256d &x, U &z){ return TypeWrapper::Mul(z,x); }
+  
+    template <typename U, typename... Args>
+    static load_t Load(U &alpha, Args... args) {
+
+      auto x = TypeWrapper::Load(args...);
+      return preOP(x,alpha);
+
     }
-  
-    /// Fringe case (see GenericPackOps<T>), bcast 0 to vector
-    static inline __m256d load(){ return _mm256_setzero_pd(); }
-  
-    /// Store quaternion as __m256d
-    static inline void store(qd* x, __m256d &y) {
-      STORE_256D_ALIGNED_AS(double,x,y);
-    }
-  
-  
-    /// (No-op) scaling operation
-    static inline __m256d preOP(__m256d &x, noscalar_t &z){ return x; }
-  
-    /// Real scaling operation
-    static inline __m256d preOP(__m256d &x, real_t     &z){
-      return _mm256_mul_pd(z.x,x);
-    }
-  
-    /// Complex scaling operation
-    static inline __m256d preOP(__m256d &x, complex_t     &z){
-      __m256d p1 = _mm256_mul_pd(x,z.x);
-      __m256d p2 = _mm256_mul_pd(x,z.y);
-  
-      return _mm256_hsub_pd(p1,p2);
-    }
-  
   
   
   };
@@ -143,18 +127,18 @@ namespace HAXX {
 
   
   template < typename T = quaternion<double>, 
-    typename _TypeWrapper = AVX64BitTypeWrapper > struct GenericPackOps_T1;
+    typename _TypeWrapper = AVXType<double> > struct GenericPackOps_T1;
   
   template < typename T = quaternion<double>, 
-    typename _TypeWrapper = AVX64BitTypeWrapper > struct GenericPackOps_T2;
+    typename _TypeWrapper = AVXType<double> > struct GenericPackOps_T2;
   
   
   template <typename T = quaternion<double>, 
-    typename _TypeWrapper = AVX64BitTypeWrapper>
+    typename _TypeWrapper = AVXType<double>>
   using ConjPackOps_T1 = ConjPackOps<T,_TypeWrapper,GenericPackOps_T1>;
   
   template <typename T = quaternion<double>, 
-    typename _TypeWrapper = AVX64BitTypeWrapper>
+    typename _TypeWrapper = AVXType<double>>
   using ConjPackOps_T2 = ConjPackOps<T,_TypeWrapper,GenericPackOps_T2>;
   
   
@@ -168,8 +152,8 @@ namespace HAXX {
    *  AVX / AVX2
    */ 
   template<>
-  struct GenericPackOps_T1< quaternion<double>, AVX64BitTypeWrapper >: 
-    public GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
+  struct GenericPackOps_T1< quaternion<double>, AVXType<double> >: 
+    public GenericPackOps< quaternion<double>, AVXType<double> > {
   
     using twoTuple = std::tuple<__m256d,__m256d>;
   
@@ -193,8 +177,8 @@ namespace HAXX {
    *  AVX / AVX2
    */ 
   template<>
-  struct GenericPackOps_T2< quaternion<double>, AVX64BitTypeWrapper >: 
-    public GenericPackOps< quaternion<double>, AVX64BitTypeWrapper > {
+  struct GenericPackOps_T2< quaternion<double>, AVXType<double> >: 
+    public GenericPackOps< quaternion<double>, AVXType<double> > {
   
     using twoTuple = std::tuple<__m256d,__m256d>;
   

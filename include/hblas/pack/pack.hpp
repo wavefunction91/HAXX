@@ -59,24 +59,24 @@ namespace HAXX {
     _x  = X;
     _xp = Xp;
   
-    auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
+    auto alpha = PackOps::TypeWrapper::LoadScalar(args...);
   
   
     auto load_preOP = 
       overload(
         [&](auto &t){ 
-          auto x = PackOps::load(t);        
+          auto x = PackOps::TypeWrapper::Load(t);        
           return PackOps::preOP(x,alpha);
         },
         [&](){ 
-          auto x = PackOps::load();        
+          auto x = PackOps::TypeWrapper::Load();        
           return PackOps::preOP(x,alpha);
         }
       );
   
     auto ptrInc = [](auto &t){ return t + 1; };
   
-    auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
+    auto store = [](auto *&p, auto &t){ PackOps::TypeWrapper::Store(p,t);    };
 
     auto loopBody = [&](auto &xCol, auto *&xp) {
 
@@ -147,23 +147,23 @@ namespace HAXX {
     _x = X;
     _xp = Xp;
   
-    auto alpha = PackOps::TypeWrapper::cacheScalar(args...);
+    auto alpha = PackOps::TypeWrapper::LoadScalar(args...);
   
     auto load_preOP = 
       overload(
         [&](auto &t){ 
-          auto x = PackOps::load(t);        
+          auto x = PackOps::TypeWrapper::Load(t);        
           return PackOps::preOP(x,alpha);
         },
         [&](){ 
-          auto x = PackOps::load();        
+          auto x = PackOps::TypeWrapper::Load();        
           return PackOps::preOP(x,alpha);
         }
       );
   
     auto ptrInc = [&](auto &t){ return t + LDX; };
   
-    auto store = [](auto *&p, auto &t){ PackOps::store(p,t);    };
+    auto store = [](auto *&p, auto &t){ PackOps::TypeWrapper::Store(p,t);    };
 
 
     auto loopBody = [&](auto &xCol, auto *&xp) {
