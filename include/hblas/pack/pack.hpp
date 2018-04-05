@@ -85,7 +85,7 @@ namespace HAXX {
         auto x   = apply_n<PK>( load_preOP, xCol );
         auto x_t = PackOps::OP(x);
   
-        arrExc( store, xp, x_t );
+        array_tuple_execute( store, xp, x_t );
   
         xCol = apply( ptrInc, xCol );
         xp += PK;
@@ -98,7 +98,7 @@ namespace HAXX {
     if( j > 0 )
     do {
   
-      auto xCol = ptrSeq<PK>(_x,LDX);
+      auto xCol = pointer_sequence<PK>(_x,LDX);
       _x += PK*LDX;
 
       loopBody(xCol,_xp);
@@ -172,7 +172,7 @@ namespace HAXX {
   
         auto x   = apply_n<PK>( load_preOP, xCol );
         auto x_t = PackOps::OP(x);
-        arrExc( store, xp, x_t );
+        array_tuple_execute( store, xp, x_t );
   
         xCol = apply( ptrInc, xCol );
         xp += PK;
@@ -186,7 +186,7 @@ namespace HAXX {
     if( i > 0 )
     do {
   
-      auto xCol = ptrSeq<PK>(_x,1);
+      auto xCol = pointer_sequence<PK>(_x,1);
       _x += PK;
 
       loopBody(xCol,_xp); 

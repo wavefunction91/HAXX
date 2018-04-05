@@ -14,15 +14,6 @@
 namespace HAXX {
 
 
-  // Aliases
-
-  template < size_t... Is >
-  using indx_seq = std::index_sequence< Is... >;
-
-  template < size_t N >
-  using mk_indx_seq = std::make_index_sequence< N >;
-
-
   // Generate a sequence of pointers
 
   /**
@@ -31,7 +22,8 @@ namespace HAXX {
    *  Implementation function for ptrSeq.
    */
   template <typename T, size_t... Is>
-  constexpr auto ptrSeq_impl(T seed, size_t INC, indx_seq<Is...>) {
+  constexpr auto pointer_sequence_impl(T seed, size_t INC, 
+      std::index_sequence<Is...>) {
   
     return std::make_tuple( (seed + Is*INC)... );
   
@@ -43,9 +35,10 @@ namespace HAXX {
    *  Generate a sequence of integers and store it in a tuple.
    */
   template <size_t N, typename T>
-  constexpr auto ptrSeq(T seed, size_t INC) {
+  constexpr auto pointer_sequence(T seed, size_t INC) {
   
-    return ptrSeq_impl(seed, INC, mk_indx_seq< N >{});
+    return pointer_sequence_impl(seed, INC, 
+        std::make_index_sequence< N >{});
   
   };
 
@@ -61,7 +54,8 @@ namespace HAXX {
    *  Implementation function for apply
    */
   template < typename F, class Tuple, size_t... Is>
-  constexpr auto apply_impl( const F &op, Tuple &t, indx_seq<Is...>) {
+  constexpr auto apply_impl( const F &op, Tuple &t, 
+      std::index_sequence<Is...>) {
   
     return std::make_tuple( op(std::get<Is>(t))... );
   
@@ -136,9 +130,9 @@ namespace HAXX {
    */ 
   template <typename F, typename T, typename U, typename... Args>
   constexpr inline std::enable_if_t<(sizeof...(Args) > 0),void> 
-    arrExc_impl( const F &op, T *ptr, U &param, Args... args) {
+    array_tuple_execute_impl( const F &op, T *ptr, U &param, Args... args) {
   
-    op(ptr,param); arrExc_impl(op,++ptr,args...);
+    op(ptr,param); array_tuple_execute_impl(op,++ptr,args...);
   
   };
 
@@ -147,7 +141,8 @@ namespace HAXX {
    *  and array. (implementation case sizeof(array) == 1).
    */ 
   template <typename F, typename T, typename U, typename... Args>
-  constexpr inline void arrExc_impl( const F &op, T *ptr, U &param) {
+  constexpr inline void array_tuple_execute_impl( const F &op, T *ptr, 
+      U &param) {
   
     op(ptr,param); 
   
@@ -158,10 +153,10 @@ namespace HAXX {
    *  and array. (expansion of tuple).
    */ 
   template <typename F, typename T, class Tuple, size_t... Is>
-  constexpr inline void arrExc_impl( const F &op, T* ptr, Tuple &t, 
-    std::index_sequence<Is...>) {
+  constexpr inline void array_tuple_execute_impl( const F &op, T* ptr, 
+    Tuple &t, std::index_sequence<Is...>) {
   
-    arrExc_impl(op,ptr,(std::get<Is>(t))...);
+    array_tuple_execute_impl(op,ptr,(std::get<Is>(t))...);
   
   };
   
@@ -176,44 +171,44 @@ namespace HAXX {
    *  ...
    */ 
   template <typename F, typename T, class Tuple>
-  constexpr inline void arrExc(const F &op, T* ptr, Tuple &t) {
+  constexpr inline void array_tuple_execute(const F &op, T* ptr, Tuple &t) {
   
-    arrExc_impl(op,ptr,t,
+    array_tuple_execute_impl(op,ptr,t,
       std::make_index_sequence<std::tuple_size<Tuple>::value>{});
   
   }
 
 
 
-template <class... Fs> struct overload_set;
-
-template <class F1, class... Fs>
-struct overload_set<F1,Fs...> : F1, overload_set<Fs...>::type {
-
-  typedef overload_set type;
-  overload_set(F1 head, Fs... tail) :
-    F1(head), overload_set<Fs...>::type(tail...){}
-
-  using F1::operator();
-  using overload_set<Fs...>::type::operator();
-
-};
-
-template< class F >
-struct overload_set<F> : F {
-
-  typedef F type;
-  using F::operator();
-
-};
-
-
-template <class... Fs>
-typename overload_set<Fs...>::type overload(Fs... x) {
-
-  return overload_set<Fs...>(x...);
-
-};
+  template <class... Fs> struct overload_set;
+  
+  template <class F1, class... Fs>
+  struct overload_set<F1,Fs...> : F1, overload_set<Fs...>::type {
+  
+    typedef overload_set type;
+    overload_set(F1 head, Fs... tail) :
+      F1(head), overload_set<Fs...>::type(tail...){}
+  
+    using F1::operator();
+    using overload_set<Fs...>::type::operator();
+  
+  };
+  
+  template< class F >
+  struct overload_set<F> : F {
+  
+    typedef F type;
+    using F::operator();
+  
+  };
+  
+  
+  template <class... Fs>
+  typename overload_set<Fs...>::type overload(Fs... x) {
+  
+    return overload_set<Fs...>(x...);
+  
+  };
 
 
 }; // namespace HAXX
