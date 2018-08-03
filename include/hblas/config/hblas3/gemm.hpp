@@ -14,9 +14,16 @@
 #include "hblas/config/types.hpp"
 
 // Caching dimensions
-#define MC 64
-#define NC 1024
-#define KC 64
+
+#ifndef MC
+  #define MC 64
+#endif
+#ifndef NC
+  #define NC 512
+#endif
+#ifndef KC
+  #define KC 64
+#endif
 
 // Register block size
 #define MR 2

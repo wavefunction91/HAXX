@@ -13,7 +13,12 @@ set(HAXX_VERSION_PATCH 0)
 
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
-#include_directories("${PROJECT_BINARY_DIR}/include")
+include_directories("${PROJECT_BINARY_DIR}/include")
+
+configure_file(
+  "${PROJECT_SOURCE_DIR}/include/haxx_config.hpp.in"
+  "${PROJECT_BINARY_DIR}/include/haxx_config.hpp"
+)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 

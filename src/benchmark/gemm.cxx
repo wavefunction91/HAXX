@@ -36,8 +36,8 @@ std::mt19937 gen(rd());
 std::uniform_real_distribution<> dis(HBLAS1_RAND_MIN,HBLAS1_RAND_MAX);
 
 
-#define _DO_COMPLEX
-#define _DO_FORTRAN
+//#define _DO_COMPLEX
+//#define _DO_FORTRAN
 
 
 void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {
@@ -58,7 +58,15 @@ void outTime(std::string name, size_t LEN, size_t FLOPS, double count) {
 
 int main() {
 
-  for(int GEMM_LEN = 500; GEMM_LEN <= 10000; GEMM_LEN += 500) {
+  const size_t GEMM_LEN_MIN = 500;
+  const size_t GEMM_LEN_MAX = 5000;
+  const size_t GEMM_INC     = 500;
+
+  for( auto GEMM_LEN =  GEMM_LEN_MIN; 
+            GEMM_LEN <= GEMM_LEN_MAX; 
+            GEMM_LEN += GEMM_INC ) {
+
+
   std::vector<HAXX::quaternion<double>> 
     A(GEMM_LEN*GEMM_LEN), B(GEMM_LEN*GEMM_LEN), C(GEMM_LEN*GEMM_LEN);
 
@@ -85,6 +93,7 @@ int main() {
 
   std::complex<double> ALPHA(dis(gen),dis(gen)), BETA(dis(gen),dis(gen));
   
+
   if(GEMM_LEN == 500)
   HBLAS_GEMM(TRANSA,TRANSB,GEMM_LEN,GEMM_LEN,GEMM_LEN,ALPHA,&A[0],GEMM_LEN,
     &B[0],GEMM_LEN,BETA,&C[0],GEMM_LEN);

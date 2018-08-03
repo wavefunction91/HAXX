@@ -10,6 +10,7 @@
 #ifndef __INCLUDED_HAXX_DEF_HPP
 #define __INCLUDED_HAXX_DEF_HPP
 
+#include <haxx_config.hpp>
 
 #include <complex> // Support for complex numbers
 #include <string>

@@ -44,7 +44,6 @@ void HBLAS_GEMM(const char TRANSA, const char TRANSB, const HAXX_INT M,
   const HAXX_INT LDA, _BMATF * const B, const HAXX_INT LDB, 
   const _BETAF BETA, quaternion<double> * const C, const HAXX_INT LDC) {
 
-
   const bool ATRAN = TRANSA == 'T';
   const bool ACT   = TRANSA == 'C';
   const bool ACONJ = TRANSA == 'R';
