@@ -6,10 +6,10 @@
 #
 #  See LICENSE.txt 
 #
+#set(Boost_USE_STATIC_LIBS ON)
 
-add_subdirectory(hblas)
-add_subdirectory(tune)
 
-if( HAXX_ENABLE_BENCHMARK )
-  add_subdirectory(benchmark)
-endif()
+
+add_executable(gemm_tune gemm.cxx)
+target_link_libraries(gemm_tune ${Boost_LIBRARIES} hblas)
+
